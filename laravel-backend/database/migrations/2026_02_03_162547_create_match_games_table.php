@@ -38,6 +38,7 @@ return new class extends Migration
             $table->integer('duration_minutes')->nullable();
             $table->integer('team1_score')->default(0);
             $table->integer('team2_score')->default(0);
+            
             $table->timestamps();
             $table->index(['game_id', 'status']);
             $table->index(['team1_id', 'team2_id']);

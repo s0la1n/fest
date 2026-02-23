@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('team_players', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id')->constrained()->onDelete('cascade');
-            $table->string('player_name')->nullable();
+            $table->string('name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('nickname')->nullable();
             $table->enum('role', ['captain', 'player'])->default('player');
             $table->timestamps();
