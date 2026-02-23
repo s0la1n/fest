@@ -18,7 +18,7 @@ interface ScheduleEvent {
 }
 
 function teamName(t: any) {
-  return t?.tournament_application?.team_name || t?.display_name || t?.name || 'TBD';
+  return t?.team_name || t?.display_name || t?.name || 'TBD';
 }
 
 interface ScheduleData {

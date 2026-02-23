@@ -3,6 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig = {
   reactStrictMode: true,
 
+  async redirects() {
+    return [{ source: '/applications', destination: '/', permanent: false }];
+  },
+
   // Прокси для Laravel API (чтобы избежать CORS ошибок)
   async rewrites() {
     return [

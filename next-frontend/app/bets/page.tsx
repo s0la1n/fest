@@ -131,7 +131,7 @@ export default function BetsPage() {
                         }}
                       >
                         <p className="text-xs text-slate-400">{m.game?.name}</p>
-                        <p className="font-medium text-white">{m.team1?.tournament_application?.team_name || m.team1?.display_name || 'TBD'} vs {m.team2?.tournament_application?.team_name || m.team2?.display_name || 'TBD'}</p>
+                        <p className="font-medium text-white">{m.team1?.team_name || m.team1?.display_name || 'TBD'} vs {m.team2?.team_name || m.team2?.display_name || 'TBD'}</p>
                         <p className="text-sm text-slate-400">{new Date(m.start_time).toLocaleString('ru-RU')}</p>
                       </div>
                     ))
@@ -147,7 +147,7 @@ export default function BetsPage() {
                   ) : (
                     myBets.map((b) => (
                       <div key={b.id} className="bg-slate-800 rounded-lg p-4 border border-slate-600">
-                        <p className="text-sm text-slate-300">{b.match?.team1?.tournament_application?.team_name || b.match?.team1?.display_name} vs {b.match?.team2?.tournament_application?.team_name || b.match?.team2?.display_name}</p>
+                        <p className="text-sm text-slate-300">{b.match?.team1?.team_name || b.match?.team1?.display_name} vs {b.match?.team2?.team_name || b.match?.team2?.display_name}</p>
                         <p className="text-sm">Ставка: {b.coins_amount} монет (x{b.odds})</p>
                         <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium ${
                           b.status === 'won' ? 'bg-green-100' : b.status === 'lost' ? 'bg-red-100' : 'bg-gray-100'
@@ -164,7 +164,7 @@ export default function BetsPage() {
             {selectedMatch && (
               <div className="mt-8 bg-slate-800 rounded-xl p-6 border-2 border-cyan-500/50">
                 <h3 className="text-lg font-bold text-white mb-4">Разместить ставку</h3>
-                <p className="text-slate-400 mb-4">{selectedMatch.team1?.tournament_application?.team_name || selectedMatch.team1?.display_name} vs {selectedMatch.team2?.tournament_application?.team_name || selectedMatch.team2?.display_name}</p>
+                <p className="text-slate-400 mb-4">{selectedMatch.team1?.team_name || selectedMatch.team1?.display_name} vs {selectedMatch.team2?.team_name || selectedMatch.team2?.display_name}</p>
                 <form onSubmit={placeBet} className="space-y-4">
                   {error && <p className="text-red-600 text-sm">{error}</p>}
                     <div>
@@ -172,11 +172,11 @@ export default function BetsPage() {
                     <div className="flex gap-4">
                       <label className="flex items-center gap-2">
                         <input type="radio" checked={betOn === 'team1_win'} onChange={() => setBetOn('team1_win')} />
-                        {selectedMatch.team1?.tournament_application?.team_name || selectedMatch.team1?.display_name}
+                        {selectedMatch.team1?.team_name || selectedMatch.team1?.display_name}
                       </label>
                       <label className="flex items-center gap-2">
                         <input type="radio" checked={betOn === 'team2_win'} onChange={() => setBetOn('team2_win')} />
-                        {selectedMatch.team2?.tournament_application?.team_name || selectedMatch.team2?.display_name}
+                        {selectedMatch.team2?.team_name || selectedMatch.team2?.display_name}
                       </label>
                     </div>
                   </div>

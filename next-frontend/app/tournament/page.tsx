@@ -11,15 +11,14 @@ const GAMES_FALLBACK = [
 ];
 
 const REGISTRATION_RULES = [
-  'Команда регистрируется капитаном. Все участники должны иметь аккаунт на сайте фестиваля.',
-  'Укажите название команды, сокращение (тег), логотип (PNG), город в СНГ и состав. Участники должны подтвердить участие в разделе «Заявки».',
-  'После проверки организатор одобряет или отклоняет заявку.',
+  'Команды хранятся в базе и формируются организатором турнира.',
+  'Указывается название команды, тег, логотип, город и состав. Участникам не нужен аккаунт на сайте.',
 ];
 
 const TWITCH_CHANNEL = 'festival_stream';
 
 const FAQ = [
-  { q: 'Как подать заявку на турнир?', a: 'Войдите в аккаунт, перейдите в раздел «Заявки» и выберите «Заявка на турнир». Заполните форму и дождитесь подтверждения от участников команды.' },
+  { q: 'Как посмотреть команды турнира?', a: 'На этой странице выберите игру и посмотрите зарегистрированные команды. Расписание и сетка — в разделе «Расписание».' },
   { q: 'Где смотреть трансляцию?', a: 'Трансляция матчей ведётся на нашем канале в Twitch. Ссылка на стрим — в блоке выше.' },
   { q: 'Сколько человек в команде?', a: 'В каждой команде может быть до 5 игроков включая капитана.' },
 ];
@@ -37,7 +36,7 @@ export default function TournamentPage() {
   const twitchEmbedUrl = `https://player.twitch.tv/?channel=${TWITCH_CHANNEL}&parent=${twitchParent}`;
 
   useEffect(() => {
-    apiClient.get<typeof GAMES_FALLBACK>('/applications/games').then(setGames).catch(() => setGames(GAMES_FALLBACK));
+    apiClient.get<typeof GAMES_FALLBACK>('/games').then(setGames).catch(() => setGames(GAMES_FALLBACK));
   }, []);
 
   useEffect(() => {
@@ -61,10 +60,10 @@ export default function TournamentPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">КИБЕРСПОРТИВНЫЙ ТУРНИР</h1>
           <p className="text-xl text-[#00f5ff] mb-2">Игровой Лабиринт 2026</p>
           <p className="text-slate-400 mb-8 max-w-2xl mx-auto">
-            Собери команду, зарегистрируйся и сражайся за призы. CS2, Dota 2, Valorant — одна сцена, один фестиваль.
+            Команды формируются организатором. CS2, Dota 2, Valorant — одна сцена, один фестиваль.
           </p>
-          <Link href="/applications" className="inline-block px-8 py-4 bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] rounded-lg font-semibold transition" style={{ boxShadow: '0 0 20px rgba(0,245,255,0.4)' }}>
-            ПОДАТЬ ЗАЯВКУ
+          <Link href="/schedule" className="inline-block px-8 py-4 bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] rounded-lg font-semibold transition" style={{ boxShadow: '0 0 20px rgba(0,245,255,0.4)' }}>
+            РАСПИСАНИЕ И СЕТКА
           </Link>
         </div>
       </section>
@@ -105,8 +104,8 @@ export default function TournamentPage() {
             ))}
           </ul>
           <div className="mt-8">
-            <Link href="/applications" className="inline-block px-6 py-3 bg-[#12121a] border border-[#00f5ff]/30 hover:bg-[#00f5ff]/10 text-[#00f5ff] rounded-lg font-medium">
-              Перейти к заявке на турнир
+            <Link href="/schedule" className="inline-block px-6 py-3 bg-[#12121a] border border-[#00f5ff]/30 hover:bg-[#00f5ff]/10 text-[#00f5ff] rounded-lg font-medium">
+              Расписание и турнирная сетка
             </Link>
           </div>
         </div>
@@ -138,7 +137,7 @@ export default function TournamentPage() {
                 className="bg-[#12121a] rounded-xl p-4 border border-[#1a1a24] hover:border-[#00f5ff]/50 text-left transition"
               >
                 <p className="font-semibold text-white">
-                  {t.tournament_application?.team_name || t.display_name || 'Команда'}
+                  {t.team_name || t.display_name || 'Команда'}
                 </p>
                 <p className="text-slate-500 text-sm mt-1">Нажмите для состава</p>
               </button>
@@ -209,12 +208,12 @@ export default function TournamentPage() {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" onClick={() => setModalTeam(null)}>
           <div className="bg-[#12121a] rounded-xl p-6 max-w-md w-full border border-[#00f5ff]/30" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-xl font-bold text-white mb-4">
-              {modalTeam.tournament_application?.team_name || 'Состав команды'}
+              {modalTeam.team_name || 'Состав команды'}
             </h3>
             <ul className="space-y-2">
               {modalTeam.players?.map((p: any) => (
                 <li key={p.id} className="flex justify-between text-slate-300">
-                  <span>{p.user?.nickname || p.user?.login || 'Игрок'}</span>
+                  <span>{p.display_name ?? 'Игрок'}</span>
                   <span className="text-[#00f5ff] text-sm">{p.role === 'captain' ? 'Капитан' : 'Игрок'}</span>
                 </li>
               ))}

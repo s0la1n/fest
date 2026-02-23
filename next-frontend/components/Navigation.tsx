@@ -43,7 +43,6 @@ export default function Navigation() {
               <>
                 {!hasRole('admin') && (
                   <>
-                    <Link href="/applications" className={navLink}>Заявки</Link>
                     <Link href="/voting" className={navLink}>Голосование</Link>
                     <Link href="/shop" className={navLink}>Магазин</Link>
                   </>
@@ -110,7 +109,6 @@ export default function Navigation() {
               <>
                 {!hasRole('admin') && (
                   <>
-                    <Link href="/applications" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Заявки</Link>
                     <Link href="/voting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Голосование</Link>
                     <Link href="/shop" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Магазин</Link>
                     <Link href="/balance" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg bg-[#00f5ff]/10 text-[#00f5ff] border border-[#00f5ff]/30">

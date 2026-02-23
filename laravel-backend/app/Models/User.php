@@ -51,16 +51,6 @@ class User extends Authenticatable
         return $this->hasMany(Ticket::class);
     }
 
-    public function cosplayApplications()
-    {
-        return $this->hasMany(CosplayApplication::class);
-    }
-
-    public function tournamentApplications()
-    {
-        return $this->hasMany(TournamentApplication::class, 'captain_id');
-    }
-
     public function orders()
     {
         return $this->hasMany(Order::class);
@@ -76,23 +66,4 @@ class User extends Authenticatable
         return $this->hasMany(BalanceHistory::class);
     }
 
-    public function teamPlayers()
-    {
-        return $this->hasMany(TeamPlayer::class);
-    }
-
-    public function sentInvitations()
-    {
-        return $this->hasMany(TeamInvation::class, 'invited_by');
-    }
-
-    public function receivedInvitations()
-    {
-        return $this->hasMany(TeamInvation::class, 'invited_user_id');
-    }
-
-    public function cosplayers()
-    {
-        return $this->hasOne(Cosplayer::class);
-    }
 }

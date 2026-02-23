@@ -10,19 +10,27 @@ class Team extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tournament_application_id',
-        'captain_id',
+        'game_id',
+        'team_name',
+        'tag',
+        'city',
+        'logo',
+        'description',
+        'awards',
         'status',
     ];
 
-    public function tournamentApplication()
+    public function game()
     {
-        return $this->belongsTo(TournamentApplication::class);
+        return $this->belongsTo(Game::class);
     }
 
-    public function captain()
+    /**
+     * Капитан команды (участник с ролью captain).
+     */
+    public function captainPlayer()
     {
-        return $this->belongsTo(User::class, 'captain_id');
+        return $this->hasOne(TeamPlayer::class)->where('role', 'captain');
     }
 
     public function players()
@@ -45,11 +53,6 @@ class Team extends Model
         return $this->hasMany(MatchGame::class, 'winner_id');
     }
 
-    public function invitations()
-    {
-        return $this->hasMany(TeamInvation::class);
-    }
-
     public function getMatchGamesAttribute()
     {
         return $this->matchGamesAsTeam1->merge($this->matchGamesAsTeam2);
@@ -57,16 +60,20 @@ class Team extends Model
 
     public function isFull(): bool
     {
-        $game = $this->tournamentApplication->game;
-        return $this->players()->count() >= $game->max_players;
+        $game = $this->game;
+        return $game && $this->players()->count() >= $game->max_players;
     }
 
-    public function addPlayer(User $user, string $role = 'player')
+    /**
+     * Добавить участника в команду (имя/ник).
+     */
+    public function addPlayer(?string $playerName, ?string $nickname, string $role = 'player')
     {
         if (!$this->isFull()) {
             return TeamPlayer::create([
                 'team_id' => $this->id,
-                'user_id' => $user->id,
+                'player_name' => $playerName,
+                'nickname' => $nickname,
                 'role' => $role,
             ]);
         }

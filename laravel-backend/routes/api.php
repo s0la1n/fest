@@ -13,15 +13,16 @@ use App\Http\Controllers\VotingController;
 Route::get('/schedule', [ScheduleController::class, 'index']);
 Route::get('/schedule/bracket/{game}', [ScheduleController::class, 'bracket']);
 
-Route::get('/applications/games', function () {
-    $urls = ['cs2' => 'https://www.counter-strike.net', 'dota2' => 'https://www.dota2.com', 'valorant' => 'https://playvalorant.com'];
+Route::get('/games', function () {
+    $urls = ['cs2' => 'https://www.counter-strike.net', 'dota2' => 'https://www.dota2.com', 'dota-2' => 'https://www.dota2.com', 'valorant' => 'https://playvalorant.com'];
     $games = \App\Models\Game::orderBy('name')->get(['id', 'name', 'slug', 'description']);
     return response()->json($games->map(fn ($g) => [...$g->toArray(), 'official_url' => $urls[$g->slug ?? ''] ?? null]));
 });
 
 Route::get('/teams/{gameId}', fn ($gameId) => response()->json(
-    \App\Models\Team::with(['tournamentApplication:id,game_id,team_name,tag', 'players.user:id,nickname,login'])
-        ->whereHas('tournamentApplication', fn ($q) => $q->where('game_id', $gameId)->where('status', 'approved'))
+    \App\Models\Team::with(['game:id,name', 'players'])
+        ->where('game_id', $gameId)
+        ->where('status', 'active')
         ->get()
 ));
 
@@ -45,6 +46,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Проверки
 Route::post('/check-email', [AuthController::class, 'checkEmail']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 // Защищенные маршруты
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -83,13 +85,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     });
 
     Route::prefix('organizer/tournament')->middleware(['auth:sanctum'])->group(function () {
-        Route::get('/applications', fn () => response()->json(\App\Models\TournamentApplication::with('game:id,name')->orderByDesc('created_at')->get()));
-        Route::get('/teams', fn () => response()->json(['teams' => \App\Models\Team::with('tournamentApplication:id,team_name,tag')->get()]));
+        Route::get('/teams', fn () => response()->json(['teams' => \App\Models\Team::with('game:id,name')->orderByDesc('created_at')->get()]));
     });
 
     Route::prefix('organizer/cosplay')->middleware(['auth:sanctum'])->group(function () {
-        Route::get('/applications', fn () => response()->json(['data' => \App\Models\CosplayApplication::orderByDesc('created_at')->get()]));
-        Route::get('/participants', fn () => response()->json(['participants' => \App\Models\CosplayApplication::where('status', 'approved')->with('user:id,name')->get()]));
+        Route::get('/participants', fn () => response()->json(['participants' => \App\Models\Cosplayer::orderByDesc('created_at')->get()]));
     });
 });
 

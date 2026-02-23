@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CosplayApplication;
 use App\Models\Cosplayer;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -15,17 +14,15 @@ class VotingController extends Controller
     public function participants(Request $request): JsonResponse
     {
         $user = $request->user();
-        $participants = CosplayApplication::where('status', 'approved')
-            ->with(['user:id,name,nickname', 'cosplayer:id,cosplay_application_id,votes_count,voted_users'])
-            ->get()
-            ->map(fn ($a) => [
-                'id' => $a->id,
-                'character_name' => $a->character_name,
-                'origin' => $a->origin,
-                'photo' => $a->photo,
-                'user' => $a->user ? ['name' => $a->user->name, 'nickname' => $a->user->nickname] : null,
-                'votes_count' => (int) ($a->cosplayer?->votes_count ?? 0),
-                'has_voted' => in_array($user->id, $a->cosplayer?->voted_users ?? [], true),
+        $participants = Cosplayer::all()
+            ->map(fn ($c) => [
+                'id' => $c->id,
+                'character_name' => $c->character_name,
+                'origin' => $c->origin,
+                'photo' => $c->photo,
+                'display_name' => trim($c->name . ' ' . $c->last_name) ?: 'Участник',
+                'votes_count' => (int) ($c->votes_count ?? 0),
+                'has_voted' => in_array($user->id, $c->voted_users ?? [], true),
             ]);
         return response()->json(['participants' => $participants]);
     }
@@ -37,21 +34,11 @@ class VotingController extends Controller
     {
         $request->validate(['participant_id' => 'required|integer']);
         $user = $request->user();
-        $applicationId = (int) $request->input('participant_id');
-        $application = CosplayApplication::where('id', $applicationId)->where('status', 'approved')->first();
+        $cosplayerId = (int) $request->input('participant_id');
+        $cosplayer = Cosplayer::find($cosplayerId);
 
-        if (!$application) {
-            return response()->json(['message' => 'Участник не найден'], 404);
-        }
-
-        $cosplayer = $application->cosplayer;
         if (!$cosplayer) {
-            $cosplayer = Cosplayer::create([
-                'cosplay_application_id' => $application->id,
-                'user_id' => $application->user_id,
-                'votes_count' => 0,
-                'voted_users' => [],
-            ]);
+            return response()->json(['message' => 'Участник не найден'], 404);
         }
 
         if (in_array($user->id, $cosplayer->voted_users ?? [], true)) {

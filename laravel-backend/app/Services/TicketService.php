@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 
 class TicketService
 {
@@ -17,8 +18,6 @@ class TicketService
         'standard' => 1000,
         'vip' => 2500,
         'premium' => 5000,
-        'cosplay' => 1500,
-        'tournament' => 2000,
     ];
 
     private const TICKET_BENEFITS = [
@@ -27,49 +26,44 @@ class TicketService
         'premium' => ['entry', 'vip_lounge', 'fast_track', 'premium_merch_discount', 'meet_and_greet', 'backstage_access'],
     ];
 
-    /** Начальный баланс (монеты) по типу билета после оплаты */
     private const INITIAL_BALANCE_BY_TICKET = [
         'standard' => 400,
         'vip' => 800,
         'premium' => 1500,
-        'cosplay' => 500,
-        'tournament' => 500,
     ];
+
+    private const CACHE_KEY_PASSWORD = 'ticket_temp_password:';
+    private const PASSWORD_TTL_HOURS = 24;
 
     public function buyTicket(array $validated): array
     {
-        $user = User::where('email', $validated['email'])->first();
-        if ($user) {
-            return ['message' => 'Пользователь с таким email уже существует. Войдите в свой аккаунт.', 'status' => 409];
+        $existing = User::where('email', $validated['email'])
+            ->orWhere('phone', $validated['phone'])
+            ->first();
+
+        if ($existing) {
+            $message = $existing->email === $validated['email']
+                ? 'Пользователь с таким email уже существует. Войдите в свой аккаунт.'
+                : 'Пользователь с таким номером телефона уже существует. Войдите в свой аккаунт.';
+            return ['message' => $message, 'status' => 409];
         }
 
-        $user = User::where('phone', $validated['phone'])->first();
-        if ($user) {
-            return ['message' => 'Пользователь с таким номером телефона уже существует. Войдите в свой аккаунт.', 'status' => 409];
-        }
-
-        $login = $this->generateLogin($validated['email']);
         $password = Str::random(10);
-
         $user = User::create([
-            'login' => $login,
+            'login' => $this->generateLogin($validated['email']),
             'email' => $validated['email'],
             'phone' => $validated['phone'],
             'name' => $validated['name'],
-            'last_name' => $validated['last_name'] ?? null,
-            'nickname' => $validated['name'] ?? null,
-            'password' => bcrypt($password),
+            'password' => Hash::make($password),
             'role' => 'user',
             'is_banned' => false,
         ]);
 
         $ticketType = $validated['ticket_type'];
-
         $ticket = $this->createPendingTicket($user, $ticketType);
-        Cache::put('ticket_temp_password:' . $ticket->id, $password, now()->addHours(24));
+        Cache::put(self::CACHE_KEY_PASSWORD . $ticket->id, $password, now()->addHours(self::PASSWORD_TTL_HOURS));
 
         $payment = $this->createYooKassaPayment($ticket);
-
         if (!$payment || empty($payment['confirmation_url'])) {
             Log::error('YooKassa: failed to create payment', ['ticket_id' => $ticket->id]);
             return ['message' => 'Не удалось создать платёж. Проверьте настройки ЮKassa.', 'status' => 502];
@@ -102,7 +96,6 @@ class TicketService
         }
 
         $paymentStatus = $this->getYooKassaPaymentStatus($ticket->transaction_id);
-
         if ($paymentStatus === null) {
             Log::warning('YooKassa: не удалось получить статус платежа', ['transaction_id' => $ticket->transaction_id]);
             return [
@@ -136,7 +129,7 @@ class TicketService
             'type' => 'registration_bonus',
         ]);
 
-        $password = Cache::pull('ticket_temp_password:' . $ticket->id);
+        $password = Cache::pull(self::CACHE_KEY_PASSWORD . $ticket->id);
         $emailSent = $password ? $this->sendTicketEmail($user, $password, $ticket) : false;
 
         $payload = [
@@ -191,14 +184,25 @@ class TicketService
         ];
     }
 
+    private function yooKassaHttp(?array $config): ?\Illuminate\Http\Client\PendingRequest
+    {
+        if (!$config) {
+            return null;
+        }
+        return Http::withBasicAuth($config['shop_id'], $config['secret_key'])
+            ->connectTimeout($config['connect_timeout'])
+            ->timeout($config['timeout']);
+    }
+
     private function createYooKassaPayment(Ticket $ticket): ?array
     {
         $config = $this->getYooKassaConfig();
-        if (!$config) return null;
+        $http = $this->yooKassaHttp($config);
+        if (!$http) {
+            return null;
+        }
 
-        $frontendUrl = rtrim(config('app.frontend_url', env('FRONTEND_URL', 'http://localhost:3000')), '/');
-        $returnUrl = $frontendUrl . '/buy-ticket/success?ticket_id=' . $ticket->id;
-
+        $returnUrl = $this->frontendUrl() . '/buy-ticket/success?ticket_id=' . $ticket->id;
         $body = [
             'amount' => ['value' => number_format((float) $ticket->price, 2, '.', ''), 'currency' => 'RUB'],
             'capture' => true,
@@ -207,9 +211,7 @@ class TicketService
             'metadata' => ['ticket_id' => (string) $ticket->id],
         ];
 
-        $response = Http::withBasicAuth($config['shop_id'], $config['secret_key'])
-            ->connectTimeout($config['connect_timeout'])
-            ->timeout($config['timeout'])
+        $response = $http
             ->withHeaders(['Idempotence-Key' => 'ticket-' . $ticket->id . '-' . time()])
             ->post($config['api_url'] . '/payments', $body);
 
@@ -228,50 +230,47 @@ class TicketService
     private function getYooKassaPaymentStatus(string $paymentId): ?string
     {
         $config = $this->getYooKassaConfig();
-        if (!$config) return null;
-
-        $response = Http::withBasicAuth($config['shop_id'], $config['secret_key'])
-            ->connectTimeout($config['connect_timeout'])
-            ->timeout($config['timeout'])
-            ->get($config['api_url'] . '/payments/' . $paymentId);
-
-        if (!$response->successful()) {
-            Log::warning('YooKassa GET payment failed', [
-                'payment_id' => $paymentId,
-                'status' => $response->status(),
-            ]);
+        $http = $this->yooKassaHttp($config);
+        if (!$http) {
             return null;
         }
 
+        $response = $http->get($config['api_url'] . '/payments/' . $paymentId);
+        if (!$response->successful()) {
+            Log::warning('YooKassa GET payment failed', ['payment_id' => $paymentId, 'status' => $response->status()]);
+            return null;
+        }
         return $response->json('status');
+    }
+
+    private function frontendUrl(): string
+    {
+        return rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/');
     }
 
     private function generateLogin(string $email): string
     {
-        $baseLogin = explode('@', $email)[0];
-        $login = $baseLogin;
-        $counter = 1;
-
+        $base = Str::before($email, '@');
+        $login = $base;
+        $n = 1;
         while (User::where('login', $login)->exists()) {
-            $login = $baseLogin . $counter;
-            $counter++;
+            $login = $base . $n;
+            $n++;
         }
-
         return $login;
     }
 
     private function sendTicketEmail(User $user, string $password, Ticket $ticket): bool
     {
         try {
-            $frontendUrl = rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/');
             Mail::to($user->email)->send(new TicketPurchaseMail([
                 'user' => $user,
                 'password' => $password,
                 'ticket' => $ticket,
-                'login_url' => $frontendUrl . '/signin',
+                'login_url' => $this->frontendUrl() . '/signin',
             ]));
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Failed to send ticket email: ' . $e->getMessage(), ['to' => $user->email]);
             return false;
         }

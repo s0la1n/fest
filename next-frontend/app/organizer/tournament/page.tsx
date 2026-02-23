@@ -18,22 +18,15 @@ export default function OrganizerTournamentPage() {
     <div className="min-h-screen bg-slate-900 text-slate-200 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-2">Организатор турнира</h1>
-        <p className="text-slate-400 mb-8">Заявки, команды и турнирная сетка</p>
+        <p className="text-slate-400 mb-8">Команды и турнирная сетка</p>
 
-        <div className="grid sm:grid-cols-3 gap-4">
-          <Link
-            href="/organizer/tournament/applications"
-            className="block p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-cyan-500/50 transition-colors"
-          >
-            <h2 className="text-lg font-semibold text-white mb-2">Заявки</h2>
-            <p className="text-slate-400 text-sm">Рассмотрение заявок команд, принять или отклонить</p>
-          </Link>
+        <div className="grid sm:grid-cols-2 gap-4">
           <Link
             href="/organizer/tournament/teams"
             className="block p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-cyan-500/50 transition-colors"
           >
             <h2 className="text-lg font-semibold text-white mb-2">Команды</h2>
-            <p className="text-slate-400 text-sm">Информация о командах турнира</p>
+            <p className="text-slate-400 text-sm">Список команд турнира</p>
           </Link>
           <Link
             href="/organizer/tournament/bracket"

@@ -30,13 +30,10 @@ return new class extends Migration
             $table->string('transaction_id')->nullable();
             $table->string('payment_method')->nullable();
             $table->timestamp('payment_date')->nullable();
-            $table->timestamp('activated_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-            $table->timestamp('used_at')->nullable();
             $table->string('qr_code')->nullable()->unique();
             $table->string('qr_code_hash')->nullable()->unique();
-            $table->integer('check_in_count')->default(0);
-            $table->timestamp('last_check_in')->nullable();
+
+            
             $table->index(['user_id', 'payment_status']);
             $table->index(['ticket_number', 'qr_code_hash']);
             $table->index(['type', 'payment_status']);

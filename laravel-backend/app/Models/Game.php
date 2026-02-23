@@ -21,9 +21,9 @@ class Game extends Model
         'max_players' => 'integer',
     ];
 
-    public function tournamentApplications()
+    public function teams()
     {
-        return $this->hasMany(TournamentApplication::class);
+        return $this->hasMany(Team::class);
     }
 
     public function matchGames()

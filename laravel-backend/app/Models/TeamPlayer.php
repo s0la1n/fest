@@ -11,18 +11,24 @@ class TeamPlayer extends Model
 
     protected $fillable = [
         'team_id',
-        'user_id',
+        'player_name',
+        'nickname',
         'role',
     ];
+
+    protected $appends = ['display_name'];
 
     public function team()
     {
         return $this->belongsTo(Team::class);
     }
 
-    public function user()
+    /**
+     * Имя для отображения.
+     */
+    public function getDisplayNameAttribute(): string
     {
-        return $this->belongsTo(User::class);
+        return $this->nickname ?: $this->player_name ?: 'Игрок';
     }
 
     public function isCaptain(): bool

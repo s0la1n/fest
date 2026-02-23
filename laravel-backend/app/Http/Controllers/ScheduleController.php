@@ -75,7 +75,7 @@ class ScheduleController extends Controller
 
         $games = Game::orderBy('name')->get(['id', 'name', 'slug', 'description']);
         $schedules = Schedule::orderBy('day')->orderBy('start_time')->get();
-        $matches = MatchGame::with(['game:id,name', 'team1.tournamentApplication:id,team_name', 'team2.tournamentApplication:id,team_name'])
+        $matches = MatchGame::with(['game:id,name', 'team1:id,team_name', 'team2:id,team_name'])
             ->orderBy('start_time')
             ->get();
 
@@ -101,7 +101,7 @@ class ScheduleController extends Controller
      */
     public function bracket(int $game): JsonResponse
     {
-        $matches = MatchGame::with(['team1.tournamentApplication:id,team_name', 'team2.tournamentApplication:id,team_name'])
+        $matches = MatchGame::with(['team1:id,team_name', 'team2:id,team_name'])
             ->where('game_id', $game)
             ->orderBy('stage')
             ->orderBy('start_time')
@@ -119,8 +119,8 @@ class ScheduleController extends Controller
 
         $formatTeam = fn ($team) => $team ? [
             'id' => $team->id,
-            'name' => $team->tournamentApplication->team_name ?? null,
-            'display_name' => $team->tournamentApplication->team_name ?? "Команда #{$team->id}",
+            'name' => $team->team_name ?? null,
+            'display_name' => $team->team_name ?? "Команда #{$team->id}",
         ] : null;
 
         return [

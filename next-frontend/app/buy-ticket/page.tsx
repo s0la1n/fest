@@ -36,18 +36,14 @@ export default function BuyTicket() {
   const isValidEmail = (email: string): boolean => {
     const trimmed = email.trim();
     if (!trimmed) return false;
-    // RFC-5322-упрощённый: локальная часть + @ + домен с точкой
     const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
     return emailRegex.test(trimmed) && trimmed.length <= 254;
   };
 
-  // Валидация российского номера телефона (+7/8 и 10 цифр)
-  const isValidRussianPhone = (phone: string): boolean => {
+  // Валидация номера телефона
+  const isValidPhone = (phone: string): boolean => {
     const digits = phone.replace(/\D/g, '');
-    // 11 цифр: 7/8 + 10 цифр номера
     if (digits.length === 11) return /^[78]\d{10}$/.test(digits);
-    // 10 цифр: без кода страны (9XX, 8XX, 3XX и т.д.)
-    if (digits.length === 10) return /^[3589]\d{9}$/.test(digits);
     return false;
   };
 
@@ -59,20 +55,25 @@ export default function BuyTicket() {
 
     // Валидация на клиенте
     const validationErrors: Record<string, string[]> = {};
+    const trimmedName = formData.name.trim();
 
-    if (!formData.name.trim()) {
+    if (!trimmedName) {
       validationErrors.name = ['Укажите своё имя'];
+    } else if (trimmedName.length < 2) {
+      validationErrors.name = ['Имя должно быть не короче 2 символов'];
+    } else if (!/^[\p{L}\p{M}\s\-']+$/u.test(trimmedName)) {
+      validationErrors.name = ['Имя может содержать только буквы, пробелы и дефис'];
     }
 
     if (!formData.email.trim()) {
-      validationErrors.email = ['Email обязателен'];
+      validationErrors.email = ['Укажите email'];
     } else if (!isValidEmail(formData.email)) {
       validationErrors.email = ['Введите корректный email (например: name@example.com)'];
     }
 
     if (!formData.phone.trim()) {
-      validationErrors.phone = ['Номер телефона обязателен'];
-    } else if (!isValidRussianPhone(formData.phone)) {
+      validationErrors.phone = ['Укажите номер телефона'];
+    } else if (!isValidPhone(formData.phone)) {
       validationErrors.phone = ['Введите корректный номер: +7 (XXX) XXX-XX-XX или 8 XXX XXX-XX-XX'];
     }
 
@@ -175,8 +176,11 @@ export default function BuyTicket() {
               value={formData.name}
               onChange={handleChange}
               className="w-full px-4 py-3 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-              placeholder="Ваше имя"
+              placeholder="Ваше имя (только буквы)"
               required
+              minLength={2}
+              maxLength={255}
+              autoComplete="name"
             />
             {errors.name && (
               <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>
@@ -194,8 +198,10 @@ export default function BuyTicket() {
               value={formData.email}
               onChange={handleChange}
               className="w-full px-4 py-3 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-              placeholder="your@email.com"
+              placeholder="example@mail.ru"
               required
+              maxLength={255}
+              autoComplete="email"
             />
             {errors.email && (
               <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>
@@ -215,6 +221,8 @@ export default function BuyTicket() {
               className="w-full px-4 py-3 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
               placeholder="+7 (999) 123-45-67"
               required
+              maxLength={20}
+              autoComplete="tel"
             />
             {errors.phone && (
               <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.phone) ? errors.phone[0] : errors.phone}</p>

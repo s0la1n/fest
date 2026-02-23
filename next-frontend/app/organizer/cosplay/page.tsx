@@ -18,22 +18,15 @@ export default function OrganizerCosplayPage() {
     <div className="min-h-screen bg-slate-900 text-slate-200 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-white mb-2">Организатор конкурса косплея</h1>
-        <p className="text-slate-400 mb-8">Заявки, участники и распределение мест</p>
+        <p className="text-slate-400 mb-8">Участники и распределение мест</p>
 
-        <div className="grid sm:grid-cols-3 gap-4">
-          <Link
-            href="/organizer/cosplay/applications"
-            className="block p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-cyan-500/50 transition-colors"
-          >
-            <h2 className="text-lg font-semibold text-white mb-2">Заявки</h2>
-            <p className="text-slate-400 text-sm">Рассмотрение заявок, принять или отклонить</p>
-          </Link>
+        <div className="grid sm:grid-cols-2 gap-4">
           <Link
             href="/organizer/cosplay/participants"
             className="block p-6 bg-slate-800 rounded-xl border border-slate-700 hover:border-cyan-500/50 transition-colors"
           >
             <h2 className="text-lg font-semibold text-white mb-2">Участники</h2>
-            <p className="text-slate-400 text-sm">Информация об участниках конкурса</p>
+            <p className="text-slate-400 text-sm">Список участников конкурса</p>
           </Link>
           <Link
             href="/organizer/cosplay/voting"

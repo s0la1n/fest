@@ -7,14 +7,11 @@ use App\Models\Game;
 use App\Models\Ticket;
 use App\Models\Team;
 use App\Models\TeamPlayer;
-use App\Models\TournamentApplication;
-use App\Models\CosplayApplication;
 use App\Models\Cosplayer;
 use App\Models\MatchGame;
 use App\Models\Merch;
 use App\Models\Order;
 use App\Models\Bet;
-use App\Models\TeamInvation;
 use App\Models\BalanceHistory;
 use App\Models\Schedule;
 use Illuminate\Database\Seeder;
@@ -180,65 +177,44 @@ class DatabaseSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
-        // ========== 4. ЗАЯВКИ НА КОСПЛЕЙ ==========
-        echo "Создание заявок на косплей...\n";
+        // ========== 4. УЧАСТНИКИ КОСПЛЕЯ ==========
+        echo "Создание участников косплея...\n";
 
         $cosplayCharacters = [
-            ['Электро', 'Marvel'],
-            ['Геральт из Ривии', 'Ведьмак'],
-            ['Элли', 'The Last of Us'],
-            ['Джокер', 'Batman'],
-            ['Алая Ведьма', 'Marvel'],
+            ['Электро', 'Marvel', 'Анна', 'Смирнова'],
+            ['Геральт из Ривии', 'Ведьмак', 'Алексей', 'Кузнецов'],
+            ['Элли', 'The Last of Us', 'Дмитрий', 'Попов'],
+            ['Джокер', 'Batman', 'Ольга', 'Соколова'],
+            ['Алая Ведьма', 'Marvel', 'Николай', 'Лебедев'],
         ];
 
-        $cosplayApplications = [];
-        foreach ($users as $index => $user) {
-            if ($index >= 5) break; // Только 5 заявок
-            
-            $character = $cosplayCharacters[$index];
-            $status = $index === 0 ? 'approved' : ($index === 1 ? 'rejected' : 'under_review');
-            
-            $app = CosplayApplication::create([
-                'user_id' => $user->id,
-                'character_name' => $character[0],
-                'origin' => $character[1],
-                'photo' => '/cosplay/photos/' . Str::slug($character[0]) . '.jpg',
+        foreach ($cosplayCharacters as $index => $c) {
+            Cosplayer::create([
+                'name' => $c[2],
+                'last_name' => $c[3],
+                'character_name' => $c[0],
+                'origin' => $c[1],
+                'photo' => '/cosplay/photos/' . Str::slug($c[0]) . '.jpg',
                 'biography' => 'Опытный косплеер с 5-летним стажем',
                 'character_description' => 'Детальная проработка костюма и характера персонажа',
-                'portfolio_link' => 'https://portfolio.example.com/' . $user->login,
+                'portfolio_link' => 'https://portfolio.example.com/cosplayer' . ($index + 1),
                 'awards' => 'Победитель регионального конкурса 2023',
-                'status' => $status,
+                'votes_count' => rand(50, 200),
+                'voted_users' => [],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
-            $cosplayApplications[] = $app;
-
-            // Создаем запись в таблице косплееров для одобренных заявок
-            if ($status === 'approved') {
-                Cosplayer::create([
-                    'cosplay_application_id' => $app->id,
-                    'user_id' => $user->id,
-                    'votes_count' => rand(50, 200),
-                    'voted_users' => [$users[1]->id ?? 0, $users[2]->id ?? 0, $users[3]->id ?? 0],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-            }
         }
 
-        // ========== 5. ТУРНИРНЫЕ ЗАЯВКИ ==========
-        echo "Создание заявок на турнир...\n";
+        // ========== 5. КОМАНДЫ ==========
+        echo "Создание команд...\n";
 
-        $tournamentApplications = [];
         $teamNames = ['Dragon Force', 'Cyber Warriors', 'Storm Riders'];
         $cities = ['Москва', 'Санкт-Петербург', 'Новосибирск'];
+        $teams = [];
 
-        // 3 одобренные заявки (капитаны: user0, user5, user10 — по 5 участников на команду)
         for ($i = 0; $i < 3; $i++) {
-            $captainIndex = $i * 5; // 0, 5, 10
-            $app = TournamentApplication::create([
-                'captain_id' => $users[$captainIndex]->id,
+            $team = Team::create([
                 'game_id' => $gameModels[$i]->id,
                 'team_name' => $teamNames[$i],
                 'tag' => strtoupper(substr($teamNames[$i], 0, 3)) . rand(100, 999),
@@ -246,45 +222,34 @@ class DatabaseSeeder extends Seeder
                 'logo' => '/teams/logos/' . Str::slug($teamNames[$i]) . '.png',
                 'description' => 'Профессиональная киберспортивная команда',
                 'awards' => 'Чемпионы региона 2023',
-                'status' => 'approved',
+                'status' => 'active',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            
-            $tournamentApplications[] = $app;
-        }
+            $teams[] = $team;
 
-        // ========== 6. КОМАНДЫ ==========
-        echo "Создание команд...\n";
-
-        $teams = [];
-        foreach ($tournamentApplications as $index => $app) {
-            if ($app->status === 'approved') {
-                $team = Team::create([
-                    'tournament_application_id' => $app->id,
-                    'captain_id' => $app->captain_id,
-                    'status' => 'active',
+            $baseIndex = $i * 5;
+            $playerNames = [
+                ['Иван Драго', 'ivan_d'],
+                ['Мария Снайпер', 'mary_s'],
+                ['Сергей Мид', 'sergey_m'],
+                ['Анна Саппорт', 'anna_s'],
+                ['Алексей Керри', 'alex_k'],
+            ];
+            for ($j = 0; $j < 5; $j++) {
+                $names = $playerNames[$j];
+                TeamPlayer::create([
+                    'team_id' => $team->id,
+                    'player_name' => $names[0],
+                    'nickname' => $names[1],
+                    'role' => $j === 0 ? 'captain' : 'player',
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                $teams[] = $team;
-
-                // 5 участников в команде: капитан + 4 игрока
-                $baseIndex = $index * 5; // 0, 5, 10
-                for ($j = 0; $j < 5; $j++) {
-                    $userIndex = $baseIndex + $j;
-                    TeamPlayer::create([
-                        'team_id' => $team->id,
-                        'user_id' => $users[$userIndex]->id,
-                        'role' => $j === 0 ? 'captain' : 'player',
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
             }
         }
 
-        // ========== 7. МАТЧИ ==========
+        // ========== 6. МАТЧИ ==========
         echo "Создание матчей...\n";
 
         if (count($teams) >= 2) {
@@ -411,31 +376,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ========== 11. ПРИГЛАШЕНИЯ В КОМАНДЫ ==========
-        echo "Создание приглашений в команды...\n";
-
-        // Команда 0 (users 0-4) приглашает users 5 и 6 (не из своей команды)
-        if (count($teams) > 0) {
-            $team = $teams[0];
-            TeamInvation::create([
-                'invited_by' => $team->captain_id,
-                'team_id' => $team->id,
-                'invited_user_id' => $users[5]->id,
-                'status' => 'pending',
-                'created_at' => now()->subDays(2),
-                'updated_at' => now()->subDays(1),
-            ]);
-            TeamInvation::create([
-                'invited_by' => $team->captain_id,
-                'team_id' => $team->id,
-                'invited_user_id' => $users[6]->id,
-                'status' => 'accepted',
-                'created_at' => now()->subDays(1),
-                'updated_at' => now(),
-            ]);
-        }
-
-        // ========== 12. ИСТОРИЯ БАЛАНСА ==========
+        // ========== 11. ИСТОРИЯ БАЛАНСА ==========
         echo "Создание истории баланса...\n";
 
         $balanceTypes = [
@@ -464,7 +405,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ========== 13. РАСПИСАНИЕ ==========
+        // ========== 12. РАСПИСАНИЕ ==========
         echo "Создание расписания...\n";
 
         $scheduleItems = [

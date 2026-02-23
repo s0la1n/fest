@@ -5,9 +5,9 @@ import Link from 'next/link';
 import PhotoPlaceholder from '@/components/PhotoPlaceholder';
 
 const FAQ = [
-  { q: 'Что нужно для участия в конкурсе?', a: 'Билет типа «Косплей» и одна заявка с персонажем, описанием и фото. Костюм должен быть самодельным или значительно доработанным.' },
-  { q: 'Сколько заявок можно подать?', a: 'Один участник подаёт одну заявку. В заявке указывается один персонаж, откуда он, описание, фото и по желанию ссылки на другие работы.' },
-  { q: 'Как поменять тип билета на «Косплей»?', a: 'Обратитесь в поддержку фестиваля. Без билета «Косплей» заявка на конкурс не будет принята.' },
+  { q: 'Что нужно для участия в конкурсе?', a: 'Билет типа «Косплей» и регистрация участника организатором. Костюм должен быть самодельным или значительно доработанным.' },
+  { q: 'Как участвовать?', a: 'Участники регистрируются организатором конкурса. Указывается один персонаж, откуда он, описание, фото и по желанию ссылки на другие работы.' },
+  { q: 'Как поменять тип билета на «Косплей»?', a: 'Обратитесь в поддержку фестиваля.' },
   { q: 'Когда объявляют победителей?', a: 'Итоги голосования и решения жюри объявляются на сцене фестиваля. Расписание — в разделе «Расписание».' },
 ];
 
@@ -25,11 +25,8 @@ export default function CosplayPage() {
               <h1 className="text-4xl font-bold text-white mb-4">КОСПЛЕЙ-КОНКУРС 2026</h1>
               <p className="text-slate-400 mb-6">Сделай косплей на любимого персонажа и выиграй главный приз 500 000 ₽</p>
               <div className="flex flex-wrap gap-4">
-                <Link href="/applications" className="px-8 py-4 bg-[#ff00ff] hover:bg-[#ff66ff] text-white rounded-lg font-semibold transition" style={{ boxShadow: '0 0 20px rgba(255,0,255,0.4)' }}>
-                  УЧАСТВОВАТЬ
-                </Link>
-                <Link href="/applications" className="px-8 py-4 border-2 border-[#ff00ff] text-[#ff00ff] rounded-lg font-semibold hover:bg-[#ff00ff]/10 transition">
-                  МОИ ЗАЯВКИ
+                <Link href="/voting" className="px-8 py-4 bg-[#ff00ff] hover:bg-[#ff66ff] text-white rounded-lg font-semibold transition" style={{ boxShadow: '0 0 20px rgba(255,0,255,0.4)' }}>
+                  ГОЛОСОВАТЬ ЗА УЧАСТНИКОВ
                 </Link>
               </div>
             </div>
@@ -94,13 +91,12 @@ export default function CosplayPage() {
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold text-white mb-8">Правила регистрации на конкурс</h2>
           <ul className="space-y-4 text-slate-400">
-            <li>• В заявке укажите: персонажа для косплея, откуда он (игра, аниме, фильм), описание персонажа, свои награды, фото косплея и при желании ссылку на другие работы.</li>
-            <li>• Заявка отправляется на рассмотрение организатору конкурса. После проверки вам придёт решение — одобрено или отклонено.</li>
+            <li>• Участники регистрируются организатором: персонаж, откуда он (игра, аниме, фильм), описание, награды, фото и ссылки на работы.</li>
             <li>• Костюм должен быть самодельным или значительно доработанным. Качество и сходство с персонажем учитываются жюри.</li>
           </ul>
           <div className="mt-8">
-            <Link href="/applications" className="inline-block px-6 py-3 bg-[#ff00ff] hover:bg-[#ff66ff] text-white rounded-lg font-medium transition" style={{ boxShadow: '0 0 15px rgba(255,0,255,0.3)' }}>
-              Подать заявку на конкурс
+            <Link href="/voting" className="inline-block px-6 py-3 bg-[#ff00ff] hover:bg-[#ff66ff] text-white rounded-lg font-medium transition" style={{ boxShadow: '0 0 15px rgba(255,0,255,0.3)' }}>
+              Участники и голосование
             </Link>
           </div>
         </div>
@@ -146,7 +142,7 @@ export default function CosplayPage() {
       {/* CTA */}
       <section className="py-16 px-4 text-center">
         <h2 className="text-2xl font-bold text-white mb-4">Покажи свой косплей</h2>
-        <p className="text-slate-400 mb-6">Купи билет «Косплей» и подай заявку в разделе «Заявки»</p>
+        <p className="text-slate-400 mb-6">Участники конкурса и голосование — в разделе «Голосование»</p>
         <Link href="/buy-ticket" className="inline-block px-10 py-4 bg-[#ff00ff] hover:bg-[#ff66ff] text-white rounded-lg font-semibold transition" style={{ boxShadow: '0 0 20px rgba(255,0,255,0.4)' }}>
           КУПИТЬ БИЛЕТ
         </Link>

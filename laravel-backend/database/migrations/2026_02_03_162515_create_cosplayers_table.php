@@ -13,10 +13,17 @@ return new class extends Migration
     {
         Schema::create('cosplayers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cosplay_application_id')->constrained()->onDelete('cascade')->unique();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('last_name');
+            $table->string('character_name');
+            $table->string('origin');
+            $table->string('photo');
+            $table->text('biography')->nullable();
+            $table->text('character_description')->nullable();
+            $table->string('portfolio_link');
             $table->unsignedInteger('votes_count')->default(0);
             $table->json('voted_users')->nullable();
+            $table->text('awards')->nullable();
             $table->timestamps();
         });
     }

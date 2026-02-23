@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -29,7 +30,6 @@ class AuthController extends Controller
             ]);
         }
 
-        // Создаем новый токен
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
@@ -119,7 +119,7 @@ class AuthController extends Controller
 
         if (!Hash::check($validated['current_password'], $user->password)) {
             throw ValidationException::withMessages([
-                'current_password' => ['Current password is incorrect.'],
+                'current_password' => ['Неверный текущий пароль.'],
             ]);
         }
 
@@ -127,21 +127,77 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Отправляем email об изменении пароля
-        // Mail::to($user->email)->send(new PasswordChangedMail($user));
-
         return response()->json([
-            'message' => 'Password changed successfully'
+            'message' => 'Пароль успешно изменён'
         ]);
     }
 
     /**
-     * Восстановление пароля
+     * Запрос на восстановление пароля: создаём токен и отправляем ссылку на почту (если настроена).
      */
     public function forgotPassword(Request $request)
     {
         $request->validate(['email' => 'required|email|exists:users,email']);
-        return response()->json(['message' => 'На вашу почту отправлена ссылка для сброса пароля']);
+        $email = $request->email;
+        $token = Str::random(64);
+        $hashedToken = Hash::make($token);
+        $frontendUrl = rtrim(env('FRONTEND_URL', 'http://localhost:3000'), '/');
+        $resetLink = $frontendUrl . '/reset-password?token=' . urlencode($token) . '&email=' . urlencode($email);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $email],
+            ['token' => $hashedToken, 'created_at' => now()]
+        );
+
+        try {
+            \Illuminate\Support\Facades\Mail::raw(
+                "Здравствуйте!\n\nПерейдите по ссылке для сброса пароля:\n{$resetLink}\n\nСсылка действительна 60 минут.\n\nЕсли вы не запрашивали сброс пароля, проигнорируйте это письмо.",
+                function ($message) use ($email) {
+                    $message->to($email)->subject('Сброс пароля — Фестиваль');
+                }
+            );
+        } catch (\Throwable $e) {
+            return response()->json([
+                'message' => 'На вашу почту отправлена ссылка для сброса пароля (если почта настроена).',
+                'reset_link' => $resetLink,
+            ]);
+        }
+
+        return response()->json(['message' => 'На вашу почту отправлена ссылка для сброса пароля.']);
+    }
+
+    /**
+     * Сброс пароля по токену из письма.
+     */
+    public function resetPassword(Request $request)
+    {
+        $validated = $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $record = DB::table('password_reset_tokens')->where('email', $validated['email'])->first();
+        if (!$record || !Hash::check($validated['token'], $record->token)) {
+            throw ValidationException::withMessages([
+                'token' => ['Ссылка для сброса пароля недействительна или истекла. Запросите новую.'],
+            ]);
+        }
+
+        $createdAt = $record->created_at ? \Carbon\Carbon::parse($record->created_at) : null;
+        if ($createdAt && $createdAt->addMinutes(60)->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
+            throw ValidationException::withMessages([
+                'token' => ['Ссылка для сброса пароля истекла. Запросите новую.'],
+            ]);
+        }
+
+        User::where('email', $validated['email'])->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+        DB::table('password_reset_tokens')->where('email', $validated['email'])->delete();
+
+        return response()->json(['message' => 'Пароль успешно изменён. Войдите с новым паролем.']);
     }
 
     /**

@@ -10,26 +10,23 @@ class Cosplayer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'cosplay_application_id',
-        'user_id',
+        'name',
+        'last_name',
+        'character_name',
+        'origin',
+        'photo',
+        'biography',
+        'character_description',
+        'portfolio_link',
         'votes_count',
         'voted_users',
+        'awards',
     ];
 
     protected $casts = [
         'votes_count' => 'integer',
         'voted_users' => 'array',
     ];
-
-    public function cosplayApplication()
-    {
-        return $this->belongsTo(CosplayApplication::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function balanceHistories()
     {
@@ -39,7 +36,7 @@ class Cosplayer extends Model
     public function vote(User $user)
     {
         $votedUsers = $this->voted_users ?? [];
-        
+
         if (!in_array($user->id, $votedUsers)) {
             $votedUsers[] = $user->id;
             $this->update([
@@ -48,7 +45,7 @@ class Cosplayer extends Model
             ]);
             return true;
         }
-        
+
         return false;
     }
 

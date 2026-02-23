@@ -10,7 +10,7 @@ interface Participant {
   character_name?: string;
   origin?: string;
   photo?: string;
-  user?: { name?: string; nickname?: string };
+  display_name?: string;
   votes_count?: number;
   has_voted?: boolean;
 }
@@ -80,7 +80,7 @@ export default function VotingPage() {
         ) : participants.length === 0 ? (
           <div className="bg-slate-800/50 rounded-xl p-12 text-center border border-slate-700">
             <p className="text-slate-500">Участники для голосования пока не добавлены.</p>
-            <p className="text-slate-600 text-sm mt-2">Список появится после модерации заявок.</p>
+            <p className="text-slate-600 text-sm mt-2">Участников добавляет организатор конкурса.</p>
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">

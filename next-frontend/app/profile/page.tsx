@@ -21,6 +21,12 @@ export default function ProfilePage() {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileBonusMessage, setProfileBonusMessage] = useState<string | null>(null);
 
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
+  const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   useEffect(() => {
     if (user) {
       setNickname(user.nickname || '');
@@ -65,6 +71,37 @@ export default function ProfilePage() {
 
   const getTicketTypeName = (type: string) => TICKET_LABELS[type] ?? type;
   const getTicketColor = (type: string) => TICKET_COLORS[type] ?? 'bg-[#12121a] text-slate-300';
+
+  const changePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordMessage(null);
+    if (newPassword.length < 6) {
+      setPasswordMessage({ type: 'error', text: 'Новый пароль должен быть не менее 6 символов' });
+      return;
+    }
+    if (newPassword !== newPasswordConfirm) {
+      setPasswordMessage({ type: 'error', text: 'Пароли не совпадают' });
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      await apiClient.put('/change-password', {
+        current_password: currentPassword,
+        password: newPassword,
+        password_confirmation: newPasswordConfirm,
+      });
+      setPasswordMessage({ type: 'success', text: 'Пароль успешно изменён' });
+      setCurrentPassword('');
+      setNewPassword('');
+      setNewPasswordConfirm('');
+    } catch (err: unknown) {
+      const data = (err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } })?.response?.data;
+      const msg = data?.errors?.current_password?.[0] ?? data?.message ?? 'Не удалось изменить пароль';
+      setPasswordMessage({ type: 'error', text: msg });
+    } finally {
+      setChangingPassword(false);
+    }
+  };
 
   if (!user) {
     return (
@@ -136,6 +173,61 @@ export default function ProfilePage() {
                   <p className="text-white">{user.phone || '—'}</p>
                 </div>
               </div>
+            </div>
+
+            <div className="bg-[#12121a] rounded-xl p-6 border border-[#1a1a24]">
+              <h2 className="text-lg font-semibold text-white mb-4">Смена пароля</h2>
+              {passwordMessage && (
+                <p className={`mb-4 text-sm px-3 py-2 rounded-lg ${
+                  passwordMessage.type === 'success' ? 'text-[#39ff14] bg-[#39ff14]/10' : 'text-[#ff006e] bg-[#ff006e]/10'
+                }`}>
+                  {passwordMessage.text}
+                </p>
+              )}
+              <form onSubmit={changePassword} className="space-y-4">
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Текущий пароль *</label>
+                  <input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    required
+                    placeholder="Введите текущий пароль"
+                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:border-[#00f5ff] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Новый пароль *</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    required
+                    minLength={6}
+                    placeholder="Не менее 6 символов"
+                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:border-[#00f5ff] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm text-slate-400 mb-1">Повторите новый пароль *</label>
+                  <input
+                    type="password"
+                    value={newPasswordConfirm}
+                    onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                    required
+                    minLength={6}
+                    placeholder="Повторите новый пароль"
+                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:border-[#00f5ff] focus:outline-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={changingPassword}
+                  className="px-4 py-2 bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  {changingPassword ? 'Сохранение...' : 'Изменить пароль'}
+                </button>
+              </form>
             </div>
 
           </div>
