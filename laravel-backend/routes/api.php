@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\CardController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\TicketController;
@@ -65,6 +66,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     Route::get('/balance', [BalanceController::class, 'index']);
     Route::get('/balance/history', [BalanceController::class, 'history']);
+
+    Route::get('/cards', [CardController::class, 'index']);
+    Route::post('/cards/get-card', [CardController::class, 'getCard']);
+    Route::post('/cards/{userCard}/use-bonus', [CardController::class, 'useBonus']);
 
     Route::get('/shop', [ShopController::class, 'index']);
     Route::post('/shop/purchase', [ShopController::class, 'purchase']);

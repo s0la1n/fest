@@ -23,10 +23,12 @@ return new class extends Migration
                 'shared',              // Поделился в соцсетях (если есть такая механика)
                 'transferred'          // Передана другому пользователю (если трейдинг разрешён)
             ])->default('acquired');
-
-            $table->string('qr_code_bonus')->nullable()->unique();
-            $table->string('qr_code_bonus_hash')->nullable()->unique();
+            
             $table->timestamps();
+        });
+
+        Schema::table('balance_histories', function (Blueprint $table) {
+            $table->foreign('related_user_card_id')->references('id')->on('user_cards')->onDelete('set null');
         });
     }
 
@@ -35,6 +37,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('balance_histories', function (Blueprint $table) {
+            $table->dropForeign(['related_user_card_id']);
+        });
         Schema::dropIfExists('user_cards');
     }
 };

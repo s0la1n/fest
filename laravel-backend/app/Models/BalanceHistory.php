@@ -16,6 +16,7 @@ class BalanceHistory extends Model
         'related_order_id',
         'related_cosplayer_id',
         'related_bet_id',
+        'related_user_card_id',
     ];
 
     protected $casts = [
@@ -40,6 +41,11 @@ class BalanceHistory extends Model
     public function bet()
     {
         return $this->belongsTo(Bet::class, 'related_bet_id');
+    }
+
+    public function userCard()
+    {
+        return $this->belongsTo(UserCard::class, 'related_user_card_id');
     }
 
     public function isPositive(): bool
@@ -67,7 +73,7 @@ class BalanceHistory extends Model
             'tournament_win' => 'Победа в турнире',
             'bet_win' => 'Выигрыш ставки',
             'merch_purchase' => 'Покупка мерча',
-            // Добавьте остальные типы
+            'card_bonus' => 'Бонус с карточки маскота',
         ];
 
         return $descriptions[$this->type] ?? $this->type;

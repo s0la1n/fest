@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /organizer/
+Disallow: /api/
+
+Host: https://твойбудущийсайт.ru
+Sitemap: https://твойбудущийсайт.ru/sitemap.xml

@@ -240,7 +240,7 @@ class DatabaseSeeder extends Seeder
                 $names = $playerNames[$j];
                 TeamPlayer::create([
                     'team_id' => $team->id,
-                    'player_name' => $names[0],
+                    'name' => $names[0],
                     'nickname' => $names[1],
                     'role' => $j === 0 ? 'captain' : 'player',
                     'created_at' => now(),
@@ -280,7 +280,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ========== 8. МЕРЧ ==========
+        // ========== 7. МЕРЧ ==========
         echo "Создание мерча...\n";
 
         $merchItems = [
@@ -328,18 +328,18 @@ class DatabaseSeeder extends Seeder
             $merchModels[] = $merch;
         }
 
-        // ========== 9. ЗАКАЗЫ ==========
+        // ========== 8. ЗАКАЗЫ ==========
         echo "Создание заказов...\n";
 
         for ($i = 0; $i < 3; $i++) {
             $merch = $merchModels[$i % count($merchModels)];
-            
+            $quantity = rand(1, 3);
             Order::create([
                 'order_number' => 'ORD-' . strtoupper(Str::random(8)),
                 'user_id' => $users[$i]->id,
                 'merch_id' => $merch->id,
-                'quantity' => rand(1, 3),
-                'total_amount' => $merch->price * rand(1, 3),
+                'quantity' => $quantity,
+                'total_amount' => $merch->price * $quantity,
                 'shipping_address' => 'г. ' . $cities[$i] . ', ул. Примерная, д. ' . ($i + 1),
                 'status' => $i === 0 ? 'shipped' : ($i === 1 ? 'confirmed' : 'processing'),
                 'tracking_number' => $i === 0 ? 'TRACK-' . Str::random(10) : null,
@@ -348,7 +348,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
 
-        // ========== 10. СТАВКИ ==========
+        // ========== 9. СТАВКИ ==========
         echo "Создание ставок...\n";
 
         if (count($teams) >= 2 && MatchGame::count() > 0) {
@@ -376,7 +376,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ========== 11. ИСТОРИЯ БАЛАНСА ==========
+        // ========== 10. ИСТОРИЯ БАЛАНСА ==========
         echo "Создание истории баланса...\n";
 
         $balanceTypes = [
@@ -405,7 +405,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ========== 12. РАСПИСАНИЕ ==========
+        // ========== 11. РАСПИСАНИЕ ==========
         echo "Создание расписания...\n";
 
         $scheduleItems = [

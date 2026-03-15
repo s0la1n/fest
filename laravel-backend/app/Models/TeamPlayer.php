@@ -11,7 +11,7 @@ class TeamPlayer extends Model
 
     protected $fillable = [
         'team_id',
-        'player_name',
+        'name',
         'nickname',
         'role',
     ];
@@ -28,7 +28,7 @@ class TeamPlayer extends Model
      */
     public function getDisplayNameAttribute(): string
     {
-        return $this->nickname ?: $this->player_name ?: 'Игрок';
+        return $this->nickname ?: $this->name ?: 'Игрок';
     }
 
     public function isCaptain(): bool

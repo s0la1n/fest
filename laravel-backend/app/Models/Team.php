@@ -72,7 +72,7 @@ class Team extends Model
         if (!$this->isFull()) {
             return TeamPlayer::create([
                 'team_id' => $this->id,
-                'player_name' => $playerName,
+                'name' => $playerName,
                 'nickname' => $nickname,
                 'role' => $role,
             ]);

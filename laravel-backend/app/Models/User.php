@@ -66,4 +66,8 @@ class User extends Authenticatable
         return $this->hasMany(BalanceHistory::class);
     }
 
+    public function userCards()
+    {
+        return $this->hasMany(UserCard::class);
+    }
 }

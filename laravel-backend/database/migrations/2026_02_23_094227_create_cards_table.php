@@ -21,7 +21,6 @@ return new class extends Migration
             $table->integer('used_quantity');
             $table->string('qr_code_get')->nullable()->unique();
             $table->string('qr_code_get_hash')->nullable()->unique();
-            $table->string('code_get')->nullable()->unique();
             $table->enum('type_bonus', [
                 'discount',           // Скидка в процентах или фиксированная
                 'coupon',              // Промокод для магазина
@@ -30,7 +29,9 @@ return new class extends Migration
                 'digital_gift',        // Цифровой подарок (стикеры, обои, арты)
                 'experience',          // Опыт/впечатления (backstage, fast-track)
             ])->default('discount');
-             $table->enum('status', [
+            $table->unsignedInteger('bonus_value')->nullable();
+            $table->string('coupon_code', 64)->nullable();
+            $table->enum('status', [
                 'available',           // Доступна для получения
                 'active',              // Активна, в игре
                 'inactive',            // Неактивна, временно не доступна
