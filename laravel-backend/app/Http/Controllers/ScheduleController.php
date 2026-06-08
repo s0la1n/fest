@@ -20,35 +20,58 @@ class ScheduleController extends Controller
         ];
     }
 
-    /**
-     * Создать событие расписания (только админ).
-     */
+    private function checkTimeConflict(int $day, string $startTime, ?int $excludeId = null): ?Schedule
+    {
+        $query = Schedule::where('day', $day)
+            ->where('start_time', $startTime);
+        
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+        
+        return $query->first();
+    }
+
     public function storeEvent(Request $request): JsonResponse
     {
         $validated = $request->validate($this->scheduleEventRules());
+        
+        $conflict = $this->checkTimeConflict($validated['day'], $validated['start_time']);
+        
+        if ($conflict) {
+            return response()->json([
+                'message' => "Время {$validated['start_time']} уже занято событием '{$conflict->short_name}'"
+            ], 422);
+        }
+        
         $schedule = Schedule::create($validated);
+        
         return response()->json([
             'message' => 'Событие добавлено',
             'schedule' => $this->formatSchedule($schedule),
         ], 201);
     }
 
-    /**
-     * Обновить событие расписания (только админ).
-     */
     public function updateEvent(Request $request, Schedule $schedule): JsonResponse
     {
         $validated = $request->validate($this->scheduleEventRules());
+        
+        $conflict = $this->checkTimeConflict($validated['day'], $validated['start_time'], $schedule->id);
+        
+        if ($conflict) {
+            return response()->json([
+                'message' => "Время {$validated['start_time']} уже занято событием '{$conflict->short_name}'"
+            ], 422);
+        }
+        
         $schedule->update($validated);
+        
         return response()->json([
             'message' => 'Событие обновлено',
             'schedule' => $this->formatSchedule($schedule->fresh()),
         ]);
     }
 
-    /**
-     * Удалить событие расписания (только админ).
-     */
     public function destroyEvent(Schedule $schedule): JsonResponse
     {
         $schedule->delete();
@@ -66,16 +89,23 @@ class ScheduleController extends Controller
             'day' => $s->day,
         ];
     }
+    
     /**
      * Расписание фестиваля: события по дням и матчи.
+     * Даты фестиваля: 29, 30, 31 июля, 1, 2 августа 2026
      */
     public function index(Request $request): JsonResponse
     {
-        $days = ['2026-03-29', '2026-03-30', '2026-03-31', '2026-04-01', '2026-04-02'];
+        $days = ['2026-07-29', '2026-07-30', '2026-07-31', '2026-08-01', '2026-08-02'];
 
         $games = Game::orderBy('name')->get(['id', 'name', 'slug', 'description']);
         $schedules = Schedule::orderBy('day')->orderBy('start_time')->get();
+        
+        // Только матчи, у которых есть ОБЕ команды (не TBD vs TBD)
         $matches = MatchGame::with(['game:id,name', 'team1:id,team_name', 'team2:id,team_name'])
+            ->whereNotNull('team1_id')
+            ->whereNotNull('team2_id')
+            ->whereIn('status', ['scheduled', 'live', 'finished'])
             ->orderBy('start_time')
             ->get();
 
@@ -96,13 +126,11 @@ class ScheduleController extends Controller
         ]);
     }
 
-    /**
-     * Турнирная сетка по игре.
-     */
     public function bracket(int $game): JsonResponse
     {
         $matches = MatchGame::with(['team1:id,team_name', 'team2:id,team_name'])
             ->where('game_id', $game)
+            ->whereIn('status', ['scheduled', 'live', 'finished'])
             ->orderBy('stage')
             ->orderBy('start_time')
             ->get();
@@ -114,7 +142,7 @@ class ScheduleController extends Controller
 
     private function formatMatch(MatchGame $m): array
     {
-        $statusMap = ['finished' => 'completed', 'scheduled' => 'upcoming'];
+        $statusMap = ['finished' => 'completed', 'scheduled' => 'upcoming', 'live' => 'live'];
         $status = $statusMap[$m->status] ?? $m->status;
 
         $formatTeam = fn ($team) => $team ? [

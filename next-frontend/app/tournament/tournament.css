@@ -1,0 +1,743 @@
+/* tournament.css - стили для страницы турнира */
+
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.tournament-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===== HERO БЛОК ===== */
+.hero-tournament-section {
+  position: relative;
+  padding: 60px 20px;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.tournament-page .hero-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/images/tournament/hero-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  filter: brightness(0.8);
+}
+
+.tournament-page .hero-bg {
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+}
+
+.tournament-page .hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 60px;
+}
+
+.tournament-page .hero-image {
+  flex-shrink: 0;
+}
+
+.tournament-page .console-image {
+  width: 585px;
+  height: 604px;
+  background-image: url('/images/tournament/console.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.tournament-page .hero-text {
+  flex: 1;
+  text-align: left;
+}
+
+.tournament-page .hero-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 40px !important;
+  line-height: 1.2;
+  background: linear-gradient(180deg, #B72F74 0%, #54FEDD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 0 0 20px 35px;
+}
+
+.tournament-page .hero-description-back {
+  position: relative;
+  width: 562px;
+  height: 103px;
+  background: linear-gradient(90deg, rgba(1, 18, 28, 0) 0%, #01121C 25.24%, #011011 73.38%, rgba(1, 18, 28, 0) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  margin: 30px auto 60px auto;
+}
+
+.tournament-page .hero-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 18px;
+  color: #cbd5e1;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.btn-pink {
+  margin-left: 35px;
+}
+
+/* ===== ОБЩИЕ СТИЛИ ДЛЯ БЛОКОВ ===== */
+.section-pixel {
+  padding: 80px 20px;
+}
+
+.container-pixel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+h2 {
+  font-size: 35px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  margin: 0 auto 35px auto;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 24px;
+  font-family: 'VCR OSD Mono Nova', sans-serif;
+  text-align: center;
+  max-width: 790px;
+  margin: 0 auto 50px auto;
+  color: #94a3b8;
+}
+
+/* ===== ИГРЫ ТУРНИРА ===== */
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.game-card {
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  padding: 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+}
+
+.game-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 0 rgba(84, 254, 221, 0.2);
+}
+
+.game-logo {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 20px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.game-logo.cs2 {
+  background-image: url('/images/tournament/cs2-logo.png');
+}
+
+.game-logo.dota2 {
+  background-image: url('/images/tournament/dota2-logo.png');
+}
+
+.game-logo.valorant {
+  background-image: url('/images/tournament/valorant-logo.png');
+}
+
+.game-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  margin-bottom: 12px;
+}
+
+.game-desc {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.game-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.game-link:hover {
+  color: #ff00ff;
+}
+
+/* ===== ПРАВИЛА РЕГИСТРАЦИИ ===== */
+.rules-grid {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.rule-item {
+  display: flex;
+  gap: 20px;
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+}
+
+.rule-item:hover {
+  border-color: #54FEDD;
+  transform: translateX(4px);
+}
+
+.rule-number {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #54FEDD;
+  min-width: 50px;
+  text-align: center;
+}
+
+.rule-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.rule-text a {
+  color: #54FEDD;
+  text-decoration: underline;
+}
+
+.template-block {
+  background: #0d0d14;
+  border: 2px solid #54FEDD;
+  padding: 20px;
+  margin-top: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  image-rendering: pixelated;
+}
+
+.template-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  color: #54FEDD;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.template-code {
+  background: #0a0a0f;
+  padding: 16px;
+  margin-top: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #1a1a24;
+  font-size: 11px;
+}
+
+/* ===== КОМАНДЫ ===== */
+.tabs-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.tab-btn {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  padding: 12px 24px;
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.tab-btn:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.tab-btn.active {
+  background: #54FEDD;
+  border-color: #54FEDD;
+  color: #0a0a0f;
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.team-card {
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+  text-align: center;
+}
+
+.team-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 rgba(84, 254, 221, 0.2);
+}
+
+.team-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.team-meta {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #54FEDD;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: #0d0d14;
+  border: 3px solid #54FEDD;
+  padding: 32px;
+  max-width: 500px;
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+.modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #54FEDD;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-players {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px 0;
+}
+
+.modal-player {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #cbd5e1;
+}
+
+.modal-role {
+  color: #54FEDD;
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.modal-empty {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+  text-align: center;
+  padding: 20px;
+}
+
+.modal-close {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  background: #54FEDD;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.modal-close:hover {
+  filter: brightness(0.9);
+  transform: translateY(-2px);
+}
+
+/* ===== АДАПТИВНОСТЬ ===== */
+/* Адаптив для hero-блока на средних экранах */
+@media (max-width: 1100px) {
+  .tournament-page .console-image {
+    width: 400px;
+    height: 413px;
+  }
+  
+  .tournament-page .hero-title {
+    font-size: 30px !important;
+  }
+  
+  .tournament-page .hero-description {
+    font-size: 16px !important;
+    max-width: 350px !important;
+  }
+
+  .tournament-page .hero-description-back {
+    width: 380px !important;
+    height: 100px;
+    margin: 30px auto 60px auto;
+  }
+}
+
+/* Планшеты (до 1024px) */
+@media (max-width: 1024px) {
+  .games-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .teams-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  
+  .section-pixel {
+    padding: 60px 20px;
+  }
+  
+  h2 {
+    font-size: 30px;
+  }
+  
+  .section-subtitle {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 950px) {
+  .tournament-page .console-image {
+    width: 300px !important;
+    height: 400px;
+  }
+  
+  .tournament-page .hero-title {
+    font-size: 30px !important;
+  }
+  
+  .tournament-page .hero-description {
+    font-size: 16px !important;
+    max-width: 350px !important;
+  }
+
+  .tournament-page .hero-description-back {
+    width: 400px !important;
+  }
+}
+
+@media (max-width: 850px) {
+  .hero-tournament-section {
+    align-items: start;
+  }
+  
+  .tournament-page .console-image {
+    width: 270px !important;
+    height: 400px;
+  }
+  
+  .tournament-page .hero-title {
+    font-size: 27px !important;
+  }
+  
+  .tournament-page .hero-description {
+    font-size: 16px !important;
+    max-width: 300px !important;
+  }
+
+  .tournament-page .hero-description-back {
+    width: 300  px !important;
+    margin: 20px auto 40px auto;
+  }
+}
+
+/* Мобильные устройства (до 768px) */
+@media (max-width: 768px) {
+  .games-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .tournament-page .hero-title {
+    font-size: 20px !important;
+  }
+  
+  .teams-grid {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+  
+  .section-pixel {
+    padding: 40px 16px;
+  }
+  
+  h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+  }
+  
+  .section-subtitle {
+    font-size: 18px;
+    margin-bottom: 30px;
+  }
+  
+  .tabs-container {
+    gap: 8px;
+  }
+  
+  .tab-btn {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+  
+  .team-name {
+    font-size: 16px;
+  }
+  
+  .team-meta {
+    font-size: 14px;
+  }
+  
+  .rule-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 10px;
+  }
+  
+  .rule-number {
+    min-width: auto;
+  }
+  
+  .template-code {
+    font-size: 10px;
+    padding: 12px;
+  }
+
+  .tournament-page .console-image {
+    width: 270px !important;
+    height: 400px;
+  }
+  
+  .tournament-page .hero-title {
+    font-size: 27px !important;
+  }
+  
+  .tournament-page .hero-description {
+    font-size: 16px !important;
+    max-width: 300px !important;
+  }
+
+  .tournament-page .hero-description-back {
+    width: 300px !important;
+    margin: 20px auto 40px auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .tournament-page .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+  }
+  
+  .tournament-page .hero-text {
+    text-align: center;
+  }
+  
+  .tournament-page .hero-description {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
+  
+  .tournament-page .console-image {
+    display: none;
+  }
+  
+  .tournament-page .hero-title {
+    font-size: 40px !important;
+    margin: 0 auto;
+  }
+  
+  .tournament-page .hero-description {
+    font-size: 14px;
+  }
+  
+  .btn-pink {
+    margin: 0 auto;
+  }
+}
+
+/* Маленькие мобильные устройства (до 480px) */
+@media (max-width: 480px) {
+  .games-grid {
+    gap: 16px;
+  }
+  
+  .game-card {
+    padding: 16px;
+  }
+  
+  .game-name {
+    font-size: 18px;
+  }
+  
+  .game-desc {
+    font-size: 13px;
+  }
+  
+  .game-link {
+    font-size: 10px;
+  }
+  
+  .teams-grid {
+    gap: 12px;
+  }
+  
+  .team-card {
+    padding: 16px;
+  }
+  
+  .team-name {
+    font-size: 14px;
+  }
+  
+  .team-meta {
+    font-size: 12px;
+  }
+  
+  .tab-btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-title {
+    font-size: 24px;
+  }
+  
+  .modal-player {
+    font-size: 14px;
+    flex-direction: column;
+    text-align: center;
+    gap: 5px;
+  }
+  
+  .template-block {
+    padding: 16px;
+  }
+  
+  .template-title {
+    font-size: 14px;
+  }
+  
+  .tournament-page .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+  }
+  
+  .tournament-page .hero-text {
+    text-align: center;
+  }
+  
+  .tournament-page .hero-description {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+  }
+  
+  .tournament-page .console-image {
+    display: none;
+  }
+  
+  .tournament-page .hero-title {
+    font-size: 30px !important;
+    margin: 0 auto;
+  }
+  
+  .tournament-page .hero-description {
+    font-size: 14px;
+  }
+  
+  .btn-pink {
+    margin: 0 auto;
+  }
+  
+  .tournament-page .hero-description-back {
+    width: 100% !important;
+    height: auto;
+    padding: 15px;
+    margin: 20px auto 30px auto;
+  }
+}

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Merch extends Model
 {
@@ -24,6 +25,23 @@ class Merch extends Model
         'stock_quantity' => 'integer',
         'sold_quantity' => 'integer',
     ];
+
+    // Добавьте этот аксессор
+    public function getMainImageUrlAttribute(): ?string
+    {
+        if (!$this->main_image) {
+            return null;
+        }
+        
+        if (filter_var($this->main_image, FILTER_VALIDATE_URL)) {
+            return $this->main_image;
+        }
+        
+        // Очищаем путь от лишних /storage/
+        $cleanPath = preg_replace('#^/?(storage/)+#', '', $this->main_image);
+        
+        return Storage::url($cleanPath);
+    }
 
     public function orders()
     {

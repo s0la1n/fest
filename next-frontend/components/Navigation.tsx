@@ -1,148 +1,275 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import Logo from './Logo';
 import { BalanceDropdown } from './BalanceDropdown';
 
+type MenuItem = {
+  href: string;
+  label: string;
+  isOrganizer?: boolean;
+  isAuth?: boolean;
+  isBuy?: boolean;
+};
+
 export default function Navigation() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout, hasRole } = useAuth();
+  const [isDiskMenuOpen, setIsDiskMenuOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const { user, logout, isOrganizer, isAdmin } = useAuth();
+  const diskMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  let hoverTimeout: NodeJS.Timeout;
 
-  const navLink = "text-slate-400 hover:text-[#00f5ff] px-3 py-2 rounded-lg text-sm font-medium transition";
-  const navLinkActive = "text-[#00f5ff]";
+  // Закрытие десктопного меню при клике вне области
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (diskMenuRef.current && !diskMenuRef.current.contains(event.target as Node)) {
+        setIsDiskMenuOpen(false);
+      }
+    };
+    
+    if (isDiskMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDiskMenuOpen]);
 
-  return (
-    <header className="bg-[#0a0a0f]/95 border-b border-[#1a1a24] sticky top-0 z-50 backdrop-blur" style={{ boxShadow: '0 0 20px rgba(0,245,255,0.1)' }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex-shrink-0 flex items-center">
-            <Link href="/">
-              <Logo />
-            </Link>
-          </div>
+  // Закрытие мобильного меню при клике вне области
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+    
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
-          <div className="hidden md:flex md:items-center md:space-x-1">
-            <Link href="/" className={navLink}>Главная</Link>
-            <Link href="/about" className={navLink}>О нас</Link>
-            <Link href="/tournament" className={navLink}>Турнир</Link>
-            <Link href="/cosplay" className={navLink}>Косплей</Link>
-            <Link href="/schedule" className={navLink}>Расписание</Link>
-            {hasRole('admin') && (
-              <>
-                <Link href="/admin/statistics" className={navLink}>Статистика</Link>
-                {/* <Link href="/admin/actions" className={navLink}>Действия оргов</Link> */}
-                {/* <Link href="/admin" className="text-red-400 hover:text-red-300 px-3 py-2 rounded-lg text-sm font-medium">Админ-панель</Link> */}
-              </>
-            )}
-          </div>
+  const handleMouseEnter = () => {
+    clearTimeout(hoverTimeout);
+    setIsHovered(true);
+  };
 
-          <div className="hidden md:flex md:items-center md:space-x-2">
-            {user ? (
-              <>
-                {!hasRole('admin') && (
-                  <>
-                    <Link href="/voting" className={navLink}>Голосование</Link>
-                    <Link href="/shop" className={navLink}>Магазин</Link>
-                  </>
-                )}
-                {(hasRole('tournament_organizer') || hasRole('cosplay_organizer')) && (
-                  <>
-                    <div className="h-6 w-px bg-slate-600 mx-1" />
-                    {hasRole('tournament_organizer') && (
-                      <Link href="/organizer/tournament" className="text-[#ff00ff] hover:text-[#ff66ff] px-3 py-2 rounded-lg text-sm font-medium">Орг. турнир</Link>
-                    )}
-                    {hasRole('cosplay_organizer') && (
-                      <Link href="/organizer/cosplay" className="text-[#ff00ff] hover:text-[#ff66ff] px-3 py-2 rounded-lg text-sm font-medium">Орг. косплей</Link>
-                    )}
-                  </>
-                )}
-                <div className="h-6 w-px bg-slate-600 mx-1"></div>
-                {!hasRole('admin') && <BalanceDropdown />}
-                <Link href="/profile" className={navLink}>Профиль</Link>
-                <button
-                  onClick={logout}
-                  className="bg-[#12121a] hover:bg-[#1a1a24] border border-[#1a1a24] hover:border-[#00f5ff]/30 text-slate-300 px-4 py-2 rounded-lg text-sm font-medium transition"
+  const handleMouseLeave = () => {
+    hoverTimeout = setTimeout(() => {
+      setIsHovered(false);
+    }, 300);
+  };
+
+  // Пункты меню для неавторизованных
+  const getUnauthMenuItems = (): MenuItem[] => {
+    return [
+      { href: '/', label: 'ГЛАВНАЯ' },
+      { href: '/about', label: 'О НАС' },
+      { href: '/tournament', label: 'ТУРНИР' },
+      { href: '/cosplay', label: 'КОСПЛЕЙ' },
+      { href: '/schedule', label: 'РАСПИСАНИЕ' },
+      { href: '/signin', label: 'ВОЙТИ', isAuth: true },
+      { href: '/buy-ticket', label: 'КУПИТЬ БИЛЕТ', isBuy: true },
+    ];
+  };
+
+  // Пункты меню для авторизованных
+  const getAuthMenuItems = (): MenuItem[] => {
+    const items: MenuItem[] = [
+      { href: '/schedule', label: 'РАСПИСАНИЕ' },
+    ];
+    
+    if (!isOrganizer() && !isAdmin()) {
+      items.push(
+        { href: '/cards', label: 'КАРТОЧКИ' },
+        { href: '/bets', label: 'СТАВКИ' },
+        { href: '/voting', label: 'ГОЛОСОВАНИЕ' },
+        { href: '/shop', label: 'МАГАЗИН' },
+      );
+    }
+    
+    if (isOrganizer() && !isAdmin()) {
+      items.push(
+        { href: '/organizer/cosplay/participants', label: 'УЧАСТНИКИ КОСПЛЕЯ', isOrganizer: true },
+        { href: '/organizer/tournament/teams', label: 'КОМАНДЫ', isOrganizer: true },
+        { href: '/organizer/tournament/bracket', label: 'ТУРНИРНАЯ СЕТКА', isOrganizer: true },
+      );
+    }
+    
+    if (isAdmin()) {
+      items.push(
+        { href: '/admin/statistics', label: 'СТАТИСТИКА' },
+        { href: '/admin/cards', label: 'УПРАВЛЕНИЕ КАРТОЧКАМИ' },
+        { href: '/admin/merch', label: 'УПРАВЛЕНИЕ ТОВАРАМИ' },  // ← Добавлено
+        { href: '/admin/orders', label: 'ЗАКАЗЫ' }
+      );
+    }
+    
+    return items;
+  };
+
+  const unauthMenuItems = getUnauthMenuItems();
+  const authMenuItems = getAuthMenuItems();
+
+  // Для неавторизованных - меню с дисками
+  if (!user) {
+    return (
+      <>
+        {/* Десктопное меню с диском */}
+        <div 
+          className="disk-menu-wrapper" 
+          ref={diskMenuRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <button
+            className="main-disk"
+            onClick={() => setIsDiskMenuOpen(!isDiskMenuOpen)}
+            aria-label="Меню"
+          />
+          {isHovered && !isDiskMenuOpen && (
+            <span className="disk-hover-text">МЕНЮ</span>
+          )}
+          
+          <div className={`disk-items-container ${isDiskMenuOpen ? 'open' : ''}`}>
+            {unauthMenuItems.map((item) => (
+              <div key={item.href} className="disk-item-wrapper">
+                <div className={`disk-item ${item.isAuth ? 'auth-disk' : ''} ${item.isBuy ? 'buy-disk' : ''}`} />
+                <Link
+                  href={item.href}
+                  className={`disk-link ${item.isAuth ? 'auth-link' : ''} ${item.isBuy ? 'buy-link' : ''}`}
+                  onClick={() => setIsDiskMenuOpen(false)}
                 >
-                  Выйти
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/signin" className={navLink}>Войти</Link>
-                <Link href="/buy-ticket" className="bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] px-4 py-2 rounded-lg text-sm font-medium transition" style={{ boxShadow: '0 0 15px rgba(0,245,255,0.4)' }}>
-                  Купить билет
+                  {item.label}
                 </Link>
-              </>
-            )}
+              </div>
+            ))}
           </div>
+        </div>
 
-          <div className="flex items-center md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 rounded-lg text-slate-300 hover:bg-slate-700"
-            >
-              {isMenuOpen ? (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
+        {/* Мобильное меню - бургер */}
+        <div className="mobile-menu-wrapper" ref={mobileMenuRef}>
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="mobile-menu-btn"
+            aria-label="Меню"
+          >
+            <span className={`burger-icon ${isMobileMenuOpen ? 'open' : ''}`}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </button>
+          
+          {isMobileMenuOpen && (
+            <div className="mobile-menu-dropdown">
+              <div className="mobile-menu-header">
+                <span className="mobile-menu-title">МЕНЮ</span>
+              </div>
+              <div className="mobile-menu-links">
+                {unauthMenuItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={`mobile-menu-link ${item.isAuth ? 'auth-link' : ''} ${item.isBuy ? 'buy-link' : ''}`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span className="mobile-menu-link-icon">►</span>
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  // Для авторизованных - обычное меню с бургером на мобильных
+  return (
+    <>
+      <header className="auth-header desktop-nav">
+        <div className="auth-container">
+          <nav className="auth-nav">
+            {authMenuItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`auth-nav-link ${item.isOrganizer ? 'organizer-nav-link' : ''}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="navigation-spacer"></div>
+
+          <div className="navigation-actions">
+            {!isAdmin() && !isOrganizer() && <BalanceDropdown />}
+            <Link href="/profile" className="nav-link">ПРОФИЛЬ</Link>
+            <button onClick={logout} className="logout-btn">
+              ВЫЙТИ
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {isMenuOpen && (
-        <div className="md:hidden bg-[#0d0d14] border-t border-[#1a1a24]">
-          <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link href="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Главная</Link>
-            <Link href="/tournament" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Турнир</Link>
-            <Link href="/cosplay" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Косплей</Link>
-            <Link href="/schedule" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Расписание</Link>
-            <div className="border-t border-[#1a1a24] my-2"></div>
-            {user ? (
-              <>
-                {!hasRole('admin') && (
-                  <>
-                    <Link href="/voting" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Голосование</Link>
-                    <Link href="/shop" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Магазин</Link>
-                    <Link href="/balance" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg bg-[#00f5ff]/10 text-[#00f5ff] border border-[#00f5ff]/30">
-                      Баланс: {user.balance ?? 0}
-                    </Link>
-                  </>
-                )}
-                {hasRole('tournament_organizer') && (
-                  <Link href="/organizer/tournament" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-[#ff00ff] hover:bg-[#12121a]">Орг. турнир</Link>
-                )}
-                {hasRole('cosplay_organizer') && (
-                  <Link href="/organizer/cosplay" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-[#ff00ff] hover:bg-[#12121a]">Орг. косплей</Link>
-                )}
-                <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Профиль</Link>
-                {hasRole('admin') && (
-                  <>
-                    <Link href="/admin/statistics" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Статистика</Link>
-                    <Link href="/admin/actions" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Действия оргов</Link>
-                    <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-[#ff006e] hover:bg-[#12121a]">Админ-панель</Link>
-                  </>
-                )}
-                <button onClick={() => { logout(); setIsMenuOpen(false); }} className="block w-full text-left px-3 py-2 rounded-lg text-[#ff006e] hover:bg-[#12121a]">
-                  Выйти
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/signin" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-lg text-slate-400 hover:bg-[#12121a] hover:text-[#00f5ff]">Войти</Link>
-                <Link href="/buy-ticket" onClick={() => setIsMenuOpen(false)} className="block mt-2 px-3 py-2 rounded-lg bg-[#00f5ff] text-[#0a0a0f] text-center font-medium">Купить билет</Link>
-              </>
-            )}
+      {/* Мобильное меню для авторизованных */}
+      <div className="mobile-menu-wrapper auth-mobile" ref={mobileMenuRef}>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="mobile-menu-btn"
+          aria-label="Меню"
+        >
+          <span className={`burger-icon ${isMobileMenuOpen ? 'open' : ''}`}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+        
+        {isMobileMenuOpen && (
+          <div className="mobile-menu-dropdown">
+            <div className="mobile-menu-header">
+              <span className="mobile-menu-title">МЕНЮ</span>
+            </div>
+            <div className="mobile-menu-links">
+              {authMenuItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`mobile-menu-link ${item.isOrganizer ? 'organizer-link' : ''}`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <span className="mobile-menu-link-icon">►</span>
+                  {item.label}
+                </Link>
+              ))}
+              <div className="mobile-menu-divider" />
+              <Link href="/profile" className="mobile-menu-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <span className="mobile-menu-link-icon">►</span>
+                ПРОФИЛЬ
+              </Link>
+              <button onClick={logout} className="mobile-menu-logout">
+                <span className="mobile-menu-link-icon">►</span>
+                ВЫЙТИ
+              </button>
+            </div>
           </div>
-        </div>
-      )}
-    </header>
+        )}
+      </div>
+    </>
   );
 }

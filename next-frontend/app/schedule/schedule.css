@@ -1,0 +1,557 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.schedule-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===== КОНТЕЙНЕР ===== */
+.schedule-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.schedule-header {
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+}
+
+.schedule-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.schedule-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== ДНИ (ТАБЫ) ===== */
+.days-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 8px;
+  image-rendering: pixelated;
+}
+
+.day-tab {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  flex: 1;
+  text-align: center;
+}
+
+.day-tab .day-date {
+  font-size: 12px;
+  color: #64748b;
+  margin-left: 6px;
+}
+
+.day-tab:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.day-tab:hover .day-date {
+  color: #54FEDD;
+}
+
+.day-tab.active {
+  background: #54FEDD;
+  border-color: #54FEDD;
+  color: #0a0a0f;
+}
+
+.day-tab.active .day-date {
+  color: #0a0a0f;
+}
+
+/* ===== СОДЕРЖИМОЕ ===== */
+.schedule-content {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 24px;
+  image-rendering: pixelated;
+}
+
+.events-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a24;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.events-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  margin: 0;
+}
+
+.add-event-btn {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  background: #B72F74;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.add-event-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+/* ===== СПИСОК СОБЫТИЙ ===== */
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-item {
+  display: flex;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.schedule-item:hover {
+  border-color: #54FEDD;
+  transform: translateX(2px);
+}
+
+.schedule-time {
+  width: 80px;
+  flex-shrink: 0;
+  background: rgba(18, 18, 26, 0.9);
+  padding: 14px 12px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  text-align: center;
+  border-right: 1px solid #1a1a24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.schedule-content-block {
+  flex: 1;
+  padding: 14px 16px;
+}
+
+.schedule-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.schedule-item-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.match-vs {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+  margin: 0 4px;
+}
+
+.schedule-item-desc {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 6px 0;
+}
+
+.schedule-item-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.edit-btn,
+.delete-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  border-radius: 2px;
+}
+
+.edit-btn {
+  background: #1a1a24;
+  border: 1px solid #54FEDD;
+  color: #54FEDD;
+}
+
+.edit-btn:hover {
+  background: #54FEDD;
+  color: #0a0a0f;
+}
+
+.delete-btn {
+  background: #1a1a24;
+  border: 1px solid #ff006e;
+  color: #ff006e;
+}
+
+.delete-btn:hover {
+  background: #ff006e;
+  color: #ffffff;
+}
+
+/* Бейдж статуса матча */
+.match-status-badge {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 10px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.match-status-badge.completed {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid #22c55e;
+  color: #22c55e;
+}
+
+.match-status-badge.live {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.match-status-badge.upcoming {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid #eab308;
+  color: #eab308;
+}
+
+/* ===== ПУСТОЕ СОСТОЯНИЕ ===== */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  background: rgba(18, 18, 26, 0.3);
+  border: 1px solid #1a1a24;
+  image-rendering: pixelated;
+}
+
+.empty-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.empty-subtext {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #4a4a5a;
+  margin: 0;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: #0a0a0f;
+  border: 2px solid #54FEDD;
+  padding: 28px;
+  max-width: 500px;
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+.modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a24;
+  text-align: center;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 10px 12px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  color: #e2e8f0;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-hint-info {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 11px;
+  color: #64748b;
+  padding: 8px 12px;
+  background: rgba(18, 18, 26, 0.4);
+  border-radius: 4px;
+  text-align: center;
+}
+
+.error-message {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  background: rgba(255, 0, 110, 0.1);
+  padding: 10px;
+  border: 1px solid #ff006e;
+  text-align: center;
+}
+
+.warning-message {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 10px;
+  border: 1px solid #f59e0b;
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.modal-submit {
+  flex: 1;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 10px;
+  background: #B72F74;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  letter-spacing: 1px;
+}
+
+.modal-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.modal-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modal-cancel {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  letter-spacing: 1px;
+}
+
+.modal-cancel:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .schedule-title {
+    font-size: 28px;
+  }
+
+  .schedule-description {
+    font-size: 12px;
+  }
+
+  .days-tabs {
+    flex-direction: column;
+  }
+
+  .day-tab {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .schedule-time {
+    width: 60px;
+    padding: 10px 8px;
+    font-size: 12px;
+  }
+
+  .schedule-content-block {
+    padding: 10px 12px;
+  }
+
+  .schedule-item-title {
+    font-size: 14px;
+  }
+
+  .schedule-item-desc {
+    font-size: 12px;
+  }
+
+  .events-title {
+    font-size: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .modal-content {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .schedule-container {
+    padding: 32px 16px;
+  }
+
+  .schedule-title {
+    font-size: 24px;
+  }
+
+  .schedule-description {
+    font-size: 10px;
+  }
+
+  .schedule-item {
+    flex-direction: column;
+  }
+
+  .schedule-time {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #1a1a24;
+    padding: 8px;
+  }
+
+  .schedule-item-header {
+    flex-direction: column;
+  }
+
+  .schedule-item-actions {
+    align-self: flex-end;
+  }
+
+  .events-title {
+    font-size: 18px;
+  }
+}

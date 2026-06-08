@@ -1,0 +1,452 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.statistics-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===== КОНТЕЙНЕР ===== */
+.statistics-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.statistics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+.statistics-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0;
+}
+
+.statistics-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== КАРТОЧКИ СТАТИСТИКИ ===== */
+.statistics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  padding: 16px;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.stat-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-2px);
+}
+
+.stat-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.stat-value.cyan {
+  color: #54FEDD;
+}
+
+.stat-value.green {
+  color: #39ff14;
+}
+
+.stat-value.magenta {
+  color: #ff00ff;
+}
+
+.stat-value.amber {
+  color: #f59e0b;
+}
+
+.stat-sub {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+/* ===== СЕКЦИИ ===== */
+.stat-section {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 24px;
+  margin-bottom: 30px;
+  image-rendering: pixelated;
+}
+
+.stat-section-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #54FEDD;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+/* ===== ГРАФИКИ ===== */
+.chart-container {
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 30px;
+  image-rendering: pixelated;
+  width: 100%;
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.chart-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.chart-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.chart-btn {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  padding: 6px 14px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  letter-spacing: 1px;
+}
+
+.chart-btn:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.chart-btn.active {
+  background: #54FEDD;
+  border-color: #54FEDD;
+  color: #0a0a0f;
+}
+
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.chart-wrapper--trend {
+  height: 320px;
+}
+
+.chart-wrapper--section {
+  height: 300px;
+}
+
+/* ===== КНОПКИ ===== */
+.btn-pink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  padding: 0 20px;
+  height: 48px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+}
+
+.btn-pink:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-pink:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-blue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #54FEDD;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #136354, 4px 0px 0px #136354,
+              inset 0px 3px 0px #136354, inset 0px -3px 0px #136354,
+              inset 0px -10px 0px #198772, inset -3px 0px 0px #BFFFF3,
+              inset 0px -13px 0px #BFFFF3;
+  padding: 0 20px;
+  height: 48px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #01121C;
+  letter-spacing: 2px;
+}
+
+.btn-blue:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-blue:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== ТАБЛИЦЫ ===== */
+.stat-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stat-table th {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 0;
+  text-align: left;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.stat-table td {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #cbd5e1;
+  padding: 10px 0;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.stat-table tr:last-child td {
+  border-bottom: none;
+}
+
+.stat-rank {
+  width: 40px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+}
+
+.stat-rank-1 { color: #FFD700; }
+.stat-rank-2 { color: #C0C0C0; }
+.stat-rank-3 { color: #CD7F32; }
+
+/* ===== ДОПОЛНИТЕЛЬНАЯ СТАТИСТИКА ===== */
+.stat-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.stat-footer-card {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 16px;
+  text-align: center;
+  image-rendering: pixelated;
+}
+
+.stat-footer-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.stat-footer-value {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+/* ===== ОШИБКА ===== */
+.stat-error {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  padding: 16px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.stat-error-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #ff006e;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 1000px) {
+  .statistics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  
+  .statistics-title {
+    font-size: 32px;
+  }
+  
+  .statistics-description {
+    font-size: 14px;
+  }
+  
+  .stat-footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .statistics-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .statistics-title {
+    font-size: 28px;
+  }
+  
+  .statistics-description {
+    font-size: 12px;
+  }
+  
+  .statistics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .stat-section-title {
+    font-size: 20px;
+  }
+  
+  .chart-title {
+    font-size: 18px;
+  }
+  
+  .chart-btn {
+    font-size: 9px;
+    padding: 4px 10px;
+  }
+  
+  .stat-footer-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-value {
+    font-size: 22px;
+  }
+  
+  .chart-wrapper--trend,
+  .chart-wrapper--section {
+    height: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .statistics-title {
+    font-size: 24px;
+  }
+  
+  .statistics-description {
+    font-size: 10px;
+  }
+  
+  .statistics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .stat-section {
+    padding: 16px;
+  }
+  
+  .chart-container {
+    padding: 12px;
+  }
+  
+  .chart-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .btn-pink,
+  .btn-blue {
+    padding: 0 16px;
+    height: 40px;
+    font-size: 14px;
+  }
+  
+  .stat-table th,
+  .stat-table td {
+    font-size: 10px;
+  }
+  
+  .chart-wrapper--trend,
+  .chart-wrapper--section {
+    height: 220px;
+  }
+}

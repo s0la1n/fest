@@ -1,0 +1,841 @@
+/* ===== СТРАНИЦА УПРАВЛЕНИЯ ТОВАРАМИ ===== */
+.admin-merch-page {
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.admin-merch-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+.admin-merch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.admin-merch-title-section {
+  text-align: left;
+}
+
+.admin-merch-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.admin-merch-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* Кнопка добавления товара */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+  border-radius: 4px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Фильтры */
+.filters-section {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 24px;
+  image-rendering: pixelated;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.filter-input,
+.filter-select {
+  padding: 10px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.filter-reset {
+  padding: 10px 20px;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  height: 42px;
+  align-self: flex-end;
+  border-radius: 4px;
+}
+
+.filter-reset:hover {
+  border-color: #ff006e;
+  color: #ff006e;
+}
+
+.filter-stats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 0 12px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  border-radius: 4px;
+  height: 42px;
+}
+
+/* Статистика */
+.merch-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.merch-stats-count {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+.merch-stats-page {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* Таблица */
+.merch-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #1a1a24;
+  background: rgba(18, 18, 26, 0.4);
+  image-rendering: pixelated;
+  border-radius: 8px;
+}
+
+.merch-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+}
+
+.merch-table th {
+  text-align: left;
+  padding: 14px 12px;
+  background: rgba(18, 18, 26, 0.8);
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.merch-table td {
+  padding: 12px;
+  color: #cbd5e1;
+  border-bottom: 1px solid #1a1a24;
+  vertical-align: middle;
+}
+
+.merch-table tr:hover td {
+  background: rgba(18, 18, 26, 0.3);
+}
+
+.merch-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Фото в таблице */
+.table-photo-cell {
+  width: 60px;
+}
+
+.table-photo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #1a1a24;
+}
+
+.table-photo-placeholder {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  border-radius: 8px;
+  font-size: 24px;
+}
+
+/* Название товара */
+.merch-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.merch-name-text {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.merch-slug {
+  font-family: monospace;
+  font-size: 11px;
+  color: #64748b;
+}
+
+/* Описание */
+.merch-description {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Цены */
+.price-cell {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 12px;
+  color: #f59e0b;
+  white-space: nowrap;
+}
+
+.revenue-cell {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 12px;
+  color: #39ff14;
+  white-space: nowrap;
+}
+
+/* Склад */
+.stock-cell {
+  font-family: monospace;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.stock-cell.stock-out {
+  color: #ef4444;
+}
+
+.stock-cell.stock-low {
+  color: #eab308;
+}
+
+.sold-cell {
+  font-family: monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+/* Действия */
+.actions-cell {
+  white-space: nowrap;
+}
+
+.actions-group {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit-sm {
+  width: 32px;
+  height: 32px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #94a3b8;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit-sm:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.btn-delete-sm {
+  width: 32px;
+  height: 32px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #ff006e;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #ff006e;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-sm:hover {
+  background: rgba(255, 0, 110, 0.1);
+}
+
+/* Кнопки сохранения и отмены в модалке */
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #54FEDD, #2ecc71);
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #136354, 2px 0px 0px #136354,
+              inset 0px 2px 0px #136354, inset 0px -2px 0px #136354;
+  padding: 10px 20px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #01121C;
+  letter-spacing: 1px;
+  flex: 1;
+  border-radius: 4px;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 10px 20px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.btn-cancel:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* Модальное окно */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-container {
+  max-width: 600px;
+  width: 100%;
+  background: #0d0d14;
+  border: 2px solid #54FEDD;
+  padding: 28px;
+  image-rendering: pixelated;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 12px;
+}
+
+.modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a24;
+  text-align: center;
+}
+
+/* Форма в модалке */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 10px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  color: #ffffff;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a24;
+}
+
+/* Превью изображения */
+.image-preview {
+  position: relative;
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid #1a1a24;
+  border-radius: 8px;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: #ff006e;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.remove-photo-btn:hover {
+  background: #ff3388;
+}
+
+/* Сообщения */
+.message-error {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.message-success {
+  background: rgba(0, 255, 127, 0.1);
+  border: 1px solid #39ff14;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #39ff14;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+/* Пустое состояние */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 2px solid #1a1a24;
+  image-rendering: pixelated;
+  border-radius: 12px;
+}
+
+.empty-state-text {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #94a3b8;
+  margin-bottom: 16px;
+}
+
+.empty-state-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-bottom: 1px solid #54FEDD;
+  padding-bottom: 2px;
+}
+
+.empty-state-link:hover {
+  color: #B72F74;
+  border-bottom-color: #B72F74;
+}
+
+/* Доступ запрещён */
+.access-denied {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0f;
+}
+
+.access-denied-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+}
+
+/* Пагинация */
+.merch-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  padding: 10px 24px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: #B72F74;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #701342, 2px 0px 0px #701342,
+              inset 0px 2px 0px #701342, inset 0px -2px 0px #701342;
+  border-radius: 4px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.pagination-number:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.pagination-number.active {
+  background: #B72F74;
+  border-color: #B72F74;
+  color: #FFFFFF;
+}
+
+.pagination-dots {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+  padding: 0 4px;
+}
+
+/* Стили для скроллбара в таблице */
+.merch-table-wrapper::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.merch-table-wrapper::-webkit-scrollbar-track {
+  background: #1a1a24;
+  border-radius: 4px;
+}
+
+.merch-table-wrapper::-webkit-scrollbar-thumb {
+  background: #54FEDD;
+  border-radius: 4px;
+}
+
+.merch-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #B72F74;
+}
+
+/* Ховер эффект для строки таблицы */
+.merch-table tr {
+  transition: background 0.15s ease;
+}
+
+/* Анимация загрузки */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-skeleton {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Чекбоксы и радио в будущем */
+.filter-select option {
+  background: #0a0a0f;
+  color: #e2e8f0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .admin-merch-title {
+    font-size: 28px;
+  }
+  
+  .admin-merch-description {
+    font-size: 12px;
+  }
+  
+  .admin-merch-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .filters-row {
+    flex-direction: column;
+  }
+  
+  .filter-reset {
+    width: 100%;
+  }
+  
+  .filter-stats {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    height: auto;
+    padding: 12px;
+  }
+  
+  .filter-stats span {
+    display: block;
+  }
+  
+  .merch-stats {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  
+  .merch-pagination {
+    gap: 12px;
+  }
+  
+  .pagination-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  
+  .pagination-number {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-container {
+    padding: 20px;
+    max-width: 95%;
+  }
+  
+  .modal-title {
+    font-size: 20px;
+  }
+  
+  .btn-primary {
+    min-width: 160px;
+    height: 50px;
+    font-size: 16px;
+    padding: 0 16px;
+  }
+}

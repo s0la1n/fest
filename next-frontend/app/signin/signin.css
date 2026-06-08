@@ -1,0 +1,342 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.auth-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===== КОНТЕЙНЕР ===== */
+.auth-page .auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.auth-page .auth-card {
+  max-width: 460px;
+  width: 100%;
+  background: rgba(18, 18, 26, 0.7);
+  border: 2px solid #1a1a24;
+  padding: 32px;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.auth-page .auth-card:hover {
+  border-color: rgba(84, 254, 221, 0.5);
+}
+
+/* ===== ЗАГОЛОВКИ ===== */
+.auth-page .auth-header {
+  text-align: center;
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  background: none !important;
+  backdrop-filter: blur(0);
+  border: none;
+}
+
+.auth-page .auth-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 32px;
+  background: linear-gradient(180deg, #B72F74 0%, #54FEDD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+
+.auth-page .auth-subtitle {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== ФОРМА ===== */
+.auth-page .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.auth-page .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.auth-page .form-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+}
+
+.auth-page .form-label .required {
+  color: #ff006e;
+}
+
+.auth-page .form-input {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 12px 14px;
+  background: #0a0a0f;
+  border: 2px solid #1a1a24;
+  color: #ffffff;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  width: 100%;
+}
+
+.auth-page .form-input:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.auth-page .form-input::placeholder {
+  color: #4a4a5a;
+}
+
+.auth-page .form-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== LINKS ===== */
+.auth-page .form-links {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.auth-page .forgot-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  text-transform: uppercase;
+}
+
+.auth-page .forgot-link:hover {
+  color: #00c4cc;
+  text-decoration: underline;
+}
+
+/* ===== КНОПКИ ===== */
+.auth-page .auth-btn {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  padding: 14px;
+  background: #54FEDD;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  width: 100%;
+  margin: 8px 0 0 0 !important;
+}
+
+.auth-page .auth-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.auth-page .auth-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== ОШИБКИ И УВЕДОМЛЕНИЯ ===== */
+.auth-page .error-box {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  padding: 12px;
+  margin-bottom: 4px;
+}
+
+.auth-page .error-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #ff006e;
+  line-height: 1.4;
+}
+
+.auth-page .warning-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #f59e0b;
+  margin-top: 8px;
+}
+
+.auth-page .info-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-decoration: none;
+  margin-top: 8px;
+  display: inline-block;
+}
+
+.auth-page .info-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== БЛОК БЛОКИРОВКИ ===== */
+.auth-page .lock-box {
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(26, 26, 36, 0.8);
+  border: 1px solid #1a1a24;
+}
+
+.auth-page .lock-title {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #f59e0b;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.auth-page .lock-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.auth-page .lock-list {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  padding-left: 20px;
+  margin: 8px 0 0;
+}
+
+.auth-page .lock-list li {
+  margin-bottom: 4px;
+}
+
+/* ===== ФУТЕР КАРТОЧКИ ===== */
+.auth-page .auth-footer {
+  margin-top: 24px;
+  text-align: center;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a24;
+}
+
+.auth-page .auth-footer-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.auth-page .auth-footer-link:hover {
+  color: #00c4cc;
+  text-decoration: underline;
+}
+
+/* ===== ДОПОЛНИТЕЛЬНЫЙ ТЕКСТ ===== */
+.auth-page .auth-additional {
+  margin-top: 20px;
+  text-align: center;
+  padding-top: 16px;
+}
+
+.auth-page .auth-additional-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.auth-page .auth-additional-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-decoration: none;
+  transition: color 0.15s ease;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-left: 6px;
+}
+
+.auth-page .auth-additional-link:hover {
+  color: #00c4cc;
+  text-decoration: underline;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 500px) {
+  .auth-page .auth-card {
+    padding: 24px;
+  }
+  
+  .auth-page .auth-title {
+    font-size: 28px;
+  }
+  
+  .auth-page .auth-btn {
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  .auth-page .form-input {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+  
+  .auth-page .auth-subtitle {
+    font-size: 12px;
+  }
+  
+  .auth-page .form-label {
+    font-size: 11px;
+  }
+  
+  .auth-page .forgot-link {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 400px) {
+  .auth-page .auth-card {
+    padding: 20px;
+  }
+  
+  .auth-page .auth-title {
+    font-size: 24px;
+  }
+  
+  .auth-page .auth-subtitle {
+    font-size: 10px;
+  }
+  
+  .auth-page .form-links {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  
+  .auth-page .lock-text,
+  .auth-page .lock-list {
+    font-size: 10px;
+  }
+  
+  .auth-page .auth-additional-text,
+  .auth-page .auth-additional-link {
+    font-size: 10px;
+  }
+}

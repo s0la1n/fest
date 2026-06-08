@@ -12,8 +12,8 @@ export const metadata: Metadata = {
         default: 'Игровой Лабиринт - Фестиваль игр и косплея',
         template: '%s | Игровой Лабиринт'
     },
-    description: 'Фестиваль игр и косплея в Тукаев Центре 29.05.2026',
-    keywords: ['фестиваль', 'игры', 'косплей', 'турнир', 'Тукаев Центр'],
+    description: '29 мая 2026 года в Тукаев Центре пройдёт фестиваль игр и косплея «Игровой Лабиринт». Турниры, косплей-дефиле, зоны настольных и видеоигр, лекции и призы.',
+    keywords: ['фестиваль игр', 'косплей фестиваль', 'косплей', 'турнир по играм', 'Тукаев Центр', 'игровой лабиринт', 'фестиваль косплея 2026', 'компьютерные игры фестиваль', 'настольные игры турнир'],
 };
 
 export default function RootLayout({
@@ -22,24 +22,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="ru" className="dark">
-            <body className={`${inter.className} bg-[#0a0a0f] text-slate-200`}>
-                {/* AuthProvider должен оборачивать всё приложение.
-                    Тогда useAuth() будет доступен и в Navigation, и в любой странице.
-                */}
+        <html lang="ru">
+            <body className={`${inter.className}`}>
                 <AuthProvider>
-                    <div className="flex flex-col min-h-screen">
-                        {/* Навигация */}
+                    <div>
                         <Navigation />
-                        
-                        {/* flex-grow заставляет main растягиваться, 
-                            занимая всё свободное место, и толкает футер вниз 
-                        */}
-                        <main className="flex-grow">
+                        <main>
                             {children}
                         </main>
-                        
-                        {/* Футер */}
                         <Footer />
                     </div>
                 </AuthProvider>

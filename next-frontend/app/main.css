@@ -1,0 +1,1184 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+
+.home-container h1 {
+  font-size: 90px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 120px;
+  text-align: center;
+  max-width: 604px;
+  margin: 0 auto 30px auto;
+  background: linear-gradient(180deg, #B72F74 0%, #54FEDD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.home-container h2 {
+  font-size: 35px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  margin: 0 auto 35px auto;
+  text-align: center;
+}
+
+/* ===== HERO БЛОК ===== */
+.hero-section-new {
+  margin: 0 auto 50px auto;
+  height: 1528px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/images/main/back.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero-section-new {
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+}
+
+.old-monitor {
+  background-image: url('/images/main/old-pc.png');
+  height: 1448px;
+  width: 1400px;
+  background-repeat: no-repeat;
+  background-position: center;
+  position: relative;
+  background-size: contain;
+}
+
+.monitor-screen {
+  position: absolute;
+  width: 810px;
+  height: 590px;
+  left: 50%;
+  transform: translateX(-51.5%);
+  top: 121px;
+}
+
+.monitor-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.monitor-festival-info {
+  position: relative;
+  width: 562px;
+  height: 103px;
+  background: linear-gradient(90deg, rgba(1, 18, 28, 0) 0%, #01121C 25.24%, #011011 73.38%, rgba(1, 18, 28, 0) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 3;
+}
+
+.monitor-festival-info p {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 18px;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.monitor-festival-info .festival-date {
+  color: #54FEDD;
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.monitor-festival-info .festival-place {
+  color: #FFFFFF;
+}
+
+.monitor-festival-info .festival-location {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-top: 5px;
+}
+
+.monitor-overlay {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+.monitor-overlay.visible {
+  opacity: 1;
+}
+
+.monitor-btn {
+  margin-top: 40px;
+}
+
+/* О ФЕСТИВАЛЕ */
+.about-festival-section, .esports-section {
+  margin: 0 auto 70px auto;
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.about-festival-description, .esports-description, .cosplay-contest-description, .map-description {
+  font-size: 24px;
+  font-family: 'VCR OSD Mono Nova', sans-serif;
+  text-align: center;
+  max-width: 790px;
+  margin: 0 auto 50px auto;
+  color: #94a3b8;
+}
+
+/* Видео блок */
+.video-player-container {
+  margin: 0 auto 200px auto;
+  max-width: 790px;
+  position: relative;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  max-width: 790px;
+  margin: 0 auto;
+  background-color: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.main-video {
+  width: 790px;
+  height: 445px;
+}
+
+.main-video.contain {
+  object-fit: contain;
+}
+
+.video-left-image,
+.video-right-image,
+.slider-right-image,
+.slider-left-image {
+  pointer-events: none;
+}
+
+.video-left-image {
+  width: 280px;
+  height: 636px;
+  background-image: url('/images/main/char-val-1.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  transform: translateX(-190px) translateY(-600px);
+}
+
+.video-right-image {
+  width: 398px;
+  height: 398px;
+  background-image: url('/images/main/sega-stik.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  transform: translateX(630px) translateY(-620px);
+}
+
+.video-right-text {
+  position: absolute;
+  transform: translateX(330px) translateY(-150px);
+  width: 664px;
+  height: 188px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, rgba(1, 18, 28, 0) 0%, #01121C 25.24%, #011011 73.38%, rgba(1, 18, 28, 0) 100%);
+}
+
+.video-right-text p {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 24px;
+  line-height: 27px;
+  color: #FFFFFF;
+  margin: 0;
+  width: 509px;
+  height: 124px;
+  transform: translateY(-5px);
+}
+
+/* ===== СЛАЙДЕР ===== */
+.photo-slider-container {
+  margin: 0 auto 100px auto;
+  position: relative;
+}
+
+.slider-images-container {
+  width: 790px;
+  height: 497px;
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
+  background-color: #0a0a0f;
+  border-radius: 12px;
+}
+
+.slider-images {
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  height: 100%;
+  width: 100%;
+}
+
+.slider-image-item {
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.slider-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.slider-right-image {
+  width: 405px;
+  height: 721px;
+  background-image: url('/images/main/char-val-2.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  transform: translateX(620px) translateY(-650px);
+}
+
+.slider-left-image {
+  width: 278px;
+  height: 278px;
+  background-image: url('/images/main/buttons-stik.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: absolute;
+  transform: translateX(-200px) translateY(-500px);
+}
+
+.slider-text-overlay {
+  position: absolute;
+  transform: translateX(-220px) translateY(-130px);
+  width: 664px;
+  height: 188px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(90deg, rgba(1, 18, 28, 0) 0%, #01121C 25.24%, #011011 73.38%, rgba(1, 18, 28, 0) 100%);
+}
+
+.slider-text-overlay p {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 24px;
+  line-height: 27px;
+  color: #FFFFFF;
+  margin: 0;
+  width: 509px;
+  height: 124px;
+  transform: translateY(-5px);
+}
+
+/* ===== КИБЕРСПОРТ ===== */
+.esports-container {
+  position: relative;
+}
+
+.game-cards {
+  width: 800px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.game-card-item {
+  width: 230px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.game-card-item:hover {
+  transform: scale(1.05);
+}
+
+.game-card-item.active .game-card-title {
+  color: #54FEDD;
+}
+
+.game-card-bg {
+  background-image: url('/images/main/back-card.png');
+  width: 229px;
+  height: 191.5px;
+  position: absolute;
+  transform: translateY(-15px);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.game-card-item:nth-child(2) .game-card-bg {
+  transform: scaleX(-1) translateY(-15px);
+}
+
+.game-card-image {
+  width: 179px;
+  height: 247px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.game-card-title {
+  margin-top: 8px;
+  font-size: 24px;
+  font-family: 'VCR OSD Mono Nova', sans-serif;
+  color: white;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.psvita-container {
+  margin: 60px auto 50px auto;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.psvita-console {
+  background-image: url('/images/main/psvita.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  width: 995px;
+  height: 467px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Экран консоли - точное позиционирование */
+.psvita-screen {
+  position: absolute;
+  width: 620px;
+  height: 343px;
+  left: 50%;
+  top: 47%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  background: #000;
+}
+
+.psvita-stik {
+  background-image: url('/images/main/nyancat-stik.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  width: 334px;
+  height: 178px;
+  position: absolute;
+  transform: translateY(-170px);
+}
+
+/* ===== КОСПЛЕЙ ===== */
+.cosplay-contest-section {
+  margin: 0 auto 100px auto;
+  padding: 0 20px;
+}
+
+.cosplay-contest-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.cosplayers-pixel-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  margin: 60px auto 90px auto;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.cosplayer-pixel-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Информационная панель */
+.cosplayer-pixel-info {
+  position: absolute;
+  right: 80%;
+  top: 30%;
+  transform: translateY(-50%) translateX(-20px);
+  width: 230px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.cosplayer-pixel-info.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(-10px);
+}
+
+.pixel-info-frame {
+  position: relative;
+  background: #0a0a0f;
+  border: 4px solid #00f5ff;
+  image-rendering: pixelated;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.5);
+}
+
+.pixel-info-corners {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.pixel-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #00f5ff;
+}
+
+.pixel-corner.top-left { top: -4px; left: -4px; }
+.pixel-corner.top-right { top: -4px; right: -4px; }
+.pixel-corner.bottom-left { bottom: -4px; left: -4px; }
+.pixel-corner.bottom-right { bottom: -4px; right: -4px; }
+
+.pixel-info-content {
+  padding: 20px;
+  background: linear-gradient(135deg, #0d0d14 0%, #0a0a0f 100%);
+}
+
+.pixel-name {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 24px;
+  color: white;
+  margin: 0 0 5px 0;
+  text-transform: uppercase;
+}
+
+.pixel-character {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff00ff;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.pixel-desc {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  line-height: 1.3;
+  margin-bottom: 15px;
+}
+
+/* Карточка персонажа */
+.cosplayer-pixel-card {
+  position: relative;
+  width: 330px;
+  height: 700px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 1;
+  overflow: visible;
+}
+
+.cosplayer-pixel-card.active {
+  transform: scale(1.02);
+  z-index: 10;
+}
+
+.pixel-card-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 205px;
+  height: 700px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  transition: all 0.25s ease;
+  image-rendering: pixelated;
+  filter: brightness(0.6);
+}
+
+.pixel-card-bg.active {
+  filter: brightness(1);
+}
+
+.pixel-card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-card-image {
+  position: relative;
+  width: auto;
+  height: 700px;
+  min-width: 330px;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+  overflow: visible;
+  image-rendering: pixelated;
+  transition: all 0.3s ease;
+  transform: scale(1.05);
+}
+
+.cosplayer-pixel-card.active .pixel-card-image {
+  transform: scale(1.08);
+}
+
+.cosplayer-pixel-card:not(.active) .pixel-card-image {
+  filter: brightness(0.4);
+}
+
+/* P-ранг под карточкой */
+.pixel-rank-under-card {
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 106px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s ease;
+  z-index: 20;
+  color: #FFFFFF;
+}
+
+.pixel-rank-under-card.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rank-polygon-left, .rank-polygon-right {
+  width: 21px;
+  height: 21px;
+  flex-shrink: 0;
+}
+
+.rank-text {
+  font-family: 'Sonic HUD C Italic';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 45px;
+  text-align: center;
+  padding: 0 10px;
+  background: transparent;
+}
+
+/* ===== СПОНСОРЫ ===== */
+.sponsors-section {
+  margin: 100px auto;
+  padding: 0 20px;
+}
+
+.tv-monitors-container {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sponsors-logos-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.sponsor-logo-item-wrapper {
+  position: absolute;
+  overflow: hidden;
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sponsor-logo-item-wrapper:nth-child(1) { top: 3%; left: 36%; width: 19%; height: 26%; }
+.sponsor-logo-item-wrapper:nth-child(2) { top: 27%; left: 14.5%; width: 18%; height: 26%; }
+.sponsor-logo-item-wrapper:nth-child(3) { top: 34%; left: 36.5%; width: 19%; height: 26%; }
+.sponsor-logo-item-wrapper:nth-child(4) { top: 34%; left: 64.5%; width: 16%; height: 26%; }
+.sponsor-logo-item-wrapper:nth-child(5) { top: 62%; left: 3%; width: 18%; height: 24%; }
+.sponsor-logo-item-wrapper:nth-child(6) { top: 69%; left: 31.5%; width: 20%; height: 26%; }
+.sponsor-logo-item-wrapper:nth-child(7) { top: 67%; left: 55.5%; width: 20%; height: 27%; }
+.sponsor-logo-item-wrapper:nth-child(8) { top: 61%; left: 85%; width: 13%; height: 25%; }
+
+.sponsor-logo-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.logo-1 { background-image: url('/images/main/vk.png'); }
+.logo-2 { background-image: url('/images/main/scream.png'); }
+.logo-3 { background-image: url('/images/main/oklik.png'); }
+.logo-4 { background-image: url('/images/main/1c.png'); }
+.logo-5 { background-image: url('/images/main/astrum.png'); }
+.logo-6 { background-image: url('/images/main/fplus.png'); }
+.logo-7 { background-image: url('/images/main/lesta.png'); }
+.logo-8 { background-image: url('/images/main/sber.png'); }
+
+.tv-bg-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1200 / 750;
+  background-image: url('/images/main/tv.png');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.sponsors-click-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+.sponsor-tv-frame {
+  position: absolute;
+  display: block;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  background: transparent;
+  border-radius: 8px;
+}
+
+.sponsor-tv-frame.tv-1 { top: 3%; left: 37%; width: 18%; height: 25%; }
+.sponsor-tv-frame.tv-2 { top: 28%; left: 15%; width: 17%; height: 25%; }
+.sponsor-tv-frame.tv-3 { top: 35%; left: 37%; width: 18%; height: 25%; }
+.sponsor-tv-frame.tv-4 { top: 35%; left: 64.5%; width: 16%; height: 25%; }
+.sponsor-tv-frame.tv-5 { top: 62%; left: 3%; width: 18%; height: 23%; }
+.sponsor-tv-frame.tv-6 { top: 69%; left: 32%; width: 19%; height: 25%; }
+.sponsor-tv-frame.tv-7 { top: 68%; left: 56%; width: 18%; height: 25%; }
+.sponsor-tv-frame.tv-8 { top: 62%; left: 86%; width: 12%; height: 23%; }
+
+.scan-effect-horizontal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.scan-effect-horizontal::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg,
+    transparent, transparent 2px,
+    rgba(0, 0, 0, 0.25) 2px, rgba(0, 0, 0, 0.25) 3px,
+    transparent 3px, transparent 5px,
+    rgba(255, 255, 255, 0.12) 5px, rgba(255, 255, 255, 0.12) 6px,
+    transparent 6px, transparent 8px);
+  animation: scanHorizontalMove 0.6s linear infinite;
+}
+
+@keyframes scanHorizontalMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(8px); }
+}
+
+.sponsor-logo-item-wrapper:nth-child(1) .scan-effect-horizontal::before { animation-duration: 0.5s; }
+.sponsor-logo-item-wrapper:nth-child(2) .scan-effect-horizontal::before { animation-duration: 0.7s; }
+.sponsor-logo-item-wrapper:nth-child(3) .scan-effect-horizontal::before { animation-duration: 0.6s; }
+.sponsor-logo-item-wrapper:nth-child(4) .scan-effect-horizontal::before { animation-duration: 0.8s; }
+.sponsor-logo-item-wrapper:nth-child(5) .scan-effect-horizontal::before { animation-duration: 0.55s; }
+.sponsor-logo-item-wrapper:nth-child(6) .scan-effect-horizontal::before { animation-duration: 0.9s; }
+.sponsor-logo-item-wrapper:nth-child(7) .scan-effect-horizontal::before { animation-duration: 0.65s; }
+.sponsor-logo-item-wrapper:nth-child(8) .scan-effect-horizontal::before { animation-duration: 0.75s; }
+
+/* ===== КАРТА ===== */
+.map-section {
+  margin: 100px auto;
+  padding: 0 20px;
+}
+
+.map-wrapper {
+  display: flex;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.map-container {
+  position: relative;
+  flex-shrink: 0;
+  width: 585px;
+  max-width: 100%;
+}
+
+.map-bg-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 585 / 496;
+  background-image: url('/images/main/map.webp');
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 1;
+}
+
+.map-zones-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.map-zone-frame {
+  position: absolute;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 4px;
+  z-index: 10;
+}
+
+.map-zone-frame.active {
+  background: radial-gradient(circle, rgba(84, 254, 221, 0.4) 0%, rgba(84, 254, 221, 0.1) 100%);
+  border: 2px solid #54FEDD;
+  box-shadow: 0 0 20px rgba(84, 254, 221, 0.7);
+  transform: scale(1.01);
+}
+
+.map-zone-frame .zone-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0a0a0f;
+  border: 1px solid #54FEDD;
+  color: #54FEDD;
+  font-family: 'Sonic HUD C Italic', monospace;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+  z-index: 10;
+  display: inline-block;
+  max-width: none;
+  width: auto;
+  box-sizing: border-box;
+}
+
+.map-zone-frame:hover .zone-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Зоны на карте - в процентах от родителя */
+.zone-1 { top: 1%; left: 1%; width: 22%; height: 35%; }
+.zone-2 { top: 1%; left: 24%; width: 18%; height: 31%; }
+.zone-3 { top: 1%; left: 43%; width: 34%; height: 26%; }
+.zone-4 { top: 1%; left: 77.5%; width: 22%; height: 31%; }
+.zone-5 { top: 42%; left: 1%; width: 18.5%; height: 30%; }
+.zone-6 { top: 38%; left: 36%; width: 29%; height: 30%; }
+.zone-7 { top: 78%; left: 1%; width: 30%; height: 21%; }
+.zone-8 { top: 72%; left: 31.5%; width: 37.5%; height: 27%; }
+.zone-9 { top: 67.5%; left: 69.5%; width: 14.5%; height: 31.5%; }
+.zone-10 { top: 86.5%; left: 85%; width: 14.5%; height: 12.5%; }
+
+.zones-list-wrapper {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 496px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.zones-list-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.zones-list-wrapper::-webkit-scrollbar-track {
+  background: #0d0d14;
+  border: 1px solid #1a1a24;
+}
+
+.zones-list-wrapper::-webkit-scrollbar-thumb {
+  background: #00f5ff;
+  border-radius: 0;
+}
+
+.zones-list-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #00c4cc;
+}
+
+.zone-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: #12121a;
+  border: 1px solid #1a1a24;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.zone-list-item:hover {
+  border-color: #54FEDD;
+  transform: translateX(5px);
+}
+
+.zone-list-item.active {
+  border-color: #54FEDD;
+  background: rgba(84, 254, 221, 0.1);
+  box-shadow: 0 0 15px rgba(84, 254, 221, 0.2);
+}
+
+.zone-list-color {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.zone-list-item.active .zone-list-color {
+  transform: scale(1.1);
+  box-shadow: 0 0 10px currentColor;
+}
+
+.zone-list-content {
+  flex: 1;
+}
+
+.zone-list-name {
+  font-family: 'Sonic HUD C Italic', monospace;
+  font-size: 20px;
+  font-weight: 600;
+  color: white;
+  margin: 0 0 4px 0;
+}
+
+.zone-list-desc {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== ВИДЕО НА МОНИТОРЕ ===== */
+.boot-video, .game-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.boot-video.hidden, .game-video.hidden {
+  display: none;
+}
+
+.boot-video.visible, .game-video.visible {
+  display: block;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+
+/* Планшеты и ноутбуки (до 1400px) */
+@media (max-width: 1400px) {
+  .hero-section-new {
+    height: 1400px;
+  }
+  .old-monitor { width: 1200px; height: 100%;}
+  .monitor-screen { width: 58%; height: 38%; top: 12%;}
+
+  .video-right-image {
+    transform: translateX(560px) translateY(-600px);
+  }
+
+  .slider-right-image {
+    transform: translateX(550px) translateY(-650px);
+  }
+}
+
+/* Маленькие ноутбуки (до 1200px) */
+@media (max-width: 1200px) {
+  .hero-section-new {
+    height: 1200px;
+  }
+
+  .old-monitor { width: 1000px; height: 100%;}
+  .monitor-screen { width: 58%; height: 35%; top: 14%;}
+  .monitor-title { font-size: 60px !important; line-height: 80px !important; max-width: 400px !important; margin-bottom: 20px !important; }
+  
+  h2 { font-size: 30px !important; }
+  .about-festival-description, .esports-description, .cosplay-contest-description { font-size: 20px; max-width: 60%; }
+
+  .video-right-image {
+    width: 340px;
+    height: 340px;
+    transform: translateX(550px) translateY(-600px);
+  }
+
+  .video-left-image {
+    width: 250px;
+    height: 600px;
+    transform: translateX(-150px) translateY(-550px);
+  }
+
+  .video-right-text {
+    transform: translateX(260px) translateY(-150px);
+  }
+
+  .slider-right-image {
+    width: 350px;
+    height: 620px;
+    transform: translateX(750px) translateY(-550px);
+  }
+
+  .slider-left-image {
+    width: 240px;
+    height: 240px;
+    transform: translateX(50px) translateY(-500px);
+  }
+
+  .slider-text-overlay {
+    transform: translateX(50px) translateY(-130px);
+  }
+  
+  .game-cards { width: 100%; max-width: 700px; gap: 20px; justify-content: center; flex-wrap: wrap; }
+  .game-card-item { width: 200px; height: 260px; }
+  .game-card-image { width: 150px; height: 207px; }
+  .game-card-title { font-size: 20px; }
+  .game-card-bg { width: 180px; height: 150px; }
+  
+  .psvita-console { width: 800px; height: 376px; }
+  .psvita-screen { width: 500px; height: 277px; top: 47%; }
+  .psvita-stik { width: 280px; height: 150px; transform: translateY(-140px) translateX(80px); }
+}
+
+/* Планшеты горизонтально (до 992px) */
+@media (max-width: 992px) {
+
+  .hero-section-new {
+    height: 1000px;
+  }
+
+  .old-monitor { width: 900px; height: 100%;}
+  .monitor-screen { width: 58%; height: 37%; top: 12%;}
+  
+  h2 { font-size: 28px !important; }
+  
+  .main-video { width: 100%; height: auto; max-width: 800px; }
+  .video-player-container , .photo-slider-container { max-width: 90%; margin-bottom: 50px; }
+  .video-left-image, .video-right-image, .slider-right-image, .slider-left-image { display: none; }
+  .video-right-text, .slider-text-overlay { 
+    position: relative; 
+    transform: none; 
+    width: 90%; 
+    margin: 20px auto 0 auto;
+    background: linear-gradient(90deg, #01121C 0%, #011011 100%); 
+  }
+  .video-right-text p, .slider-text-overlay p { 
+    width: 90%; 
+    height: auto; 
+    transform: none; 
+    font-size: 20px;
+    text-align: center; 
+    padding: 20px; 
+  }
+  
+  .slider-images-container { width: 90%; height: auto; aspect-ratio: 790 / 497; }
+  
+  .psvita-console { width: 90%; height: auto; aspect-ratio: 995 / 467; }
+  .psvita-screen { width: 62%; height: auto; aspect-ratio: 620 / 343; top: 47%; }
+  .psvita-stik { display: none; }
+  
+  .tv-bg-image { aspect-ratio: 1200 / 750; }
+}
+
+/* Планшеты вертикально (до 768px) */
+@media (max-width: 768px) {
+  .old-monitor { background: transparent; }
+  .monitor-screen { width: 100%; height: auto; aspect-ratio: 9 / 6; top: 0; left: 51.5%;}
+  .hero-section-new { height: 500px; }
+  
+  h2 { font-size: 22px !important; margin-bottom: 20px !important; }
+  
+  .about-festival-description, .esports-description, .cosplay-contest-description, .map-description { 
+    font-size: 14px; 
+    margin-bottom: 30px; 
+  }
+
+  .video-frame { width: 90%; height: auto; max-width: 1000px; }
+  
+  .game-card-item { width: 150px; height: 200px; }
+  .game-card-image { width: 110px; height: 152px; }
+  .game-card-title { font-size: 18px; }
+  .game-card-bg { width: 140px; height: 117px; }
+  
+  .video-right-text p, .slider-text-overlay p { font-size: 16px; padding: 15px; }
+
+  .sponsors-title, .map-title { font-size: 22px !important; }
+  
+  .zone-list-name { font-size: 14px; }
+  .zone-list-desc { font-size: 10px; }
+  .zone-list-color { width: 30px; height: 30px; }
+  .zone-list-item { padding: 8px 12px; }
+  
+  /* Косплей блок - вертикальная раскладка */
+  .cosplayers-pixel-row { 
+      flex-direction: column; 
+      align-items: center; 
+    gap: 100px; 
+  }
+  
+  .cosplayer-pixel-info { 
+    position: absolute; 
+    left: 50%; 
+    right: auto; 
+    top: 80%;  
+    transform: translateX(-50%) translateY(-10px); 
+    width: 280px;
+  }
+  
+  .cosplayer-pixel-info.visible { 
+    transform: translateX(-50%) translateY(-20px); 
+  }
+  
+  .pixel-rank-under-card { bottom: -50px; }
+  
+  /* Карта - вертикально и центрировано */
+  .map-wrapper { 
+    flex-direction: column; 
+    align-items: center; 
+  }
+  
+  .map-container { 
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .zones-list-wrapper { 
+    width: 100%; 
+    max-width: 500px; 
+    height: auto; 
+    max-height: 350px; 
+  }
+}
+
+/* Мобильные телефоны (до 576px) */
+@media (max-width: 576px) {
+  .hero-section-new { height: 700px; }
+
+  .monitor-screen { aspect-ratio: 6 / 8; }
+  
+  .game-cards { gap: 10px; }
+  .game-card-item { width: 110px; height: 150px; }
+  .game-card-image { width: 80px; height: 110px; }
+  .game-card-title { font-size: 20px; }
+  .game-card-bg { width: 100px; height: 84px; }
+  
+  .cosplayer-pixel-card { width: 250px !important; height: 530px !important; }
+  .pixel-card-image { height: 530px !important; min-width: 250px !important; }
+  .pixel-card-bg { width: 160px !important; height: 530px !important; }
+  .pixel-rank-under-card { bottom: -40px !important; }
+  .rank-text { font-size: 20px !important; line-height: 30px !important; }
+  .rank-polygon-left, .rank-polygon-right { width: 16px; height: 16px; }
+  
+  .pixel-name { font-size: 18px; }
+  .pixel-character { font-size: 12px; }
+  .pixel-desc { font-size: 11px; }
+  .pixel-info-content { padding: 12px; }
+  .cosplayer-pixel-info { width: 240px; }
+}

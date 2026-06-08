@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { apiClient } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
+import PageLoader from '@/components/ui/PageLoader';
+import './schedule.css';
 
-const DAYS = ['29 марта', '30 марта', '31 марта', '1 апреля', '2 апреля'];
-const DAY_KEYS = ['2026-03-29', '2026-03-30', '2026-03-31', '2026-04-01', '2026-04-02'];
+const DAYS = ['29 июля', '30 июля', '31 июля', '1 августа', '2 августа'];
+const DAY_KEYS = ['2026-07-29', '2026-07-30', '2026-07-31', '2026-08-01', '2026-08-02'];
 
 interface ScheduleEvent {
   id: number;
@@ -28,27 +29,15 @@ interface ScheduleData {
   schedules: any[];
 }
 
-interface BracketMatch {
-  id: number;
-  stage?: string;
-  team1?: { display_name?: string; name?: string };
-  team2?: { display_name?: string; name?: string };
-  team1_score?: number;
-  team2_score?: number;
-  status?: string;
-}
-
 export default function SchedulePage() {
   const { user, hasRole } = useAuth();
   const [selectedDay, setSelectedDay] = useState(0);
-  const [selectedGame, setSelectedGame] = useState<number | null>(null);
   const [data, setData] = useState<ScheduleData>({
     matches: [],
     games: [],
     by_day: {},
     schedules: [],
   });
-  const [bracket, setBracket] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -57,6 +46,7 @@ export default function SchedulePage() {
   const [form, setForm] = useState({ short_name: '', description: '', start_time: '10:00', day: 1 });
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [timeConflict, setTimeConflict] = useState<string | null>(null);
 
   const isAdmin = user && hasRole('admin');
 
@@ -83,22 +73,40 @@ export default function SchedulePage() {
     fetchSchedule();
   }, []);
 
-  useEffect(() => {
-    if (selectedGame) {
-      const fetchBracket = async () => {
-        try {
-          const result = await apiClient.get<BracketMatch[]>(`/schedule/bracket/${selectedGame}`);
-          setBracket(Array.isArray(result) ? result : []);
-        } catch (err) {
-          console.error('Ошибка загрузки турнирной сетки:', err);
-          setBracket([]);
-        }
-      };
-      fetchBracket();
-    } else {
-      setBracket([]);
+  const checkTimeConflict = (day: number, startTime: string, excludeEventId?: number): boolean => {
+    const eventsForDay = (data.schedules || []).filter((s: ScheduleEvent) => s.day === day);
+    
+    for (const event of eventsForDay) {
+      if (excludeEventId && event.id === excludeEventId) continue;
+      
+      if (event.start_time === startTime) {
+        setTimeConflict(`Событие "${event.short_name}" уже запланировано на ${event.start_time}`);
+        return true;
+      }
     }
-  }, [selectedGame]);
+    
+    setTimeConflict(null);
+    return false;
+  };
+
+  const validateForm = (): boolean => {
+    if (!form.short_name.trim()) {
+      setSubmitError('Название события обязательно');
+      return false;
+    }
+    
+    if (!form.start_time) {
+      setSubmitError('Время начала обязательно');
+      return false;
+    }
+    
+    if (checkTimeConflict(form.day, form.start_time, editingEvent?.id)) {
+      setSubmitError('В это время уже запланировано другое событие');
+      return false;
+    }
+    
+    return true;
+  };
 
   const matchesForDay = data.by_day?.[DAY_KEYS[selectedDay]] ?? [];
   const schedulesForDay = (data.schedules || []).filter((s: any) => s.day === selectedDay + 1);
@@ -109,29 +117,31 @@ export default function SchedulePage() {
     }
   });
 
-  const bracketRows = (() => {
-    if (bracket.length === 0) return [];
-    const byStage: Record<string, any[]> = {};
-    bracket.forEach((m) => {
-      const s = m.stage || 'group';
-      if (!byStage[s]) byStage[s] = [];
-      byStage[s].push(m);
-    });
-    const order = ['group', 'quarterfinal', 'semifinal', 'final'];
-    return order.filter((s) => byStage[s]?.length).map((s) => ({ stage: s, matches: byStage[s] }));
-  })();
-
-  const stageLabels: Record<string, string> = {
-    group: 'Группы',
-    quarterfinal: '1/4 финала',
-    semifinal: '1/2 финала',
-    final: 'Финал',
-  };
+  const dayEvents = [
+    ...schedulesForDay.map((s: ScheduleEvent) => ({
+      type: 'schedule' as const,
+      sortTime: s.start_time || '99:99',
+      id: `schedule-${s.id}`,
+      payload: s,
+    })),
+    ...matchesForDay.map((m: any) => {
+      const localTime = m.start_time
+        ? new Date(m.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+        : '99:99';
+      return {
+        type: 'match' as const,
+        sortTime: localTime,
+        id: `match-${m.id}`,
+        payload: m,
+      };
+    }),
+  ].sort((a, b) => a.sortTime.localeCompare(b.sortTime));
 
   const openAddModal = () => {
     setEditingEvent(null);
     setForm({ short_name: '', description: '', start_time: '10:00', day: selectedDay + 1 });
     setSubmitError(null);
+    setTimeConflict(null);
     setModalOpen(true);
   };
 
@@ -144,6 +154,7 @@ export default function SchedulePage() {
       day: s.day,
     });
     setSubmitError(null);
+    setTimeConflict(null);
     setModalOpen(true);
   };
 
@@ -151,12 +162,17 @@ export default function SchedulePage() {
     setModalOpen(false);
     setEditingEvent(null);
     setSubmitError(null);
+    setTimeConflict(null);
   };
 
   const handleSubmitEvent = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+    
     setSubmitting(true);
     setSubmitError(null);
+    
     try {
       if (editingEvent) {
         await apiClient.put(`/admin/schedule/events/${editingEvent.id}`, {
@@ -176,8 +192,14 @@ export default function SchedulePage() {
       closeModal();
       await fetchSchedule();
     } catch (err: unknown) {
-      const e = err as { message?: string };
-      setSubmitError(e?.message || 'Ошибка сохранения');
+      const e = err as { message?: string; response?: { data?: { message?: string } } };
+      const errorMessage = e?.response?.data?.message || e?.message || 'Ошибка сохранения';
+      
+      if (errorMessage.includes('already exists') || errorMessage.includes('duplicate')) {
+        setSubmitError('В это время уже запланировано другое событие');
+      } else {
+        setSubmitError(errorMessage);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -193,33 +215,39 @@ export default function SchedulePage() {
     }
   };
 
+  const timeOptions = () => {
+    const options = [];
+    for (let hour = 8; hour <= 22; hour++) {
+      for (let minute of ['00', '30']) {
+        const timeStr = `${hour.toString().padStart(2, '0')}:${minute}`;
+        options.push(timeStr);
+      }
+    }
+    return options;
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] text-slate-200 py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-8">Расписание фестиваля</h1>
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00f5ff]"></div>
-            <p className="mt-4 text-slate-400">Загрузка расписания...</p>
-          </div>
-        </div>
-      </div>
+      <PageLoader text="ЗАГРУЗКА РАСПИСАНИЯ..." className="loader-container" />
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] text-slate-200 py-12 px-4">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-8">Расписание фестиваля</h1>
-          <div className="bg-[#ff006e]/10 border border-[#ff006e]/50 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-red-400 mb-2">Ошибка загрузки</h2>
-            <p className="text-[#ff006e]">{error}</p>
+      <div className="schedule-page">
+        <div className="schedule-container">
+          <div className="schedule-header">
+            <h1 className="schedule-title">РАСПИСАНИЕ ФЕСТИВАЛЯ</h1>
+            <p className="schedule-description">РАСПИСАНИЕ МЕРОПРИЯТИЙ И МАТЧЕЙ</p>
+          </div>
+          <div className="empty-state">
+            <p className="empty-text">ОШИБКА ЗАГРУЗКИ</p>
+            <p className="empty-subtext">{error}</p>
             <button 
               onClick={() => window.location.reload()}
-              className="mt-4 px-4 py-2 bg-red-700 hover:bg-red-600 rounded-lg text-white"
+              className="add-event-btn"
             >
-              Попробовать снова
+              ПОВТОРИТЬ
             </button>
           </div>
         </div>
@@ -228,283 +256,192 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-slate-200 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Расписание фестиваля</h1>
+    <div className="schedule-page">
+      <div className="schedule-container">
+        <div className="schedule-header">
+          <h1 className="schedule-title">РАСПИСАНИЕ ФЕСТИВАЛЯ</h1>
+          <p className="schedule-description">РАСПИСАНИЕ МЕРОПРИЯТИЙ И МАТЧЕЙ</p>
+        </div>
 
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="days-tabs">
           {DAYS.map((d, i) => (
             <button
               key={i}
               onClick={() => setSelectedDay(i)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                selectedDay === i 
-                  ? 'bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc]' 
-                  : 'bg-[#12121a] hover:bg-[#16161f] border border-[#1a1a24]'
-              }`}
+              className={`day-tab ${selectedDay === i ? 'active' : ''}`}
             >
-              День {i + 1} ({d})
+              ДЕНЬ {i + 1}<span className="day-date">{d}</span>
             </button>
           ))}
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Левая колонка - события дня */}
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-white">События дня</h2>
+        <div className="schedule-content">
+          {/* События дня */}
+          <div className="events-section">
+            <div className="events-header">
+              <h2 className="events-title">СОБЫТИЯ ДНЯ</h2>
               {isAdmin && (
-                <button
-                  type="button"
-                  onClick={openAddModal}
-                  className="px-4 py-2 rounded-lg bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] text-sm font-medium transition"
-                >
-                  + Добавить событие
+                <button type="button" onClick={openAddModal} className="add-event-btn">
+                  + ДОБАВИТЬ
                 </button>
               )}
             </div>
 
-            {schedulesForDay.length > 0 && (
-              <div className="space-y-3 mb-6">
-                <h3 className="text-lg font-medium text-[#00f5ff]">Расписание</h3>
-                {schedulesForDay.map((s: ScheduleEvent) => (
-                  <div key={s.id} className="bg-[#12121a] rounded-lg p-4 border border-slate-600 hover:border-[#00f5ff]/50 transition-colors">
-                    <div className="flex justify-between items-start gap-2">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-white">{s.short_name || 'Событие'}</p>
-                        <p className="text-slate-400 text-sm">{s.description || 'Описание отсутствует'}</p>
-                        <p className="text-[#00f5ff] text-sm mt-1">
-                          {s.start_time || 'Время не указано'}
-                          {s.end_time && ` - ${s.end_time}`}
-                        </p>
-                      </div>
-                      {isAdmin && (
-                        <div className="flex gap-2 flex-shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => openEditModal(s)}
-                            className="px-2 py-1 rounded bg-slate-600 hover:bg-slate-500 text-slate-200 text-xs"
-                          >
-                            Изменить
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteEvent(s.id)}
-                            className="px-2 py-1 rounded bg-red-900/50 hover:bg-red-800/50 text-red-300 text-xs"
-                          >
-                            Удалить
-                          </button>
+            {dayEvents.length > 0 ? (
+              <div className="schedule-list">
+                {dayEvents.map((event) => {
+                  if (event.type === 'schedule') {
+                    const s = event.payload as ScheduleEvent;
+                    return (
+                      <div key={event.id} className="schedule-item">
+                        <div className="schedule-time">{s.start_time || '--:--'}</div>
+                        <div className="schedule-content-block">
+                          <div className="schedule-item-header">
+                            <h4 className="schedule-item-title">{s.short_name || 'СОБЫТИЕ'}</h4>
+                            {isAdmin && (
+                              <div className="schedule-item-actions">
+                                <button type="button" onClick={() => openEditModal(s)} className="edit-btn">
+                                  ✎
+                                </button>
+                                <button type="button" onClick={() => handleDeleteEvent(s.id)} className="delete-btn">
+                                  ✕
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                          {s.description && <p className="schedule-item-desc">{s.description}</p>}
                         </div>
-                      )}
+                      </div>
+                    );
+                  }
+
+                  const m = event.payload as any;
+                  return (
+                    <div key={event.id} className="schedule-item match-item">
+                      <div className="schedule-time">
+                        {m.start_time
+                          ? new Date(m.start_time).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
+                          : '--:--'}
+                      </div>
+                      <div className="schedule-content-block">
+                        <div className="schedule-item-header">
+                          <h4 className="schedule-item-title">
+                            {teamName(m.team1)} <span className="match-vs">VS</span> {teamName(m.team2)}
+                          </h4>
+                          <span className={`match-status-badge ${m.status}`}>
+                            {m.status === 'completed' ? 'ЗАВЕРШЕН' :
+                             m.status === 'live' ? 'В ЭФИРЕ' :
+                             m.status === 'upcoming' ? 'ПРЕДСТОЯЩИЙ' : m.status}
+                          </span>
+                        </div>
+                        <p className="schedule-item-desc">{gameNames[m.game_id] || 'МАТЧ'}</p>
+                        {m.stage && <p className="match-stage">Этап: {m.stage}</p>}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
-            )}
-
-            {matchesForDay.length > 0 && (
-              <div className="space-y-3">
-                <h3 className="text-lg font-medium text-[#00f5ff]">Матчи</h3>
-                {matchesForDay.map((m: any) => (
-                  <div key={m.id} className="bg-[#12121a] rounded-lg p-4 border border-slate-600 hover:border-[#00f5ff]/50 transition-colors">
-                    <p className="text-[#00f5ff] text-sm mb-1">
-                      {gameNames[m.game_id] || 'Игра'}
-                    </p>
-                    <p className="font-medium text-white">
-                      {teamName(m.team1)} vs {teamName(m.team2)}
-                    </p>
-                    {m.start_time && (
-                      <p className="text-slate-500 text-sm">
-                        {new Date(m.start_time).toLocaleTimeString('ru-RU', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </p>
-                    )}
-                    {m.status && (
-                      <p className={`text-xs font-medium mt-1 ${
-                        m.status === 'completed' ? 'text-green-400' :
-                        m.status === 'live' ? 'text-red-400' :
-                        'text-yellow-400'
-                      }`}>
-                        {m.status === 'completed' ? 'Завершен' :
-                         m.status === 'live' ? 'В прямом эфире' :
-                         m.status === 'upcoming' ? 'Предстоящий' : m.status}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {schedulesForDay.length === 0 && matchesForDay.length === 0 && (
-              <div className="bg-slate-800/50 rounded-lg p-8 text-center border border-slate-700">
-                <p className="text-slate-500">Нет событий на этот день</p>
-                <p className="text-slate-600 text-sm mt-2">Выберите другой день</p>
-              </div>
-            )}
-          </div>
-
-          {/* Правая колонка - турнирная сетка */}
-          <div>
-            <h2 className="text-xl font-semibold text-white mb-4">Турнирная сетка</h2>
-            
-            {data.games && data.games.length > 0 ? (
-              <>
-                <div className="space-y-2 mb-6">
-                  <p className="text-slate-400 text-sm mb-2">Выберите игру:</p>
-                  {data.games.map((g: any) => (
-                    <button
-                      key={g.id}
-                      onClick={() => setSelectedGame(selectedGame === g.id ? null : g.id)}
-                      className={`w-full py-3 px-4 rounded-lg text-left transition-colors ${
-                        selectedGame === g.id 
-                          ? 'bg-cyan-600 hover:bg-cyan-700' 
-                          : 'bg-slate-800 hover:bg-slate-700'
-                      }`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <span>{g.name || `Игра ${g.id}`}</span>
-                        {selectedGame === g.id && (
-                          <span className="text-xs bg-cyan-800 px-2 py-1 rounded">Открыть сетку</span>
-                        )}
-                      </div>
-                      {g.description && (
-                        <p className="text-slate-400 text-xs mt-1 truncate">{g.description}</p>
-                      )}
-                    </button>
-                  ))}
-                </div>
-
-                {selectedGame && (
-                  <div className="bg-slate-800 rounded-xl p-6 border border-slate-600">
-                    <h3 className="text-lg font-medium text-white mb-4">
-                      Турнирная сетка: {gameNames[selectedGame] || `Игра ${selectedGame}`}
-                    </h3>
-                    
-                    {bracket.length > 0 ? (
-                      <div className="overflow-x-auto">
-                        <div className="flex gap-6 min-w-max">
-                          {bracketRows.map((row, ri) => (
-                            <div key={ri} className="flex flex-col gap-4">
-                              <p className="text-[#00f5ff] text-sm font-medium">
-                                {stageLabels[row.stage] || row.stage}
-                              </p>
-                              {row.matches.map((m: any) => (
-                                <div key={m.id} className="relative">
-                                  <div className={`border rounded-lg overflow-hidden min-w-[180px] ${
-                                    m.status === 'completed' ? 'border-green-600 bg-green-900/20' :
-                                    m.status === 'live' ? 'border-red-600 bg-red-900/20' :
-                                    'border-slate-600 bg-slate-700'
-                                  }`}>
-                                    <div className="px-3 py-2 border-b border-slate-600 text-sm text-white truncate max-w-[180px]">
-                                      {teamName(m.team1)}
-                                      {m.team1_score !== undefined && ` (${m.team1_score})`}
-                                    </div>
-                                    <div className="px-3 py-2 text-sm text-white truncate max-w-[180px]">
-                                      {teamName(m.team2)}
-                                      {m.team2_score !== undefined && ` (${m.team2_score})`}
-                                    </div>
-                                  </div>
-                                  {ri < bracketRows.length - 1 && (
-                                    <div className="absolute -right-6 top-1/2 -translate-y-1/2 w-6 h-px bg-slate-500" />
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-slate-500">Данные турнирной сетки отсутствуют</p>
-                        <p className="text-slate-600 text-sm mt-2">
-                          Сетка будет доступна после начала турнира
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
             ) : (
-              <div className="bg-slate-800/50 rounded-lg p-8 text-center border border-slate-700">
-                <p className="text-slate-500">Нет доступных игр</p>
-                <p className="text-slate-600 text-sm mt-2">
-                  Игры будут добавлены организаторами
-                </p>
+              <div className="empty-state">
+                <p className="empty-text">НЕТ СОБЫТИЙ НА ЭТОТ ДЕНЬ</p>
+                <p className="empty-subtext">ВЫБЕРИТЕ ДРУГОЙ ДЕНЬ</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* Модальное окно: добавление / редактирование события (только админ) */}
+        {/* Модальное окно */}
         {modalOpen && isAdmin && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="bg-[#12121a] border border-[#1a1a24] rounded-xl max-w-md w-full p-6 shadow-xl">
-              <h3 className="text-lg font-semibold text-white mb-4">
-                {editingEvent ? 'Редактировать событие' : 'Новое событие'}
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h3 className="modal-title">
+                {editingEvent ? 'РЕДАКТИРОВАТЬ СОБЫТИЕ' : 'НОВОЕ СОБЫТИЕ'}
               </h3>
-              <form onSubmit={handleSubmitEvent} className="space-y-4">
-                {submitError && (
-                  <p className="text-sm text-red-400 bg-red-500/10 px-3 py-2 rounded-lg">{submitError}</p>
-                )}
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Название *</label>
+              <form onSubmit={handleSubmitEvent} className="modal-form">
+                {submitError && <div className="error-message">{submitError}</div>}
+                {timeConflict && <div className="warning-message">⚠️ {timeConflict}</div>}
+                
+                <div className="form-group">
+                  <label className="form-label">НАЗВАНИЕ *</label>
                   <input
                     type="text"
                     required
                     value={form.short_name}
                     onChange={(e) => setForm((f) => ({ ...f, short_name: e.target.value }))}
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white focus:border-[#00f5ff]"
-                    placeholder="Например: Открытие"
+                    className="form-input"
+                    placeholder="НАПРИМЕР: ОТКРЫТИЕ ФЕСТИВАЛЯ"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Описание</label>
+                
+                <div className="form-group">
+                  <label className="form-label">ОПИСАНИЕ</label>
                   <textarea
                     value={form.description}
                     onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white focus:border-[#00f5ff]"
+                    className="form-textarea"
+                    placeholder="КРАТКОЕ ОПИСАНИЕ СОБЫТИЯ"
                     rows={3}
-                    placeholder="Краткое описание события"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">Время начала *</label>
-                  <input
-                    type="time"
-                    required
-                    value={form.start_time}
-                    onChange={(e) => setForm((f) => ({ ...f, start_time: e.target.value }))}
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white focus:border-[#00f5ff]"
-                  />
+                
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">ВРЕМЯ *</label>
+                    <select
+                      required
+                      value={form.start_time}
+                      onChange={(e) => {
+                        setForm((f) => ({ ...f, start_time: e.target.value }));
+                        if (form.day && e.target.value) {
+                          checkTimeConflict(form.day, e.target.value, editingEvent?.id);
+                        }
+                      }}
+                      className="form-select"
+                    >
+                      {timeOptions().map((time) => (
+                        <option key={time} value={time}>{time}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="form-group">
+                    <label className="form-label">ДЕНЬ *</label>
+                    <select
+                      value={form.day}
+                      onChange={(e) => {
+                        const newDay = Number(e.target.value);
+                        setForm((f) => ({ ...f, day: newDay }));
+                        if (newDay && form.start_time) {
+                          checkTimeConflict(newDay, form.start_time, editingEvent?.id);
+                        }
+                      }}
+                      className="form-select"
+                    >
+                      {DAYS.map((d, i) => (
+                        <option key={i} value={i + 1}>ДЕНЬ {i + 1} ({d})</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-1">День фестиваля *</label>
-                  <select
-                    value={form.day}
-                    onChange={(e) => setForm((f) => ({ ...f, day: Number(e.target.value) }))}
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white focus:border-[#00f5ff]"
-                  >
-                    {DAYS.map((d, i) => (
-                      <option key={i} value={i + 1}>День {i + 1} ({d})</option>
-                    ))}
-                  </select>
+                
+                <div className="form-hint-info">
+                  <span>🕐 ДОСТУПНОЕ ВРЕМЯ: 08:00 - 22:00 (ИНТЕРВАЛ 30 МИНУТ)</span>
                 </div>
-                <div className="flex gap-2 pt-2">
+                
+                <div className="modal-buttons">
                   <button
                     type="submit"
-                    disabled={submitting}
-                    className="flex-1 py-2 rounded-lg bg-[#00f5ff] text-[#0a0a0f] font-medium hover:bg-[#00c4cc] disabled:opacity-50"
+                    disabled={submitting || !!timeConflict}
+                    className="modal-submit"
                   >
-                    {submitting ? 'Сохранение...' : editingEvent ? 'Сохранить' : 'Добавить'}
+                    {submitting ? 'СОХРАНЕНИЕ...' : editingEvent ? 'СОХРАНИТЬ' : 'ДОБАВИТЬ'}
                   </button>
                   <button
                     type="button"
                     onClick={closeModal}
-                    className="px-4 py-2 rounded-lg border border-[#1a1a24] text-slate-300 hover:bg-[#1a1a24]"
+                    className="modal-cancel"
                   >
-                    Отмена
+                    ОТМЕНА
                   </button>
                 </div>
               </form>

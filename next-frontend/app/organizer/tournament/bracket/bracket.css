@@ -1,0 +1,877 @@
+.organizer-tournament-page {
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.organizer-tournament-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.organizer-tournament-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.organizer-tournament-title-section {
+  text-align: left;
+}
+
+.organizer-tournament-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.organizer-tournament-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== КНОПКИ ===== */
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.btn-primary {
+  background: #B72F74;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  color: #FFFFFF;
+}
+
+.btn-secondary {
+  background: #54FEDD;
+  box-shadow: -4px 0px 0px #136354, 4px 0px 0px #136354,
+              inset 0px 3px 0px #136354, inset 0px -3px 0px #136354,
+              inset 0px -10px 0px #198772, inset -3px 0px 0px #BFFFF3,
+              inset 0px -13px 0px #BFFFF3;
+  color: #01121C;
+}
+
+.btn-primary:hover:not(:disabled), .btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled, .btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-score, .btn-meta {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  text-transform: uppercase;
+  transition: all 0.15s ease;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.btn-score {
+  background: #B72F74;
+  border: none;
+  color: #ffffff;
+}
+
+.btn-score:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-score:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #334155;
+}
+
+.btn-meta {
+  background: #1a1a24;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  flex: 1;
+}
+
+.btn-meta:hover:not(:disabled) {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #22c55e;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #15803d, 2px 0px 0px #15803d,
+              inset 0px 2px 0px #15803d, inset 0px -2px 0px #15803d;
+  padding: 10px 20px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 8px 16px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-cancel:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.btn-close {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.btn-close:hover {
+  color: #ffffff;
+}
+
+/* ===== СООБЩЕНИЯ ===== */
+.message-error, .message-success {
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  image-rendering: pixelated;
+}
+
+.message-error {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  color: #ff006e;
+}
+
+.message-success {
+  background: rgba(0, 255, 127, 0.1);
+  border: 1px solid #39ff14;
+  color: #39ff14;
+}
+
+/* ===== ПУСТОЕ СОСТОЯНИЕ ===== */
+.empty-state {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 48px 24px;
+  text-align: center;
+  image-rendering: pixelated;
+}
+
+.empty-state-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 24px;
+}
+
+/* ===== ВЫБОР ИГРЫ ===== */
+.game-selector {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  image-rendering: pixelated;
+}
+
+.game-selector-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.game-select {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.game-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+/* ===== ТУРНИРНАЯ СЕТКА ===== */
+.bracket-container {
+  overflow-x: auto;
+  padding: 20px 0;
+}
+
+.bracket-wrapper {
+  display: flex;
+  gap: 48px;
+  min-width: max-content;
+  justify-content: center;
+}
+
+.bracket-stage {
+  display: flex;
+  flex-direction: column;
+  min-width: 320px;
+  background: rgba(18, 18, 26, 0.2);
+  border-radius: 8px;
+  padding: 16px 12px;
+}
+
+.bracket-stage-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  letter-spacing: 2px;
+  text-align: center;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #1a1a24;
+}
+
+.bracket-matches {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  justify-content: space-around;
+  height: 100%;
+}
+
+.bracket-match {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.bracket-connector {
+  position: relative;
+  height: 20px;
+  margin: -10px 0;
+}
+
+.connector-line {
+  position: absolute;
+  background: #1a1a24;
+}
+
+.connector-line.horizontal {
+  top: 50%;
+  left: -24px;
+  width: 24px;
+  height: 2px;
+}
+
+.connector-line.vertical {
+  top: -50%;
+  left: -24px;
+  width: 2px;
+  height: 100%;
+}
+
+.bracket-stage:not(:first-child)::before {
+  content: '';
+  position: absolute;
+  left: -24px;
+  top: 50%;
+  width: 24px;
+  height: 2px;
+  background: #1a1a24;
+}
+
+/* Карточка матча */
+.bracket-match-card {
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.bracket-match-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-2px);
+}
+
+.bracket-match-card.finished {
+  border-color: #22c55e;
+}
+
+.bracket-match-card.pending {
+  background: rgba(18, 18, 26, 0.4);
+  border-color: #334155;
+}
+
+.bracket-match-pending {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.pending-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Команды в матче */
+.bracket-team {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.bracket-team:last-child {
+  border-bottom: none;
+}
+
+.bracket-team.winner {
+  background: rgba(34, 197, 94, 0.1);
+}
+
+.team-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.team-select {
+  width: 100%;
+  padding: 6px 8px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 4px;
+}
+
+.team-select:hover {
+  border-color: #54FEDD;
+}
+
+.team-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.team-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.team-tag {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.team-score {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  font-weight: bold;
+}
+
+/* Футер карточки */
+.bracket-match-footer {
+  padding: 8px 12px;
+  background: rgba(10, 10, 15, 0.6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.match-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.match-time {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.match-status-badge {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.match-status-badge.status-scheduled {
+  background: rgba(234, 179, 8, 0.15);
+  border: 1px solid #eab308;
+  color: #eab308;
+}
+
+.match-status-badge.status-live {
+  background: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.match-status-badge.status-finished {
+  background: rgba(34, 197, 94, 0.15);
+  border: 1px solid #22c55e;
+  color: #22c55e;
+}
+
+.match-status-badge.status-cancelled {
+  background: rgba(107, 114, 128, 0.15);
+  border: 1px solid #6b7280;
+  color: #9ca3af;
+}
+
+.odds-preview {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding: 8px 0;
+  border-top: 1px solid #1a1a24;
+  border-bottom: 1px solid #1a1a24;
+  margin: 4px 0;
+}
+
+.odds-item {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  background: rgba(84, 254, 221, 0.1);
+  padding: 4px 8px;
+  border-radius: 20px;
+}
+
+.match-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.match-winner-badge {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.15);
+  padding: 4px 8px;
+  border-radius: 20px;
+  text-align: center;
+  margin-top: 4px;
+}
+
+/* ===== МОДАЛЬНЫЕ ОКНА ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.modal-container {
+  background: #0a0a0f;
+  border: 2px solid #54FEDD;
+  max-width: 500px;
+  width: 100%;
+  padding: 24px;
+  image-rendering: pixelated;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #54FEDD;
+  letter-spacing: 2px;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 0 0 16px 0;
+}
+
+.match-teams {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  border-radius: 8px;
+  image-rendering: pixelated;
+}
+
+.match-teams.small {
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.match-teams.small .match-team-name {
+  font-size: 14px;
+}
+
+.match-team-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #54FEDD;
+  text-align: center;
+  flex: 1;
+}
+
+.match-vs {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Поля ввода счета */
+.score-input-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.score-field {
+  text-align: center;
+}
+
+.score-label {
+  display: block;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.score-input {
+  width: 100%;
+  padding: 12px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  text-align: center;
+  color: #54FEDD;
+  border-radius: 8px;
+}
+
+.score-input:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.winner-preview {
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+  border-radius: 8px;
+}
+
+.winner-preview-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #22c55e;
+}
+
+/* Форма настроек */
+.meta-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.form-select, .form-input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  border-radius: 4px;
+}
+
+.form-select:focus, .form-input:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.odds-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.odds-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.odds-team {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.odds-field .form-input {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a24;
+}
+
+/* ===== ДОСТУП ЗАПРЕЩЁН ===== */
+.access-denied {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0f;
+}
+
+.access-denied-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+}
+
+/* ===== ПОДСКАЗКИ ===== */
+.date-error-message {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ef4444;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 4px;
+}
+
+.date-hint, .status-hint {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: rgba(18, 18, 26, 0.4);
+  border-radius: 4px;
+  color: #64748b;
+}
+
+.status-hint.warning {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  border-left: 2px solid #f59e0b;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 1024px) {
+  .bracket-wrapper { gap: 32px; }
+  .bracket-stage { min-width: 280px; }
+}
+
+@media (max-width: 768px) {
+  .organizer-tournament-title { font-size: 28px; }
+  .organizer-tournament-description { font-size: 12px; }
+  .game-selector { flex-direction: column; align-items: stretch; }
+  .bracket-wrapper { gap: 24px; }
+  .bracket-stage { min-width: 260px; padding: 12px 8px; }
+  .bracket-stage-title { font-size: 18px; }
+  .team-name { font-size: 14px; }
+  .team-score { font-size: 16px; }
+  .team-select { font-size: 12px; padding: 4px 6px; }
+  .btn-score, .btn-meta { font-size: 10px; padding: 4px 8px; }
+  .match-team-name { font-size: 14px; }
+  .score-input { font-size: 20px; padding: 8px; }
+  .match-info-row { flex-direction: column; align-items: flex-start; }
+  .odds-preview { flex-wrap: wrap; justify-content: flex-start; }
+  .match-actions { flex-direction: column; }
+  .odds-field { flex-direction: column; align-items: flex-start; }
+  .odds-team { width: auto; }
+  .odds-field .form-input { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .organizer-tournament-title { font-size: 24px; }
+  .organizer-tournament-description { font-size: 10px; }
+  .bracket-stage { min-width: 240px; }
+  .bracket-stage-title { font-size: 16px; }
+  .team-name { font-size: 12px; }
+  .team-tag { font-size: 10px; }
+  .team-score { font-size: 14px; }
+  .modal-container { max-width: 95%; padding: 16px; }
+  .modal-title { font-size: 20px; }
+  .match-team-name { font-size: 12px; }
+  .score-input-group { gap: 8px; }
+  .score-input { font-size: 18px; padding: 6px; }
+}
+
+/* Убираем горизонтальный скролл для сетки */
+.bracket-container {
+  overflow-x: visible !important;
+  overflow-y: visible !important;
+}
+
+.bracket-wrapper {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  .bracket-wrapper {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .bracket-stage {
+    width: 100%;
+    max-width: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .bracket-stage {
+    max-width: 100%;
+  }
+  
+  .bracket-wrapper {
+    gap: 32px;
+  }
+}

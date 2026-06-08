@@ -23,6 +23,9 @@ return new class extends Migration
                 'shared',              // Поделился в соцсетях (если есть такая механика)
                 'transferred'          // Передана другому пользователю (если трейдинг разрешён)
             ])->default('acquired');
+            $table->string('coupon_code_used')->nullable();
+            $table->json('bonus_used_data')->nullable();
+            $table->timestamp('expires_at')->nullable();
             
             $table->timestamps();
         });

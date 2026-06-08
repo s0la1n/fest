@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Cosplayer extends Model
 {
@@ -15,12 +16,10 @@ class Cosplayer extends Model
         'character_name',
         'origin',
         'photo',
-        'biography',
-        'character_description',
         'portfolio_link',
         'votes_count',
         'voted_users',
-        'awards',
+        'biography', // добавим biography
     ];
 
     protected $casts = [
@@ -52,5 +51,19 @@ class Cosplayer extends Model
     public function hasVoted(User $user): bool
     {
         return in_array($user->id, $this->voted_users ?? []);
+    }
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        if (!$this->photo) {
+            return null;
+        }
+        
+        if (filter_var($this->photo, FILTER_VALIDATE_URL)) {
+            return $this->photo;
+        }
+        
+        // Просто возвращаем URL через Storage
+        return Storage::url($this->photo);
     }
 }

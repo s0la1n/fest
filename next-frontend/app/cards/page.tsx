@@ -3,34 +3,38 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { apiClient } from '@/lib/api';
+import Link from 'next/link';
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import { QRCodeSVG } from 'qrcode.react';
+import PageLoader from '@/components/ui/PageLoader';
+import './cards.css';
 
 const RARITY_LABELS: Record<string, string> = {
-  common: 'Обычная',
-  rare: 'Редкая',
-  epic: 'Эпическая',
-  legendary: 'Легендарная',
-  secret: 'Секретная',
+  common: 'ОБЫЧНАЯ',
+  rare: 'РЕДКАЯ',
+  epic: 'ЭПИЧЕСКАЯ',
+  legendary: 'ЛЕГЕНДАРНАЯ',
+  secret: 'СЕКРЕТНАЯ',
 };
 
 const BONUS_LABELS: Record<string, string> = {
-  virtual_currency: 'Виртуальная валюта',
-  coupon: 'Промокод',
-  discount: 'Скидка',
-  physical_gift: 'Физический подарок',
-  digital_gift: 'Цифровой подарок',
-  experience: 'Впечатления',
+  virtual_currency: 'ВИРТУАЛЬНАЯ ВАЛЮТА',
+  coupon: 'ПРОМОКОД',
+  discount: 'СКИДКА',
+  physical_gift: 'ФИЗИЧЕСКИЙ ПОДАРОК',
+  digital_gift: 'ЦИФРОВОЙ ПОДАРОК',
+  experience: 'ВПЕЧАТЛЕНИЯ',
 };
 
 const STATUS_LABELS: Record<string, string> = {
-  acquired: 'Получена',
-  active: 'Активна',
-  bonus_used: 'Бонус использован',
-  bonus_expired: 'Истекла',
-  shared: 'Поделился',
-  transferred: 'Передана',
+  acquired: 'ПОЛУЧЕНА',
+  bonus_used: 'БОНУС ИСПОЛЬЗОВАН',
+  active: 'АКТИВНА',
+  inactive: 'НЕАКТИВНА',
+  expired: 'ИСТЕКЛА',
 };
 
-type UserCardItem = {
+type UserCard = {
   id: number;
   card_id: number;
   name: string;
@@ -41,212 +45,365 @@ type UserCardItem = {
   bonus_value: number | null;
   coupon_code: string | null;
   status: string;
+  qr_data: string | null;
   acquired_at: string;
 };
 
 export default function CardsPage() {
-  const { user, refreshUserData } = useAuth();
-  const [cards, setCards] = useState<UserCardItem[]>([]);
+  const { user, token, loading: authLoading, refreshUserData } = useAuth();
+  const [cards, setCards] = useState<UserCard[]>([]);
   const [loading, setLoading] = useState(true);
-  const [code, setCode] = useState('');
-  const [submitLoading, setSubmitLoading] = useState(false);
-  const [codeError, setCodeError] = useState('');
-  const [codeSuccess, setCodeSuccess] = useState('');
-  const [useBonusLoading, setUseBonusLoading] = useState<number | null>(null);
-  const [bonusResult, setBonusResult] = useState<{ message: string; bonus?: Record<string, unknown> } | null>(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [codeInput, setCodeInput] = useState('');
+  const [activating, setActivating] = useState(false);
+  const [activatingCardId, setActivatingCardId] = useState<number | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
+  const [qrScanner, setQrScanner] = useState<Html5QrcodeScanner | null>(null);
+  const [showBonusQr, setShowBonusQr] = useState<{ cardId: number; qrData: string; message: string } | null>(null);
 
+  const isAuthenticated = !!user && !!token;
+
+  // Загрузка карточек пользователя
   const loadCards = async () => {
+    setLoading(true);
+    setError('');
     try {
-      const data = await apiClient.get<{ cards: UserCardItem[] }>('/cards');
-      setCards(data.cards ?? []);
-    } catch (e) {
-      console.error(e);
-      setCards([]);
+      const data = await apiClient.get<{ cards: UserCard[] }>('/cards');
+      setCards(data.cards || []);
+    } catch (err) {
+      console.error('Ошибка загрузки карточек:', err);
+      setError('НЕ УДАЛОСЬ ЗАГРУЗИТЬ КАРТОЧКИ');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user) loadCards();
-    else setLoading(false);
-  }, [user]);
-
-  const handleSubmitCode = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setCodeError('');
-    setCodeSuccess('');
-    if (!code.trim()) {
-      setCodeError('Введите код');
-      return;
+    if (!authLoading && isAuthenticated && user) {
+      loadCards();
+    } else if (!authLoading && !isAuthenticated) {
+      setLoading(false);
     }
-    setSubmitLoading(true);
+  }, [authLoading, isAuthenticated, user]);
+
+  // Активация карточки по коду
+  const activateCardByCode = async (code: string) => {
+    if (!code.trim()) {
+      setError('ВВЕДИТЕ КОД КАРТОЧКИ');
+      return false;
+    }
+
+    setActivating(true);
+    setError('');
+    setSuccess('');
+
     try {
-      const res = await apiClient.post<{ success?: boolean; message?: string; card?: unknown; error?: string }>(
+      const data = await apiClient.post<{ success: boolean; message: string; card: UserCard }>(
         '/cards/get-card',
         { code: code.trim() }
       );
-      if (res.success) {
-        setCodeSuccess(res.message || 'Карточка получена!');
-        setCode('');
+
+      if (data.success) {
+        setSuccess(data.message || 'КАРТОЧКА УСПЕШНО АКТИВИРОВАНА!');
+        setCodeInput('');
         loadCards();
-        refreshUserData?.();
+        return true;
       } else {
-        setCodeError((res as { error?: string }).error || 'Ошибка');
+        setError(data.message || 'НЕ УДАЛОСЬ АКТИВИРОВАТЬ КАРТОЧКУ');
+        return false;
       }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : (err as { response?: { data?: { error?: string } } })?.response?.data?.error || 'Ошибка запроса';
-      setCodeError(message);
+    } catch (err: any) {
+      const message = err?.response?.data?.error || err?.message || 'ОШИБКА АКТИВАЦИИ КАРТОЧКИ';
+      setError(message);
+      return false;
     } finally {
-      setSubmitLoading(false);
+      setActivating(false);
     }
   };
 
-  const handleUseBonus = async (userCardId: number) => {
-    setBonusResult(null);
-    setUseBonusLoading(userCardId);
+  // Обработчик формы активации
+  const handleActivateCard = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await activateCardByCode(codeInput);
+  };
+
+  // Запуск сканера QR-кода
+  const startScanner = () => {
+    setShowScanner(true);
+    setError('');
+    
+    setTimeout(() => {
+      const scanner = new Html5QrcodeScanner(
+        "qr-reader",
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1,
+        },
+        false
+      );
+      
+      scanner.render(
+        (decodedText) => {
+          scanner.clear();
+          setShowScanner(false);
+          setQrScanner(null);
+          activateCardByCode(decodedText);
+        },
+        (errorMessage) => {
+          console.log('QR scan error:', errorMessage);
+        }
+      );
+      
+      setQrScanner(scanner);
+    }, 100);
+  };
+
+  // Остановка сканера
+  const stopScanner = () => {
+    if (qrScanner) {
+      qrScanner.clear();
+      setQrScanner(null);
+    }
+    setShowScanner(false);
+  };
+
+  // Использование бонуса карточки
+  const useBonus = async (userCardId: number, card: UserCard) => {
+    setActivatingCardId(userCardId);
+    setError('');
+    setSuccess('');
+
     try {
-      const res = await apiClient.post<{ success?: boolean; message?: string; bonus?: Record<string, unknown> }>(
+      const data = await apiClient.post<{ success: boolean; message: string; bonus?: any }>(
         `/cards/${userCardId}/use-bonus`
       );
-      if (res.success) {
-        setBonusResult({ message: res.message || 'Готово', bonus: res.bonus });
-        loadCards();
-        refreshUserData?.();
+
+      if (data.success) {
+        if (data.bonus?.type === 'virtual_currency') {
+          // Для виртуальной валюты - показываем успех и обновляем баланс
+          setSuccess(`${data.message} Получено ${data.bonus.amount} монет!`);
+          await refreshUserData?.();
+          loadCards();
+        } else if (data.bonus?.qr_data) {
+          // Для остальных типов - показываем QR-код
+          setShowBonusQr({
+            cardId: userCardId,
+            qrData: data.bonus.qr_data,
+            message: data.bonus.message || data.message
+          });
+          loadCards();
+        } else {
+          setSuccess(data.message || 'БОНУС УСПЕШНО ИСПОЛЬЗОВАН!');
+          loadCards();
+        }
       } else {
-        setBonusResult({ message: (res as { error?: string }).error || 'Ошибка' });
+        setError(data.message || 'НЕ УДАЛОСЬ ИСПОЛЬЗОВАТЬ БОНУС');
       }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : (err as { response?: { data?: { error?: string } } })?.response?.data?.error || 'Ошибка';
-      setBonusResult({ message });
+    } catch (err: any) {
+      const message = err?.response?.data?.error || err?.message || 'ОШИБКА ИСПОЛЬЗОВАНИЯ БОНУСА';
+      setError(message);
     } finally {
-      setUseBonusLoading(null);
+      setActivatingCardId(null);
     }
   };
 
-  if (!user) {
+  // Загрузка аутентификации
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <p className="text-slate-400">Войдите, чтобы просматривать и активировать карточки маскотов</p>
+      <div className="cards-page">
+        <PageLoader text="ЗАГРУЗКА..." className="cards-loader" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="cards-page">
+        <div className="cards-container">
+          <div className="cards-card">
+            <div className="cards-error">
+              <div className="cards-error-icon">⚠️</div>
+              <h2>ДОСТУП ЗАПРЕЩЁН</h2>
+              <p>ТОЛЬКО ДЛЯ АВТОРИЗОВАННЫХ ПОЛЬЗОВАТЕЛЕЙ</p>
+              <Link href="/signin" className="cards-btn">ВОЙТИ В АККАУНТ</Link>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-2">Карточки маскотов</h1>
-        <p className="text-slate-400 text-sm mb-8">
-          Находите секретные QR-коды или коды на фестивале, вводите их ниже и получайте карточки спонсоров с бонусами.
-        </p>
+    <div className="cards-page">
+      <div className="cards-container">
+        <div className="cards-header">
+          <h1 className="cards-title">МОИ КАРТОЧКИ</h1>
+          <p className="cards-subtitle">АКТИВИРУЙТЕ КАРТОЧКИ И ПОЛУЧАЙТЕ БОНУСЫ</p>
+        </div>
 
-        {/* Ввод секретного кода */}
-        <section className="bg-slate-800/50 rounded-xl p-6 border border-slate-600 mb-8">
-          <h2 className="text-lg font-semibold text-white mb-3">Ввести код</h2>
-          <form onSubmit={handleSubmitCode} className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[200px]">
-              <label className="block text-sm font-medium text-slate-300 mb-1">Секретный код или код с QR</label>
-              <input
-                type="text"
-                value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="Введите код"
-                className="w-full px-4 py-2.5 rounded-lg bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500"
-                disabled={submitLoading}
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={submitLoading}
-              className="px-5 py-2.5 bg-cyan-600 hover:bg-cyan-500 text-white font-medium rounded-lg disabled:opacity-50 transition"
-            >
-              {submitLoading ? 'Проверка...' : 'Получить карточку'}
-            </button>
-          </form>
-          {codeError && <p className="mt-2 text-red-400 text-sm">{codeError}</p>}
-          {codeSuccess && <p className="mt-2 text-green-400 text-sm">{codeSuccess}</p>}
-        </section>
-
-        {/* Результат использования бонуса */}
-        {bonusResult && (
-          <div className="mb-6 p-4 rounded-lg bg-slate-800 border border-slate-600 text-slate-200">
-            <p className="font-medium text-white">{bonusResult.message}</p>
-            {bonusResult.bonus && Object.keys(bonusResult.bonus).length > 0 && (
-              <pre className="mt-2 text-sm text-slate-400 overflow-auto">
-                {JSON.stringify(bonusResult.bonus, null, 2)}
-              </pre>
-            )}
+        {error && (
+          <div className="cards-error-box">
+            <p>{error}</p>
           </div>
         )}
 
-        {/* Мои карточки — только свои */}
-        <section>
-          <h2 className="text-lg font-semibold text-white mb-4">Мои карточки</h2>
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-600 border-t-cyan-500" />
-            </div>
-          ) : cards.length === 0 ? (
-            <p className="text-slate-500">У вас пока нет карточек. Введите секретный код выше.</p>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {cards.map((c) => (
-                <div
-                  key={c.id}
-                  className="bg-slate-800 rounded-xl overflow-hidden border border-slate-600 hover:border-slate-500 transition"
+        {success && (
+          <div className="cards-success-box">
+            <p>{success}</p>
+          </div>
+        )}
+
+        {/* Модальное окно для показа QR-кода бонуса */}
+        {showBonusQr && (
+          <div className="cards-scanner-modal">
+            <div className="cards-scanner-container">
+              <div className="cards-scanner-header">
+                <h3 className="cards-scanner-title">ПРЕДЪЯВИТЕ КОД</h3>
+                <button 
+                  className="cards-scanner-close" 
+                  onClick={() => setShowBonusQr(null)}
                 >
-                  <div className="aspect-[4/3] bg-slate-700 relative">
-                    {c.image ? (
-                      <img
-                        src={c.image}
-                        alt={c.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-slate-500 text-4xl">
-                        🎴
-                      </div>
-                    )}
-                    <span
-                      className={`absolute top-2 right-2 px-2 py-0.5 rounded text-xs font-medium ${
-                        c.rarity === 'secret'
-                          ? 'bg-amber-600/90'
-                          : c.rarity === 'legendary'
-                          ? 'bg-purple-600/90'
-                          : c.rarity === 'epic'
-                          ? 'bg-indigo-600/90'
-                          : c.rarity === 'rare'
-                          ? 'bg-blue-600/90'
-                          : 'bg-slate-600/90'
-                      } text-white`}
-                    >
-                      {RARITY_LABELS[c.rarity] ?? c.rarity}
+                  ✕
+                </button>
+              </div>
+              <div className="cards-bonus-qr">
+                <div className="cards-bonus-message">{showBonusQr.message}</div>
+                <div className="cards-bonus-qr-code">
+                  <QRCodeSVG 
+                    value={showBonusQr.qrData} 
+                    size={200}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                    level="L"
+                    includeMargin={true}
+                  />
+                </div>
+                <p className="cards-scanner-hint">
+                  Покажите этот QR-код на стойке организаторов
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Сканер QR-кода для активации */}
+        {showScanner && (
+          <div className="cards-scanner-modal">
+            <div className="cards-scanner-container">
+              <div className="cards-scanner-header">
+                <h3 className="cards-scanner-title">НАВЕДИТЕ НА QR-КОД</h3>
+                <button className="cards-scanner-close" onClick={stopScanner}>✕</button>
+              </div>
+              <div id="qr-reader" className="cards-qr-reader"></div>
+              <p className="cards-scanner-hint">НАВЕДИТЕ КАМЕРУ НА QR-КОД КАРТОЧКИ</p>
+            </div>
+          </div>
+        )}
+
+        {/* Форма активации карточки */}
+        <div className="cards-activate-section">
+          <h2 className="cards-section-title">АКТИВИРОВАТЬ КАРТОЧКУ</h2>
+          <form onSubmit={handleActivateCard} className="cards-activate-form">
+            <input
+              type="text"
+              value={codeInput}
+              onChange={(e) => setCodeInput(e.target.value)}
+              placeholder="ВВЕДИТЕ КОД С КАРТОЧКИ"
+              className="cards-input"
+            />
+            <div className="cards-buttons-group">
+              <button
+                type="submit"
+                disabled={activating}
+                className="cards-activate-btn"
+              >
+                {activating ? 'АКТИВАЦИЯ...' : 'АКТИВИРОВАТЬ'}
+              </button>
+              <button
+                type="button"
+                onClick={startScanner}
+                className="cards-scan-btn"
+              >
+              Сканировать 
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Список карточек */}
+        {loading ? (
+          <PageLoader text="ЗАГРУЗКА КАРТОЧЕК..." className="cards-loader" />
+        ) : cards.length === 0 ? (
+          <div className="cards-empty">
+            <p>У ВАС ПОКА НЕТ КАРТОЧЕК</p>
+            <p>АКТИВИРУЙТЕ КАРТОЧКУ ПО КОДУ ИЛИ QR</p>
+          </div>
+        ) : (
+          <div className="cards-grid">
+            {cards.map((card) => (
+              <div key={card.id} className="cards-item" data-rarity={card.rarity} data-status={card.status}>
+                <div className="cards-item-image">
+                  {card.image ? (
+                    <img src={card.image} alt={card.name} />
+                  ) : (
+                    <div className="cards-item-placeholder">🎴</div>
+                  )}
+                  <span className={`cards-item-rarity ${card.rarity}`}>
+                    {RARITY_LABELS[card.rarity] ?? card.rarity}
+                  </span>
+                </div>
+                <div className="cards-item-info">
+                  <h3 className="cards-item-name">{card.name}</h3>
+                  {card.description && (
+                    <p className="cards-item-desc">{card.description}</p>
+                  )}
+                  <div className="cards-item-tags">
+                    <span className="cards-item-tag">
+                      {BONUS_LABELS[card.type_bonus] ?? card.type_bonus}
+                    </span>
+                    <span className={`cards-item-status ${card.status}`}>
+                      {STATUS_LABELS[card.status] ?? card.status}
                     </span>
                   </div>
-                  <div className="p-4">
-                    <h3 className="font-semibold text-white truncate">{c.name}</h3>
-                    {c.description && (
-                      <p className="text-slate-400 text-sm mt-0.5 line-clamp-2">{c.description}</p>
-                    )}
-                    <p className="text-slate-500 text-xs mt-1">
-                      {BONUS_LABELS[c.type_bonus] ?? c.type_bonus} · {STATUS_LABELS[c.status] ?? c.status}
-                    </p>
-                    {(c.status === 'acquired' || c.status === 'active') && (
+                  {card.bonus_value && card.type_bonus === 'virtual_currency' && (
+                    <div className="cards-item-bonus-value">
+                      БОНУС: +{card.bonus_value} МОНЕТ
+                    </div>
+                  )}
+                  {card.coupon_code && card.type_bonus === 'coupon' && (
+                    <div className="cards-item-bonus-value">
+                      ПРОМОКОД: {card.coupon_code}
+                    </div>
+                  )}
+                  {card.bonus_value && card.type_bonus === 'discount' && (
+                    <div className="cards-item-bonus-value">
+                      СКИДКА: {card.bonus_value}%
+                    </div>
+                  )}
+                  <div className="cards-item-date">
+                    ПОЛУЧЕНА: {new Date(card.acquired_at).toLocaleDateString('ru-RU')}
+                  </div>
+                  <div className="cards-item-actions">
+                    {card.status === 'acquired' && (
                       <button
-                        type="button"
-                        onClick={() => handleUseBonus(c.id)}
-                        disabled={useBonusLoading !== null}
-                        className="mt-3 w-full py-2 px-3 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition"
+                        onClick={() => useBonus(card.id, card)}
+                        disabled={activatingCardId === card.id}
+                        className="cards-use-btn"
                       >
-                        {useBonusLoading === c.id ? '...' : 'Использовать бонус'}
+                        {activatingCardId === card.id ? 'АКТИВАЦИЯ...' : 'ИСПОЛЬЗОВАТЬ БОНУС'}
                       </button>
+                    )}
+                    {card.status === 'bonus_used' && (
+                      <span className="cards-used-label">БОНУС ИСПОЛЬЗОВАН</span>
                     )}
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </section>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

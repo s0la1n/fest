@@ -1,0 +1,289 @@
+/* ===== СТРАНИЦА ОПЛАТЫ ===== */
+.checkout-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  background: #0a0a0f;
+  position: relative;
+}
+
+.checkout-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/back.png');
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.checkout-container {
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.checkout-card {
+  background: rgba(18, 18, 26, 0.8);
+  border: 2px solid #54FEDD;
+  padding: 32px;
+  image-rendering: pixelated;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 30px rgba(84, 254, 221, 0.15);
+}
+
+.checkout-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.checkout-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: #FFFFFF;
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+.checkout-subtitle {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.checkout-username {
+  color: #54FEDD;
+}
+
+.checkout-info {
+  background: rgba(84, 254, 221, 0.05);
+  border: 1px solid rgba(84, 254, 221, 0.2);
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.checkout-info-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #54FEDD;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.checkout-info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  border-bottom: 1px solid rgba(84, 254, 221, 0.1);
+}
+
+.checkout-info-label {
+  color: #94a3b8;
+}
+
+.checkout-info-value {
+  color: #ffffff;
+}
+
+.checkout-status {
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.status-pending {
+  background: rgba(234, 179, 8, 0.2);
+  color: #eab308;
+}
+
+.status-paid {
+  background: rgba(57, 255, 20, 0.2);
+  color: #39ff14;
+}
+
+.checkout-total {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 8px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  border-top: 1px solid rgba(84, 254, 221, 0.3);
+}
+
+.checkout-total-price {
+  color: #f59e0b;
+}
+
+.checkout-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checkout-pay-btn {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 14px;
+  background: #B72F74;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  width: 100%;
+}
+
+.checkout-pay-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.checkout-pay-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.checkout-divider {
+  position: relative;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.checkout-divider-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 11px;
+  color: #64748b;
+  background: rgba(18, 18, 26, 0.8);
+  padding: 0 12px;
+  display: inline-block;
+}
+
+.checkout-later-btn {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.checkout-later-btn:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.checkout-note {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 10px;
+  color: #64748b;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.checkout-footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #1a1a24;
+}
+
+.checkout-footer-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.checkout-footer-icon {
+  font-size: 14px;
+}
+
+.checkout-footer-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 9px;
+  color: #64748b;
+}
+
+.checkout-footer-divider {
+  width: 1px;
+  background: #1a1a24;
+}
+
+/* Стили для неавторизованного состояния */
+.checkout-icon {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  background: rgba(255, 0, 110, 0.1);
+  border: 2px solid #ff006e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ff006e;
+}
+
+.checkout-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 13px;
+  color: #94a3b8;
+  margin-bottom: 24px;
+}
+
+.checkout-btn {
+  display: inline-block;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  background: #54FEDD;
+  color: #01121C;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -3px 0px 0px #136354, 3px 0px 0px #136354,
+              inset 0px 2px 0px #136354, inset 0px -2px 0px #136354;
+}
+
+.checkout-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+@media (max-width: 500px) {
+  .checkout-card {
+    padding: 24px;
+  }
+  
+  .checkout-title {
+    font-size: 22px;
+  }
+  
+  .checkout-pay-btn {
+    font-size: 14px;
+    padding: 12px;
+  }
+}

@@ -14,8 +14,7 @@ type AuthContextType = {
     logout: () => void;
     hasRole: (role: string) => boolean;
     isAdmin: () => boolean;
-    isCosplayOrganizer: () => boolean;
-    isTournamentOrganizer: () => boolean;
+    isOrganizer: () => boolean;
     updateUser: (userData: Partial<User>) => void;
     refreshUserData: () => Promise<void>;
     testApiConnection: () => Promise<boolean>;
@@ -58,11 +57,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                     setToken(storedToken);
                     setUser(userWithRoles);
                     
-                    // Проверяем токен на валидность
                     try {
                         await apiService.getUser(storedToken);
                     } catch (error) {
-                        // Если токен невалидный - чистим
                         localStorage.removeItem('token');
                         localStorage.removeItem('user');
                         setToken(null);
@@ -95,6 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             localStorage.setItem('token', newToken);
             localStorage.setItem('user', JSON.stringify(userWithRoles));
         }
+        
+        // Перенаправляем на страницу профиля при прямом логине
+        router.push('/profile');
     };
 
     // Метод для логина через API
@@ -108,7 +108,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             
             if (response.token && response.user) {
                 authLogin(response.token, response.user);
-                router.push('/');
+                // Перенаправление уже происходит внутри authLogin
             } else {
                 throw new Error(response.message || 'Ошибка авторизации');
             }
@@ -156,9 +156,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         const roles = (user.roles && Array.isArray(user.roles) ? user.roles : [user.role]) as string[];
         return roles.includes(role);
     };
-    const isAdmin = () => hasRole('admin') || user?.is_admin === true;
-    const isCosplayOrganizer = () => hasRole('cosplay_organizer') || user?.is_cosplay_organizer === true;
-    const isTournamentOrganizer = () => hasRole('tournament_organizer') || user?.is_tournament_organizer === true;
+    
+    const isAdmin = () => hasRole('admin');
+    const isOrganizer = () => hasRole('organizer') || hasRole('admin');
 
     // Обновление данных пользователя
     const updateUser = (userData: Partial<User>) => {
@@ -216,8 +216,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         logout,
         hasRole,
         isAdmin,
-        isCosplayOrganizer,
-        isTournamentOrganizer,
+        isOrganizer,
         updateUser,
         refreshUserData,
         testApiConnection,

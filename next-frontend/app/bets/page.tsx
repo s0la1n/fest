@@ -2,219 +2,424 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { getAuthHeaders } from '@/lib/api';
+import { apiClient } from '@/lib/api';
+import PageLoader from '@/components/ui/PageLoader';
+import './bets.css';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+type Match = {
+  id: number;
+  game_name: string;
+  team1: { id: number; name: string };
+  team2: { id: number; name: string };
+  start_time: string;
+  status: string;
+  stage: string;
+};
 
-const BET_STATUS: Record<string, string> = {
-  pending: 'Ожидает',
-  active: 'Активна',
-  won: 'Выиграна',
-  lost: 'Проиграна',
-  returned: 'Возвращена',
-  cancelled: 'Отменена',
+type Odds = {
+  match_id: number;
+  team1: { id: number; name: string; odds: number };
+  team2: { id: number; name: string; odds: number };
+  draw: { odds: number };
+};
+
+type Bet = {
+  id: number;
+  match: {
+    id: number;
+    game_name: string;
+    team1_name: string;
+    team2_name: string;
+    start_time: string;
+  };
+  bet_on_text: string;
+  coins_amount: number;
+  odds: number;
+  potential_win: number;
+  actual_win: number | null;
+  status_text: string;
+  status_color: string;
+  created_at: string;
+};
+
+type BetStats = {
+  total_bets: number;
+  total_wagered: number;
+  total_won: number;
+  wins_count: number;
+  losses_count: number;
 };
 
 export default function BetsPage() {
   const { user, refreshUserData } = useAuth();
-  const [matches, setMatches] = useState<any[]>([]);
-  const [myBets, setMyBets] = useState<any[]>([]);
+  const [matches, setMatches] = useState<Match[]>([]);
+  const [myBets, setMyBets] = useState<Bet[]>([]);
+  const [stats, setStats] = useState<BetStats | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedMatch, setSelectedMatch] = useState<any>(null);
-  const [betOn, setBetOn] = useState<'team1_win' | 'team2_win'>('team1_win');
-  const [amount, setAmount] = useState('');
-  const [odds, setOdds] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [placingBet, setPlacingBet] = useState<number | null>(null);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [odds, setOdds] = useState<Odds | null>(null);
+  const [betAmount, setBetAmount] = useState(100);
+  const [selectedBetOn, setSelectedBetOn] = useState<'team1_win' | 'team2_win' | 'draw'>('team1_win');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [activeTab, setActiveTab] = useState<'matches' | 'my-bets'>('matches');
 
-  useEffect(() => {
-    if (user) {
-      fetchData();
-    }
-  }, [user]);
-
-  const fetchData = async () => {
+  const loadMatches = async () => {
     try {
-      const headers = getAuthHeaders();
-      const [matchesRes, betsRes] = await Promise.all([
-        fetch(`${API_URL}/bets/matches`, { credentials: 'include', headers }),
-        fetch(`${API_URL}/bets`, { credentials: 'include', headers }),
-      ]);
-      if (matchesRes.ok) setMatches(await matchesRes.json());
-      else setMatches([]);
-      if (betsRes.ok) setMyBets(await betsRes.json());
-      else setMyBets([]);
-    } catch (e) {
-      console.error(e);
-      setMatches([]);
-      setMyBets([]);
+      const data = await apiClient.get<{ matches: Match[] }>('/bets/matches');
+      setMatches(data.matches || []);
+    } catch (err) {
+      console.error('Ошибка загрузки матчей:', err);
+    }
+  };
+
+  const loadMyBets = async () => {
+    try {
+      const data = await apiClient.get<{ bets: Bet[]; stats: BetStats }>('/bets/my-bets');
+      setMyBets(data.bets || []);
+      setStats(data.stats);
+    } catch (err) {
+      console.error('Ошибка загрузки ставок:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const placeBet = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedMatch) return;
-    setSubmitting(true);
-    setError('');
+  const loadOdds = async (matchId: number) => {
     try {
-      const res = await fetch(`${API_URL}/bets`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
-        credentials: 'include',
-        body: JSON.stringify({
-          match_id: selectedMatch.id,
-          bet_on: betOn,
-          coins_amount: parseInt(amount, 10),
-          odds: parseFloat(odds),
-        }),
-      });
-      const json = await res.json();
-      if (res.ok) {
-        setMyBets((b) => [json, ...b]);
-        setSelectedMatch(null);
-        setAmount('');
-        setOdds('');
-        refreshUserData?.();
-      } else {
-        setError(json.message || 'Ошибка');
-      }
-    } catch {
-      setError('Ошибка сети');
-    } finally {
-      setSubmitting(false);
+      const data = await apiClient.get<Odds>(`/bets/odds/${matchId}`);
+      setOdds(data);
+    } catch (err) {
+      console.error('Ошибка загрузки коэффициентов:', err);
     }
+  };
+
+  useEffect(() => {
+    if (user) {
+      loadMatches();
+      loadMyBets();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  const handleSelectMatch = (match: Match) => {
+    setSelectedMatch(match);
+    setError('');
+    setSuccess('');
+    setBetAmount(100);
+    setSelectedBetOn('team1_win');
+    loadOdds(match.id);
+  };
+
+  const handlePlaceBet = async () => {
+    if (!selectedMatch || !odds) return;
+    
+    if (betAmount < 10) {
+      setError('Минимальная ставка - 10 монет');
+      return;
+    }
+    
+    if (betAmount > (user?.balance || 0)) {
+      setError(`Недостаточно средств. Ваш баланс: ${user?.balance || 0} монет`);
+      return;
+    }
+
+    const currentOdds = selectedBetOn === 'team1_win' ? odds.team1.odds :
+                        selectedBetOn === 'team2_win' ? odds.team2.odds :
+                        odds.draw.odds;
+
+    setPlacingBet(selectedMatch.id);
+    setError('');
+    setSuccess('');
+
+    try {
+      const res = await apiClient.post<{ success: boolean; message: string; potential_win: number; new_balance: number }>(
+        '/bets/place',
+        {
+          match_id: selectedMatch.id,
+          bet_on: selectedBetOn,
+          coins_amount: betAmount,
+          odds: currentOdds,
+        }
+      );
+
+      if (res.success) {
+        setSuccess(`${res.message}. Потенциальный выигрыш: ${res.potential_win} монет`);
+        setSelectedMatch(null);
+        setOdds(null);
+        loadMyBets();
+        refreshUserData?.();
+      }
+    } catch (err: any) {
+      const message = err?.response?.data?.error || err?.message || 'Ошибка при оформлении ставки';
+      setError(message);
+    } finally {
+      setPlacingBet(null);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString('ru-RU', {
+      day: '2-digit',
+      month: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <p className="text-slate-400">Войдите для размещения ставок</p>
+      <div className="bets-page">
+        <div className="bets-container">
+          <div className="bets-empty">
+            <p className="bets-empty-text">ВОЙДИТЕ, ЧТОБЫ ДЕЛАТЬ СТАВКИ</p>
+          </div>
+        </div>
       </div>
     );
   }
 
-  const balance = user.balance ?? 0;
-  const maxAmount = Math.min(balance, 10000);
-
   return (
-    <div className="min-h-screen bg-slate-900 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">Ставки</h1>
-        <div className="mb-6 p-4 bg-amber-500/10 rounded-lg border border-amber-500/30">
-          <span className="font-medium text-slate-300">Ваш баланс: </span>
-          <span className="font-bold text-amber-400">{balance} монет</span>
+    <div className="bets-page">
+      <div className="bets-container">
+        <div className="bets-header">
+          <h1 className="bets-title">СТАВКИ НА МАТЧИ</h1>
+          <p className="bets-description">ДЕЛАЙТЕ СТАВКИ И ВЫИГРЫВАЙТЕ МОНЕТЫ</p>
         </div>
 
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto"></div>
-          </div>
-        ) : (
-          <>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h2 className="text-lg font-semibold mb-4">Доступные матчи</h2>
-                <div className="space-y-3">
-                  {matches.length === 0 ? (
-                    <p className="text-gray-500">Нет доступных матчей</p>
-                  ) : (
-                    matches.map((m) => (
-                      <div
-                        key={m.id}
-                        className="bg-slate-800 rounded-lg p-4 border border-slate-600 cursor-pointer hover:border-cyan-500/50 transition"
-                        onClick={() => {
-                          setSelectedMatch(m);
-                          setBetOn('team1_win');
-                          setOdds('1.5');
-                        }}
-                      >
-                        <p className="text-xs text-slate-400">{m.game?.name}</p>
-                        <p className="font-medium text-white">{m.team1?.team_name || m.team1?.display_name || 'TBD'} vs {m.team2?.team_name || m.team2?.display_name || 'TBD'}</p>
-                        <p className="text-sm text-slate-400">{new Date(m.start_time).toLocaleString('ru-RU')}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <h2 className="text-lg font-semibold mb-4">Мои ставки</h2>
-                <div className="space-y-3">
-                  {myBets.length === 0 ? (
-                    <p className="text-gray-500">Пока нет ставок</p>
-                  ) : (
-                    myBets.map((b) => (
-                      <div key={b.id} className="bg-slate-800 rounded-lg p-4 border border-slate-600">
-                        <p className="text-sm text-slate-300">{b.match?.team1?.team_name || b.match?.team1?.display_name} vs {b.match?.team2?.team_name || b.match?.team2?.display_name}</p>
-                        <p className="text-sm">Ставка: {b.coins_amount} монет (x{b.odds})</p>
-                        <span className={`inline-block mt-1 px-2 py-0.5 rounded text-xs font-medium ${
-                          b.status === 'won' ? 'bg-green-100' : b.status === 'lost' ? 'bg-red-100' : 'bg-gray-100'
-                        }`}>
-                          {BET_STATUS[b.status] || b.status}
-                        </span>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+        {/* Статистика */}
+        {stats && (
+          <div className="bets-stats">
+            <div className="bets-stat-card">
+              <p className="bets-stat-label">ВСЕГО СТАВОК</p>
+              <p className="bets-stat-value primary">{stats.total_bets}</p>
             </div>
+            <div className="bets-stat-card">
+              <p className="bets-stat-label">ПОСТАВЛЕНО</p>
+              <p className="bets-stat-value yellow">{stats.total_wagered}</p>
+            </div>
+            <div className="bets-stat-card">
+              <p className="bets-stat-label">ВЫИГРАНО</p>
+              <p className="bets-stat-value green">{stats.total_won}</p>
+            </div>
+            <div className="bets-stat-card">
+              <p className="bets-stat-label">ПОБЕД</p>
+              <p className="bets-stat-value green">{stats.wins_count}</p>
+            </div>
+            <div className="bets-stat-card">
+              <p className="bets-stat-label">ПОРАЖЕНИЙ</p>
+              <p className="bets-stat-value red">{stats.losses_count}</p>
+            </div>
+          </div>
+        )}
 
-            {selectedMatch && (
-              <div className="mt-8 bg-slate-800 rounded-xl p-6 border-2 border-cyan-500/50">
-                <h3 className="text-lg font-bold text-white mb-4">Разместить ставку</h3>
-                <p className="text-slate-400 mb-4">{selectedMatch.team1?.team_name || selectedMatch.team1?.display_name} vs {selectedMatch.team2?.team_name || selectedMatch.team2?.display_name}</p>
-                <form onSubmit={placeBet} className="space-y-4">
-                  {error && <p className="text-red-600 text-sm">{error}</p>}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">На кого ставите?</label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center gap-2">
-                        <input type="radio" checked={betOn === 'team1_win'} onChange={() => setBetOn('team1_win')} />
-                        {selectedMatch.team1?.team_name || selectedMatch.team1?.display_name}
-                      </label>
-                      <label className="flex items-center gap-2">
-                        <input type="radio" checked={betOn === 'team2_win'} onChange={() => setBetOn('team2_win')} />
-                        {selectedMatch.team2?.team_name || selectedMatch.team2?.display_name}
-                      </label>
+        {/* Табы */}
+        <div className="bets-tabs">
+          <button
+            onClick={() => setActiveTab('matches')}
+            className={`bets-tab ${activeTab === 'matches' ? 'active' : ''}`}
+          >
+            ДОСТУПНЫЕ МАТЧИ
+          </button>
+          <button
+            onClick={() => setActiveTab('my-bets')}
+            className={`bets-tab ${activeTab === 'my-bets' ? 'active' : ''}`}
+          >
+            МОИ СТАВКИ
+          </button>
+        </div>
+
+        {/* Доступные матчи */}
+        {activeTab === 'matches' && (
+          <>
+            {loading ? (
+              <PageLoader text="ЗАГРУЗКА МАТЧЕЙ..." className="bets-loader" />
+            ) : matches.length === 0 ? (
+              <div className="bets-empty">
+                <p className="bets-empty-text">НЕТ ДОСТУПНЫХ МАТЧЕЙ</p>
+              </div>
+            ) : (
+              <div className="bets-matches-grid">
+                {matches.map((match) => (
+                  <div
+                    key={match.id}
+                    className="bets-match-card"
+                    onClick={() => handleSelectMatch(match)}
+                  >
+                    <div className="bets-match-header">
+                      <span className="bets-match-game">{match.game_name}</span>
+                      <span className="bets-match-stage">{match.stage}</span>
+                    </div>
+                    <div className="bets-match-teams">
+                      <p className="bets-match-team">{match.team1.name}</p>
+                      <p className="bets-match-vs">VS</p>
+                      <p className="bets-match-team">{match.team2.name}</p>
+                    </div>
+                    <div className="bets-match-footer">
+                      <span className="bets-match-time">{formatDate(match.start_time)}</span>
+                      <span className="bets-match-bet">СДЕЛАТЬ СТАВКУ →</span>
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Сумма (макс. {maxAmount})</label>
-                    <input
-                      type="number"
-                      min={1}
-                      max={maxAmount}
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-lg"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">Коэффициент</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min={1}
-                      max={100}
-                      value={odds}
-                      onChange={(e) => setOdds(e.target.value)}
-                      className="w-full px-3 py-2 border rounded-lg"
-                    />
-                  </div>
-                  <div className="flex gap-4">
-                    <button type="submit" disabled={submitting} className="px-4 py-2 bg-cyan-600 text-white rounded-lg disabled:opacity-50">
-                      {submitting ? '...' : 'Поставить'}
-                    </button>
-                    <button type="button" onClick={() => setSelectedMatch(null)} className="px-4 py-2 border border-slate-600 text-slate-300 rounded-lg">
-                      Отмена
-                    </button>
-                  </div>
-                </form>
+                ))}
               </div>
             )}
           </>
+        )}
+
+        {/* Мои ставки */}
+        {activeTab === 'my-bets' && (
+          <>
+            {loading ? (
+              <PageLoader text="ЗАГРУЗКА СТАВОК..." className="bets-loader" />
+            ) : myBets.length === 0 ? (
+              <div className="bets-empty">
+                <p className="bets-empty-text">У ВАС ПОКА НЕТ СТАВОК</p>
+              </div>
+            ) : (
+              <div className="bets-list">
+                {myBets.map((bet) => (
+                  <div key={bet.id} className="bets-item">
+                    <div className="bets-item-header">
+                      <span className="bets-item-game">{bet.match.game_name}</span>
+                      <span className={`bets-item-status ${bet.status_text === 'Выиграла' ? 'won' : bet.status_text === 'Проиграла' ? 'lost' : 'active'}`}>
+                        {bet.status_text}
+                      </span>
+                    </div>
+                    <p className="bets-item-teams">
+                      {bet.match.team1_name} vs {bet.match.team2_name}
+                    </p>
+                    <div className="bets-item-details">
+                      <p className="bets-item-detail">
+                        СТАВКА НА: <span>{bet.bet_on_text}</span>
+                      </p>
+                      <p className="bets-item-detail">
+                        СУММА: <span>{bet.coins_amount}</span> МОНЕТ × {bet.odds} ={' '}
+                        <span className="bets-stat-value yellow">{bet.potential_win}</span>
+                      </p>
+                      {bet.actual_win && (
+                        <p className="bets-item-win">
+                          ВЫИГРЫШ: +{bet.actual_win} МОНЕТ
+                        </p>
+                      )}
+                    </div>
+                    <p className="bets-item-date">
+                      {formatDate(bet.created_at)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {/* Модальное окно для ставки */}
+        {selectedMatch && odds && (
+          <div className="bets-modal-overlay">
+            <div className="bets-modal">
+              <h2 className="bets-modal-title">СДЕЛАТЬ СТАВКУ</h2>
+              <p className="bets-modal-match">{selectedMatch.team1.name} vs {selectedMatch.team2.name}</p>
+              <p className="bets-modal-game">{selectedMatch.game_name}</p>
+
+              {/* Выбор исхода */}
+              <div className="bets-outcomes">
+                <button
+                  onClick={() => setSelectedBetOn('team1_win')}
+                  className={`bets-outcome-btn ${selectedBetOn === 'team1_win' ? 'active' : ''}`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="bets-outcome-name">{selectedMatch.team1.name}</span>
+                    <span className="bets-outcome-odds">x{odds.team1.odds}</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setSelectedBetOn('draw')}
+                  className={`bets-outcome-btn ${selectedBetOn === 'draw' ? 'active' : ''}`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="bets-outcome-name">НИЧЬЯ</span>
+                    <span className="bets-outcome-odds">x{odds.draw.odds}</span>
+                  </div>
+                </button>
+                <button
+                  onClick={() => setSelectedBetOn('team2_win')}
+                  className={`bets-outcome-btn ${selectedBetOn === 'team2_win' ? 'active' : ''}`}
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="bets-outcome-name">{selectedMatch.team2.name}</span>
+                    <span className="bets-outcome-odds">x{odds.team2.odds}</span>
+                  </div>
+                </button>
+              </div>
+
+              {/* Сумма ставки */}
+              <div className="bets-amount">
+                <label className="bets-amount-label">СУММА СТАВКИ (МОНЕТ)</label>
+                <input
+                  type="number"
+                  value={betAmount}
+                  onChange={(e) => setBetAmount(Number(e.target.value))}
+                  min={10}
+                  max={user?.balance || 0}
+                  className="bets-amount-input"
+                />
+                <div className="bets-amount-presets">
+                  {[100, 500, 1000].map((amount) => (
+                    <button
+                      key={amount}
+                      onClick={() => setBetAmount(amount)}
+                      className="bets-preset"
+                    >
+                      {amount}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Потенциальный выигрыш */}
+              <div className="bets-potential">
+                <div className="bets-potential-row">
+                  <span className="bets-potential-label">ПОТЕНЦИАЛЬНЫЙ ВЫИГРЫШ:</span>
+                  <span className="bets-potential-value">
+                    {Math.floor(betAmount * (
+                      selectedBetOn === 'team1_win' ? odds.team1.odds :
+                      selectedBetOn === 'team2_win' ? odds.team2.odds :
+                      odds.draw.odds
+                    ))} МОНЕТ
+                  </span>
+                </div>
+                <div className="bets-potential-row">
+                  <span className="bets-potential-label">ВАШ БАЛАНС:</span>
+                  <span className="bets-potential-value white">{user?.balance || 0} МОНЕТ</span>
+                </div>
+              </div>
+
+              {error && <div className="bets-error">{error}</div>}
+              {success && <div className="bets-success">{success}</div>}
+
+              <div className="bets-modal-buttons">
+                <button
+                  onClick={() => {
+                    setSelectedMatch(null);
+                    setOdds(null);
+                    setError('');
+                    setSuccess('');
+                  }}
+                  className="bets-modal-cancel"
+                >
+                  ОТМЕНА
+                </button>
+                <button
+                  onClick={handlePlaceBet}
+                  disabled={placingBet !== null}
+                  className="bets-modal-submit"
+                >
+                  {placingBet === selectedMatch.id ? 'ОФОРМЛЕНИЕ...' : 'СДЕЛАТЬ СТАВКУ'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

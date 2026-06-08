@@ -4,11 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BalanceController;
+use App\Http\Controllers\BetController;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\VotingController;
+use App\Http\Controllers\TournamentController;
 
 // Публичные маршруты
 Route::get('/schedule', [ScheduleController::class, 'index']);
@@ -35,19 +37,17 @@ Route::get('/test-cors', function() {
     return response()->json(['message' => 'CORS is working!']);
 });
 
-// Покупка билета: создаёт пользователя и билет (pending), возвращает ссылку на оплату ЮKassa
+// Покупка билета
 Route::post('/buy-ticket', [TicketController::class, 'buyTicket']);
-// Подтверждение оплаты после возврата с ЮKassa (ticket_id в query или body)
 Route::get('/buy-ticket/confirm', [TicketController::class, 'confirmPayment']);
 Route::post('/buy-ticket/confirm', [TicketController::class, 'confirmPayment']);
 
-// Вход в существующий аккаунт
+// Аутентификация
 Route::post('/login', [AuthController::class, 'login']);
-
-// Проверки
 Route::post('/check-email', [AuthController::class, 'checkEmail']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/check-lock-status', [AuthController::class, 'checkLockStatus']);
 
 // Защищенные маршруты
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -58,27 +58,43 @@ Route::middleware(['auth:sanctum'])->group(function () {
     
     // Профиль пользователя
     Route::put('/profile', [AuthController::class, 'updateProfile']);
-    Route::put('/change-password', [AuthController::class, 'changePassword']);
+    Route::post('/change-password', [AuthController::class, 'changePassword']);
+
+    // QR-code
+    Route::get('/ticket/qr', [AuthController::class, 'getTicketQr']);
+    Route::get('/ticket/qr-image/{ticketId}', [AuthController::class, 'getTicketQrImage']);
     
     // Билеты пользователя
     Route::get('/my-tickets', [AuthController::class, 'getUserTickets']);
     Route::get('/check-active-ticket', [AuthController::class, 'checkActiveTicket']);
     
+    // Баланс
     Route::get('/balance', [BalanceController::class, 'index']);
     Route::get('/balance/history', [BalanceController::class, 'history']);
 
+    // Карточки
     Route::get('/cards', [CardController::class, 'index']);
     Route::post('/cards/get-card', [CardController::class, 'getCard']);
     Route::post('/cards/{userCard}/use-bonus', [CardController::class, 'useBonus']);
 
+    // Магазин
     Route::get('/shop', [ShopController::class, 'index']);
     Route::post('/shop/purchase', [ShopController::class, 'purchase']);
     Route::get('/my-orders', [ShopController::class, 'myOrders']);
 
+    // Голосование за косплей
     Route::get('/voting/participants', [VotingController::class, 'participants']);
     Route::post('/voting/vote', [VotingController::class, 'vote']);
 
-    Route::prefix('admin')->middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Ставки
+    Route::get('/bets/matches', [BetController::class, 'getMatches']);
+    Route::get('/bets/odds/{matchId}', [BetController::class, 'getOdds']);
+    Route::post('/bets/place', [BetController::class, 'placeBet']);
+    Route::get('/bets/my-bets', [BetController::class, 'getUserBets']);
+    Route::get('/bets/{id}', [BetController::class, 'getBet']);
+
+    // Админские маршруты
+    Route::prefix('admin')->middleware(['admin'])->group(function () {
         Route::get('/organizer-actions', fn () => response()->json(['actions' => []]));
         Route::get('/users', [AuthController::class, 'getAllUsers']);
         Route::put('/users/{id}/role', [AuthController::class, 'updateUserRole']);
@@ -87,14 +103,39 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/schedule/events', [ScheduleController::class, 'storeEvent']);
         Route::put('/schedule/events/{schedule}', [ScheduleController::class, 'updateEvent']);
         Route::delete('/schedule/events/{schedule}', [ScheduleController::class, 'destroyEvent']);
+        Route::get('/cards', [CardController::class, 'getAllCards']);
+        Route::post('/cards', [CardController::class, 'createCard']);
+        Route::delete('/cards/{card}', [CardController::class, 'deleteCard']);
+        Route::get('/orders', [AdminController::class, 'getAllOrders']);
+        Route::get('/orders/{id}', [AdminController::class, 'getOrder']);
+        Route::put('/orders/{id}/status', [AdminController::class, 'updateOrderStatus']);
+        Route::get('/merch', [ShopController::class, 'getAllMerch']);
+        Route::post('/merch', [ShopController::class, 'createMerch']);
+        Route::put('/merch/{id}', [ShopController::class, 'updateMerch']);
+        Route::delete('/merch/{id}', [ShopController::class, 'deleteMerch']);
     });
 
-    Route::prefix('organizer/tournament')->middleware(['auth:sanctum'])->group(function () {
-        Route::get('/teams', fn () => response()->json(['teams' => \App\Models\Team::with('game:id,name')->orderByDesc('created_at')->get()]));
-    });
-
-    Route::prefix('organizer/cosplay')->middleware(['auth:sanctum'])->group(function () {
-        Route::get('/participants', fn () => response()->json(['participants' => \App\Models\Cosplayer::orderByDesc('created_at')->get()]));
+    // Маршруты для организатора (объединенные)
+    Route::prefix('organizer')->middleware(['organizer'])->group(function () {
+        // Косплей
+        Route::get('/cosplay/participants', [VotingController::class, 'getAllCosplayers']);
+        Route::get('/cosplay/participants/{id}', [VotingController::class, 'getCosplayer']);
+        Route::post('/cosplay/participants', [VotingController::class, 'createCosplayer']);
+        Route::put('/cosplay/participants/{id}', [VotingController::class, 'updateCosplayer']);
+        Route::delete('/cosplay/participants/{id}', [VotingController::class, 'deleteCosplayer']);
+        
+        // Турнир
+        Route::get('/tournament/teams', [TournamentController::class, 'getAllTeams']);
+        Route::get('/tournament/teams/{id}', [TournamentController::class, 'getTeam']);
+        Route::post('/tournament/teams', [TournamentController::class, 'createTeam']);
+        Route::put('/tournament/teams/{id}', [TournamentController::class, 'updateTeam']);
+        Route::delete('/tournament/teams/{id}', [TournamentController::class, 'deleteTeam']);
+        Route::get('/tournament/matches', [TournamentController::class, 'getAllMatches']);
+        Route::get('/tournament/teams-by-game/{gameId}', [TournamentController::class, 'getTeamsByGame']);
+        Route::post('/tournament/full-bracket', [TournamentController::class, 'createFullBracket']);
+        Route::put('/tournament/matches/{id}/winner', [TournamentController::class, 'updateMatchWinner']);
+        Route::put('/tournament/matches/{id}/team', [TournamentController::class, 'updateMatchTeam']);
+        Route::put('/tournament/matches/{id}/meta', [TournamentController::class, 'updateMatchMeta']);
     });
 });
 

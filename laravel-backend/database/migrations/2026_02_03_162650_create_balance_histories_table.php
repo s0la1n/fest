@@ -16,24 +16,14 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->integer('amount');
             $table->enum('type', [
-                'registration_bonus',
-                'profile_completion',
-                'daily_login',
-                'tournament_win',
-                'tournament_participation',
-                'cosplay_vote_received',
-                'cosplay_win',
-                'bet_win',
-                'admin_grant',
-                'merch_purchase',
-                'bet_placement',
-                'admin_deduct',
-                'refund',
-                'penalty',
-                'card_bonus'
+                'registration_bonus',        // Бонус за регистрацию
+                'profile_completion',        // Заполнение профиля
+                'bet_win',                   // Выигрыш по ставке
+                'merch_purchase',            // Покупка мерча
+                'bet_placement',             // Размещение ставки
+                'card_bonus'                 // Бонус от карточки
             ]);
             $table->foreignId('related_order_id')->nullable()->constrained('orders')->onDelete('set null');
-            $table->foreignId('related_cosplayer_id')->nullable()->constrained('cosplayers')->onDelete('set null');
             $table->foreignId('related_bet_id')->nullable()->constrained('bets')->onDelete('set null');
             $table->unsignedBigInteger('related_user_card_id')->nullable();
             $table->timestamps();

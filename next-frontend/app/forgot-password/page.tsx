@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
+import PageLoader from '@/components/ui/PageLoader';
+import './forgot-password.css';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -30,60 +32,70 @@ export default function ForgotPasswordPage() {
     }
   };
 
+  if (loading) {
+    return <PageLoader text="ОТПРАВКА..." />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#0a0a0f] py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-      <div className="max-w-md w-full bg-[#12121a] rounded-xl border border-[#00f5ff]/30 p-8" style={{ boxShadow: '0 0 30px rgba(0,245,255,0.15)' }}>
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Восстановление пароля</h1>
-          <p className="mt-2 text-slate-400">Введите email вашего аккаунта — мы отправим ссылку для сброса пароля</p>
-        </div>
-
-        {success ? (
-          <div className="space-y-4">
-            <div className="p-4 bg-[#39ff14]/10 border border-[#39ff14]/30 rounded-md text-[#39ff14] text-sm">
-              На вашу почту отправлена ссылка для сброса пароля. Проверьте почту (и папку «Спам»).
-            </div>
-            {resetLink && (
-              <p className="text-slate-400 text-sm">
-                Для разработки: <a href={resetLink} className="text-[#00f5ff] hover:underline break-all">перейти к сбросу пароля</a>
-              </p>
-            )}
-            <Link href="/signin" className="block w-full text-center py-3 text-[#00f5ff] hover:text-[#00c4cc] font-medium">
-              Вернуться ко входу
-            </Link>
+    <div className="forgot-password-page">
+      <div className="forgot-password-container">
+        <div className="forgot-password-card">
+          <div className="forgot-password-header">
+            <h1 className="forgot-password-title">ВОССТАНОВЛЕНИЕ ПАРОЛЯ</h1>
+            <p className="forgot-password-subtitle">
+              ВВЕДИТЕ EMAIL ВАШЕГО АККАУНТА — МЫ ОТПРАВИМ ССЫЛКУ ДЛЯ СБРОСА ПАРОЛЯ
+            </p>
           </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">Email *</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                required
-                placeholder="your@email.com"
-                className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-md text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-              />
-            </div>
-            {error && (
-              <div className="p-4 bg-[#ff006e]/10 border border-[#ff006e]/30 rounded-md text-sm text-[#ff006e]">
-                {error}
-              </div>
-            )}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full flex justify-center py-3 px-4 border-2 border-[#00f5ff] text-[#00f5ff] bg-transparent rounded-md text-sm font-medium hover:bg-[#00f5ff]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00f5ff] disabled:opacity-50 disabled:cursor-not-allowed transition"
-            >
-              {loading ? 'Отправка...' : 'Отправить ссылку'}
-            </button>
-          </form>
-        )}
 
-        <div className="mt-6 text-center">
-          <Link href="/signin" className="text-sm font-medium text-[#00f5ff] hover:text-[#00c4cc]">
-            ← Вернуться ко входу
-          </Link>
+          {success ? (
+            <div className="forgot-password-success">
+              <div className="forgot-password-success-icon">✓</div>
+              <p className="forgot-password-success-text">
+                НА ВАШУ ПОЧТУ ОТПРАВЛЕНА ССЫЛКА ДЛЯ СБРОСА ПАРОЛЯ.<br />
+                ПРОВЕРЬТЕ ПОЧТУ (И ПАПКУ «СПАМ»).
+              </p>
+              {resetLink && (
+                <div className="forgot-password-dev-link">
+                  <p className="forgot-password-dev-text">ДЛЯ РАЗРАБОТКИ:</p>
+                  <a href={resetLink} className="forgot-password-link">
+                    ПЕРЕЙТИ К СБРОСУ ПАРОЛЯ
+                  </a>
+                </div>
+              )}
+              <Link href="/signin" className="forgot-password-back-btn">
+                ВЕРНУТЬСЯ КО ВХОДУ
+              </Link>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="forgot-password-form">
+              <div className="forgot-password-field">
+                <label className="forgot-password-label">EMAIL *</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                  required
+                  placeholder="YOUR@EMAIL.COM"
+                  className="forgot-password-input"
+                />
+              </div>
+
+              {error && (
+                <div className="forgot-password-error">
+                  <span className="forgot-password-error-icon">⚠️</span>
+                  <p className="forgot-password-error-text">{error}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="forgot-password-submit-btn"
+              >
+                {loading ? 'ОТПРАВКА...' : 'ОТПРАВИТЬ ССЫЛКУ'}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </div>

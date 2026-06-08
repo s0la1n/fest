@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
+import './buy-ticket.css';
 
 type FormData = {
   name: string;
   email: string;
   phone: string;
   ticket_type: string;
+  agreement: boolean;
 };
 
 export default function BuyTicket() {
@@ -19,7 +21,8 @@ export default function BuyTicket() {
     name: '',
     email: '',
     phone: '',
-    ticket_type: 'standard'
+    ticket_type: 'standard',
+    agreement: false  // По умолчанию false
   });
   
   const [errors, setErrors] = useState<Record<string, string[]>>({});
@@ -27,12 +30,15 @@ export default function BuyTicket() {
   const [success, setSuccess] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFormData((prev) => ({ 
+      ...prev, 
+      [name]: type === 'checkbox' ? checked : value 
+    }));
     if (errors[name]) setErrors((prev) => { const next = { ...prev }; delete next[name]; return next; });
   };
 
-  // Валидация email
   const isValidEmail = (email: string): boolean => {
     const trimmed = email.trim();
     if (!trimmed) return false;
@@ -40,7 +46,6 @@ export default function BuyTicket() {
     return emailRegex.test(trimmed) && trimmed.length <= 254;
   };
 
-  // Валидация номера телефона
   const isValidPhone = (phone: string): boolean => {
     const digits = phone.replace(/\D/g, '');
     if (digits.length === 11) return /^[78]\d{10}$/.test(digits);
@@ -53,7 +58,6 @@ export default function BuyTicket() {
     setErrors({});
     setSuccess(false);
 
-    // Валидация на клиенте
     const validationErrors: Record<string, string[]> = {};
     const trimmedName = formData.name.trim();
 
@@ -75,6 +79,11 @@ export default function BuyTicket() {
       validationErrors.phone = ['Укажите номер телефона'];
     } else if (!isValidPhone(formData.phone)) {
       validationErrors.phone = ['Введите корректный номер: +7 (XXX) XXX-XX-XX или 8 XXX XXX-XX-XX'];
+    }
+
+    // Валидация согласия
+    if (!formData.agreement) {
+      validationErrors.agreement = ['Необходимо принять условия пользовательского соглашения'];
     }
 
     if (Object.keys(validationErrors).length > 0) {
@@ -116,34 +125,34 @@ export default function BuyTicket() {
   };
 
   const ticketTypes = [
-    { value: 'standard', label: 'Стандартный', price: '1000 ₽' },
+    { value: 'standard', label: 'СТАНДАРТНЫЙ', price: '1000 ₽' },
     { value: 'vip', label: 'VIP', price: '2500 ₽' },
-    { value: 'premium', label: 'Премиум', price: '5000 ₽' },
+    { value: 'premium', label: 'ПРЕМИУМ', price: '5000 ₽' },
   ];
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
-        <div className="bg-[#12121a] backdrop-blur-lg rounded-2xl p-8 max-w-md w-full border border-[#00f5ff]/30" style={{ boxShadow: '0 0 40px rgba(0,245,255,0.15)' }}>
-          <div className="text-center">
-            <div className="mb-4">
-              <svg className="mx-auto h-16 w-16 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
+      <div className="ticket-page">
+        <div className="ticket-container">
+          <div className="ticket-card">
+            <div className="text-center">
+              <div className="success-icon">
+                <svg viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="success-title">БИЛЕТ КУПЛЕН!</h2>
+              <p className="success-message">
+                Данные для входа (логин и пароль) отправлены на вашу почту{' '}
+                <strong style={{ color: '#54FEDD' }}>{formData.email}</strong>
+              </p>
+              <p className="credentials-note">
+                ПРОВЕРЬТЕ ПОЧТУ И ВОЙДИТЕ В СИСТЕМУ
+              </p>
+              <Link href="/signin" className="ticket-btn" style={{ display: 'inline-block', width: 'auto', padding: '12px 32px' }}>
+                ВОЙТИ
+              </Link>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Билет успешно куплен!</h2>
-            <p className="text-slate-300 mb-4">
-              Данные для входа (логин и пароль) отправлены на вашу почту <strong className="text-[#00f5ff]">{formData.email}</strong>
-            </p>
-            <p className="text-slate-400 text-sm mb-6">
-              Проверьте почту и войдите в систему используя полученные данные.
-            </p>
-            <Link
-              href="/signin"
-              className="inline-block bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] px-6 py-3 rounded-lg font-medium transition" style={{ boxShadow: '0 0 15px rgba(0,245,255,0.4)' }}
-            >
-              Перейти к входу
-            </Link>
           </div>
         </div>
       </div>
@@ -151,122 +160,128 @@ export default function BuyTicket() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
-      <div className="bg-[#12121a] backdrop-blur-lg rounded-2xl p-8 max-w-md w-full border border-[#00f5ff]/30" style={{ boxShadow: '0 0 40px rgba(0,245,255,0.15)' }}>
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">Купить билет</h1>
-          <p className="text-slate-400">Заполните форму для покупки билета на фестиваль</p>
-        </div>
+    <div className="ticket-page">
+      <div className="ticket-container">
+        <div className="ticket-card">
+          <div className="ticket-header">
+            <h1 className="ticket-title">КУПИТЬ БИЛЕТ</h1>
+            <p className="ticket-subtitle">ЗАПОЛНИТЕ ФОРМУ ДЛЯ ПОКУПКИ</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {errors.general && (
-            <div className="bg-[#ff006e]/10 border border-[#ff006e]/50 text-[#ff006e] px-4 py-3 rounded-lg text-sm">
-              {Array.isArray(errors.general) ? errors.general.join(', ') : errors.general}
+          <form onSubmit={handleSubmit} className="ticket-form">
+            {errors.general && (
+              <div className="error-alert">
+                <p className="error-text">{Array.isArray(errors.general) ? errors.general.join(', ') : errors.general}</p>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label className="form-label">
+                ИМЯ <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="ВАШЕ ИМЯ"
+                required
+                minLength={2}
+                maxLength={255}
+                autoComplete="name"
+              />
+              {errors.name && <p className="form-error">{errors.name[0]}</p>}
             </div>
-          )}
 
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">
-              Имя <span className="text-[#ff006e]">*</span>
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-              placeholder="Ваше имя (только буквы)"
-              required
-              minLength={2}
-              maxLength={255}
-              autoComplete="name"
-            />
-            {errors.name && (
-              <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.name) ? errors.name[0] : errors.name}</p>
-            )}
+            <div className="form-group">
+              <label className="form-label">
+                EMAIL <span className="required">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="EXAMPLE@MAIL.RU"
+                required
+                maxLength={255}
+                autoComplete="email"
+              />
+              {errors.email && <p className="form-error">{errors.email[0]}</p>}
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                ТЕЛЕФОН <span className="required">*</span>
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                className="form-input"
+                placeholder="+7 (999) 123-45-67"
+                required
+                maxLength={20}
+                autoComplete="tel"
+              />
+              {errors.phone && <p className="form-error">{errors.phone[0]}</p>}
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">
+                ТИП БИЛЕТА <span className="required">*</span>
+              </label>
+              <select
+                name="ticket_type"
+                value={formData.ticket_type}
+                onChange={handleChange}
+                className="form-select"
+              >
+                {ticketTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label} — {type.price}
+                  </option>
+                ))}
+              </select>
+              {errors.ticket_type && <p className="form-error">{errors.ticket_type[0]}</p>}
+            </div>
+
+            <div className="form-group agreement-group">
+              <label className="checkbox-label">
+                <input
+                  type="checkbox"
+                  name="agreement"
+                  checked={formData.agreement}
+                  onChange={handleChange}
+                  className="checkbox-input"
+                />
+                <span className="checkbox-text">
+                  Я принимаю условия{' '}
+                  <Link href="/agreement" className="agreement-link">
+                    пользовательского соглашения
+                  </Link>
+                  {' '}и даю согласие на обработку персональных данных
+                </span>
+              </label>
+              {errors.agreement && <p className="form-error">{errors.agreement[0]}</p>}
+            </div>
+
+            <button type="submit" disabled={loading} className="ticket-btn">
+              {loading ? 'ОБРАБОТКА...' : 'КУПИТЬ БИЛЕТ'}
+            </button>
+          </form>
+
+          <div className="ticket-footer">
+            <p className="ticket-footer-text">
+              УЖЕ ЕСТЬ АККАУНТ?{' '}
+              <Link href="/signin" className="ticket-link">
+                ВОЙТИ
+              </Link>
+            </p>
           </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-2">
-              Email <span className="text-[#ff006e]">*</span>
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-              placeholder="example@mail.ru"
-              required
-              maxLength={255}
-              autoComplete="email"
-            />
-            {errors.email && (
-              <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.email) ? errors.email[0] : errors.email}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-slate-300 mb-2">
-              Номер телефона <span className="text-[#ff006e]">*</span>
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-              placeholder="+7 (999) 123-45-67"
-              required
-              maxLength={20}
-              autoComplete="tel"
-            />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.phone) ? errors.phone[0] : errors.phone}</p>
-            )}
-          </div>
-
-          <div>
-            <label htmlFor="ticket_type" className="block text-sm font-medium text-slate-300 mb-2">
-              Тип билета <span className="text-[#ff006e]">*</span>
-            </label>
-            <select
-              id="ticket_type"
-              name="ticket_type"
-              value={formData.ticket_type}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition"
-            >
-              {ticketTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label} - {type.price}
-                </option>
-              ))}
-            </select>
-            {errors.ticket_type && (
-              <p className="mt-1 text-sm text-[#ff006e]">{Array.isArray(errors.ticket_type) ? errors.ticket_type[0] : errors.ticket_type}</p>
-            )}
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#00f5ff] hover:bg-[#00c4cc] disabled:bg-[#12121a] disabled:cursor-not-allowed text-[#0a0a0f] font-medium py-3 px-4 rounded-lg transition" style={{ boxShadow: '0 0 20px rgba(0,245,255,0.3)' }}
-          >
-            {loading ? 'Обработка...' : 'Купить билет'}
-          </button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-slate-400 text-sm">
-            Уже есть аккаунт?{' '}
-            <Link href="/signin" className="text-[#00f5ff] hover:text-[#00c4cc] font-medium">
-              Войти
-            </Link>
-          </p>
         </div>
       </div>
     </div>

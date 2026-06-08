@@ -13,7 +13,6 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
-        'nickname',
         'last_name',
         'login',
         'email',
@@ -69,5 +68,15 @@ class User extends Authenticatable
     public function userCards()
     {
         return $this->hasMany(UserCard::class);
+    }
+
+    public function isOrganizer(): bool
+    {
+        return $this->role === 'organizer';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
     }
 }

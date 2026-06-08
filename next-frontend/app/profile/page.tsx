@@ -4,19 +4,30 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
+import { QRCodeSVG } from 'qrcode.react';
+import PageLoader from '@/components/ui/PageLoader';
+import './profile.css';
 
-const TICKET_LABELS: Record<string, string> = { standard: 'Стандарт', vip: 'VIP', premium: 'Премиум', cosplay: 'Косплей', tournament: 'Турнир' };
+const TICKET_LABELS: Record<string, string> = { standard: 'СТАНДАРТ', vip: 'VIP', premium: 'ПРЕМИУМ', cosplay: 'КОСПЛЕЙ', tournament: 'ТУРНИР' };
 const TICKET_COLORS: Record<string, string> = {
-  standard: 'bg-[#00f5ff]/20 text-[#00f5ff]', vip: 'bg-[#ff00ff]/20 text-[#ff00ff]', premium: 'bg-[#39ff14]/20 text-[#39ff14]',
-  cosplay: 'bg-[#ff006e]/20 text-[#ff006e]', tournament: 'bg-[#00f5ff]/20 text-[#00f5ff]',
+  standard: 'standard', vip: 'vip', premium: 'premium',
+  cosplay: 'cosplay', tournament: 'standard',
+};
+
+type Ticket = {
+  id: number;
+  ticket_number: string;
+  type: string;
+  price: number;
+  payment_status: string;
+  qr_code?: string;
 };
 
 export default function ProfilePage() {
   const { user, refreshUserData } = useAuth();
-  const [tickets, setTickets] = useState<any[]>([]);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [nickname, setNickname] = useState('');
   const [lastName, setLastName] = useState('');
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileBonusMessage, setProfileBonusMessage] = useState<string | null>(null);
@@ -27,9 +38,14 @@ export default function ProfilePage() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
+  // Состояния для модального окна QR-кода
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [qrData, setQrData] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrError, setQrError] = useState<string | null>(null);
+
   useEffect(() => {
     if (user) {
-      setNickname(user.nickname || '');
       setLastName(user.last_name || '');
       fetchUserData();
     }
@@ -38,7 +54,7 @@ export default function ProfilePage() {
   const fetchUserData = async () => {
     try {
       const [ticketsRes, ordersRes] = await Promise.all([
-        apiClient.get<{ tickets?: any[] }>('/my-tickets'),
+        apiClient.get<{ tickets?: Ticket[] }>('/my-tickets'),
         apiClient.get<{ orders?: any[] }>('/my-orders').catch(() => ({ orders: [] })),
       ]);
       setTickets(ticketsRes?.tickets ?? []);
@@ -56,11 +72,11 @@ export default function ProfilePage() {
     try {
       const res = await apiClient.put<{ user?: any; profile_bonus_granted?: boolean; profile_bonus_amount?: number }>(
         '/profile',
-        { nickname: nickname.trim() || null, last_name: lastName.trim() || null }
+        { last_name: lastName.trim() || null }
       );
       refreshUserData?.();
       if (res?.profile_bonus_granted && res?.profile_bonus_amount) {
-        setProfileBonusMessage(`Вам начислено ${res.profile_bonus_amount} монет за заполнение профиля.`);
+        setProfileBonusMessage(`+${res.profile_bonus_amount} МОНЕТ ЗА ЗАПОЛНЕНИЕ ПРОФИЛЯ`);
       }
     } catch (e) {
       console.error(e);
@@ -70,226 +86,242 @@ export default function ProfilePage() {
   };
 
   const getTicketTypeName = (type: string) => TICKET_LABELS[type] ?? type;
-  const getTicketColor = (type: string) => TICKET_COLORS[type] ?? 'bg-[#12121a] text-slate-300';
+  const getTicketColor = (type: string) => TICKET_COLORS[type] ?? 'standard';
 
   const changePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordMessage(null);
     if (newPassword.length < 6) {
-      setPasswordMessage({ type: 'error', text: 'Новый пароль должен быть не менее 6 символов' });
+      setPasswordMessage({ type: 'error', text: 'НОВЫЙ ПАРОЛЬ ДОЛЖЕН БЫТЬ НЕ МЕНЕЕ 6 СИМВОЛОВ' });
       return;
     }
     if (newPassword !== newPasswordConfirm) {
-      setPasswordMessage({ type: 'error', text: 'Пароли не совпадают' });
+      setPasswordMessage({ type: 'error', text: 'ПАРОЛИ НЕ СОВПАДАЮТ' });
       return;
     }
     setChangingPassword(true);
     try {
-      await apiClient.put('/change-password', {
+      // ⚠️ Меняем put на post
+      await apiClient.post('/change-password', {
         current_password: currentPassword,
         password: newPassword,
         password_confirmation: newPasswordConfirm,
       });
-      setPasswordMessage({ type: 'success', text: 'Пароль успешно изменён' });
+      setPasswordMessage({ type: 'success', text: 'ПАРОЛЬ УСПЕШНО ИЗМЕНЁН' });
       setCurrentPassword('');
       setNewPassword('');
       setNewPasswordConfirm('');
     } catch (err: unknown) {
       const data = (err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } })?.response?.data;
-      const msg = data?.errors?.current_password?.[0] ?? data?.message ?? 'Не удалось изменить пароль';
+      const msg = data?.errors?.current_password?.[0] ?? data?.message ?? 'НЕ УДАЛОСЬ ИЗМЕНИТЬ ПАРОЛЬ';
       setPasswordMessage({ type: 'error', text: msg });
     } finally {
       setChangingPassword(false);
     }
   };
 
+  const showQrCode = async (ticket: Ticket) => {
+    setSelectedTicket(ticket);
+    setQrData(null);
+    setQrError(null);
+    setQrLoading(true);
+    
+    try {
+      const response = await apiClient.get<{ qr_data: string }>('/ticket/qr');
+      setQrData(response.qr_data);
+    } catch (err: any) {
+      console.error('Ошибка получения QR-кода:', err);
+      setQrError(err?.response?.data?.error || 'НЕ УДАЛОСЬ ЗАГРУЗИТЬ QR-КОД');
+    } finally {
+      setQrLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedTicket(null);
+    setQrData(null);
+    setQrError(null);
+  };
+
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0f]">
-        <div className="text-center">
-          <p className="text-slate-400">Войдите в систему</p>
-          <Link href="/signin" className="mt-4 inline-block text-[#00f5ff] hover:underline">Войти</Link>
+      <div className="profile-page">
+        <div className="profile-container">
+          <div className="profile-empty">
+            <p className="profile-empty-text">ВОЙДИТЕ В СИСТЕМУ</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] py-8 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6">Мой профиль</h1>
+    <div className="profile-page">
+      <div className="profile-container">
+        <div className="profile-header">
+          <h1 className="profile-title">МОЙ ПРОФИЛЬ</h1>
+          <p className="profile-description">ЛИЧНЫЕ ДАННЫЕ И БИЛЕТЫ</p>
+        </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-[#12121a] rounded-xl p-6 border border-[#1a1a24]">
-              <h2 className="text-lg font-semibold text-white mb-4">Личные данные</h2>
+        <div className="profile-grid">
+          <div className="profile-left">
+            <div className="profile-card">
+              <h2 className="profile-card-title">ЛИЧНЫЕ ДАННЫЕ</h2>
               {profileBonusMessage && (
-                <p className="mb-4 text-sm text-[#39ff14] bg-[#39ff14]/10 px-3 py-2 rounded-lg">{profileBonusMessage}</p>
+                <div className="profile-message success">{profileBonusMessage}</div>
               )}
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-slate-400">Логин</label>
-                  <p className="text-white">{user.login}</p>
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400">Имя</label>
-                  <p className="text-white">{user.name || '—'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400">Фамилия (необязательно, за заполнение — бонус монетами)</label>
-                  <input
-                    value={lastName}
-                    onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Фамилия"
-                    className="w-full mt-1 px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white focus:border-[#00f5ff]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400">Никнейм (необязательно, для турнира/косплея; за заполнение — бонус)</label>
-                  <input
-                    value={nickname}
-                    onChange={(e) => setNickname(e.target.value)}
-                    placeholder="Никнейм"
-                    className="w-full mt-1 px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white focus:border-[#00f5ff]"
-                  />
-                </div>
-                <button
-                  onClick={saveProfile}
-                  disabled={savingProfile}
-                  className="px-4 py-2 bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] rounded-lg text-sm disabled:opacity-50"
-                >
-                  {savingProfile ? 'Сохранение...' : 'Сохранить изменения'}
-                </button>
-                <div>
-                  <label className="block text-sm text-slate-400">Баланс</label>
-                  <p className="text-[#00f5ff] font-semibold">{(user as any).balance ?? 0} монет</p>
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400">Email</label>
-                  <p className="text-white">{user.email}</p>
-                </div>
-                <div>
-                  <label className="block text-sm text-slate-400">Телефон</label>
-                  <p className="text-white">{user.phone || '—'}</p>
-                </div>
+              <div className="profile-form-group">
+                <label className="profile-label">ЛОГИН</label>
+                <p className="profile-value">{user.login}</p>
+              </div>
+              <div className="profile-form-group">
+                <label className="profile-label">ИМЯ</label>
+                <p className="profile-value">{user.name || '—'}</p>
+              </div>
+              <div className="profile-form-group">
+                <label className="profile-label">ФАМИЛИЯ</label>
+                <input
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="ФАМИЛИЯ"
+                  className="profile-input"
+                />
+              </div>
+              {/* Блок с никнеймом полностью удалён */}
+              <button
+                onClick={saveProfile}
+                disabled={savingProfile}
+                className="btn-pink"
+              >
+                <span>{savingProfile ? 'СОХРАНЕНИЕ...' : 'СОХРАНИТЬ'}</span>
+              </button>
+              <div className="profile-form-group" style={{ marginTop: '20px' }}>
+                <label className="profile-label">БАЛАНС</label>
+                <p className="profile-balance">{(user as any).balance ?? 0} МОНЕТ</p>
+              </div>
+              <div className="profile-form-group">
+                <label className="profile-label">EMAIL</label>
+                <p className="profile-value">{user.email}</p>
+              </div>
+              <div className="profile-form-group">
+                <label className="profile-label">ТЕЛЕФОН</label>
+                <p className="profile-value">{user.phone || '—'}</p>
               </div>
             </div>
 
-            <div className="bg-[#12121a] rounded-xl p-6 border border-[#1a1a24]">
-              <h2 className="text-lg font-semibold text-white mb-4">Смена пароля</h2>
+            <div className="profile-card">
+              <h2 className="profile-card-title">СМЕНА ПАРОЛЯ</h2>
               {passwordMessage && (
-                <p className={`mb-4 text-sm px-3 py-2 rounded-lg ${
-                  passwordMessage.type === 'success' ? 'text-[#39ff14] bg-[#39ff14]/10' : 'text-[#ff006e] bg-[#ff006e]/10'
-                }`}>
+                <div className={`profile-message ${passwordMessage.type}`}>
                   {passwordMessage.text}
-                </p>
+                </div>
               )}
-              <form onSubmit={changePassword} className="space-y-4">
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1">Текущий пароль *</label>
+              <form onSubmit={changePassword}>
+                <div className="profile-form-group">
+                  <label className="profile-label">ТЕКУЩИЙ ПАРОЛЬ *</label>
                   <input
                     type="password"
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     required
-                    placeholder="Введите текущий пароль"
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:border-[#00f5ff] focus:outline-none"
+                    placeholder="ВВЕДИТЕ ТЕКУЩИЙ ПАРОЛЬ"
+                    className="profile-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1">Новый пароль *</label>
+                <div className="profile-form-group">
+                  <label className="profile-label">НОВЫЙ ПАРОЛЬ *</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
                     required
                     minLength={6}
-                    placeholder="Не менее 6 символов"
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:border-[#00f5ff] focus:outline-none"
+                    placeholder="НЕ МЕНЕЕ 6 СИМВОЛОВ"
+                    className="profile-input"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm text-slate-400 mb-1">Повторите новый пароль *</label>
+                <div className="profile-form-group">
+                  <label className="profile-label">ПОВТОРИТЕ НОВЫЙ ПАРОЛЬ *</label>
                   <input
                     type="password"
                     value={newPasswordConfirm}
                     onChange={(e) => setNewPasswordConfirm(e.target.value)}
                     required
                     minLength={6}
-                    placeholder="Повторите новый пароль"
-                    className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-lg text-white placeholder-slate-500 focus:border-[#00f5ff] focus:outline-none"
+                    placeholder="ПОВТОРИТЕ НОВЫЙ ПАРОЛЬ"
+                    className="profile-input"
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={changingPassword}
-                  className="px-4 py-2 bg-[#00f5ff] text-[#0a0a0f] hover:bg-[#00c4cc] rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition"
+                  className="btn-pink"
                 >
-                  {changingPassword ? 'Сохранение...' : 'Изменить пароль'}
+                  <span>{changingPassword ? 'СОХРАНЕНИЕ...' : 'ИЗМЕНИТЬ ПАРОЛЬ'}</span>
                 </button>
               </form>
             </div>
-
           </div>
 
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-[#12121a] rounded-xl p-6 border border-[#1a1a24]">
-              <h2 className="text-lg font-semibold text-white mb-6">Мои заказы</h2>
+          <div className="profile-right">
+            <div className="profile-orders-section">
+              <h2 className="profile-section-title">МОИ ЗАКАЗЫ</h2>
               {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#00f5ff] border-t-transparent mx-auto"></div>
-                </div>
+                <PageLoader className="profile-loader" text="" />
               ) : orders.length === 0 ? (
-                <p className="text-slate-400">Заказов пока нет</p>
+                <div className="profile-empty">
+                  <p className="profile-empty-text">ЗАКАЗОВ ПОКА НЕТ</p>
+                </div>
               ) : (
-                <ul className="space-y-3">
+                <div>
                   {orders.map((order: any) => (
-                    <li key={order.id} className="flex items-center justify-between py-3 border-b border-[#1a1a24] last:border-0">
-                      <div>
-                        <p className="text-white font-medium">{order.merch?.name ?? 'Товар'}</p>
-                        <p className="text-slate-400 text-sm">#{order.order_number} · {order.quantity} шт. · {order.shipping_address}</p>
+                    <div key={order.id} className="profile-order-item">
+                      <div className="profile-order-info">
+                        <p className="profile-order-name">{order.merch?.name ?? 'ТОВАР'}</p>
+                        <p className="profile-order-details">
+                          #{order.order_number} · {order.quantity} ШТ.
+                        </p>
                       </div>
-                      <span className={`text-sm px-2 py-1 rounded ${order.status === 'processing' ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-700 text-slate-300'}`}>
-                        {order.status === 'processing' ? 'В обработке' : order.status}
+                      <span className={`profile-order-status ${order.status === 'processing' ? 'processing' : 'completed'}`}>
+                        {order.status === 'processing' ? 'В ОБРАБОТКЕ' : order.status}
                       </span>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               )}
             </div>
-            <div className="bg-[#12121a] rounded-xl p-6 border border-[#1a1a24]">
-              <h2 className="text-lg font-semibold text-white mb-6">Мои билеты</h2>
 
+            <div className="profile-tickets-section">
+              <h2 className="profile-section-title">МОИ БИЛЕТЫ</h2>
               {loading ? (
-                <div className="text-center py-12">
-                  <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#00f5ff] border-t-transparent mx-auto"></div>
-                </div>
+                <PageLoader className="profile-loader" text="" />
               ) : tickets.length === 0 ? (
-                <div className="text-center py-12 text-slate-400">Нет билетов</div>
+                <div className="profile-empty">
+                  <p className="profile-empty-text">НЕТ БИЛЕТОВ</p>
+                </div>
               ) : (
-                <div className="space-y-4">
+                <div>
                   {tickets.map((ticket) => (
-                    <div
-                      key={ticket.id}
-                      className={`rounded-xl p-5 border ${
-                        ticket.payment_status === 'paid' ? 'bg-green-900/20 border-green-700/50' : 'bg-amber-900/20 border-amber-700/50'
-                      }`}
-                    >
-                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                          <div className="flex gap-2 mb-2">
-                            <span className={`px-3 py-1 rounded-full text-sm ${getTicketColor(ticket.type)}`}>
-                              {getTicketTypeName(ticket.type)}
-                            </span>
-                            <span className={`px-3 py-1 rounded-full text-sm ${
-                              ticket.payment_status === 'paid' ? 'bg-[#39ff14]/20 text-[#39ff14]' : 'bg-[#ff00ff]/20 text-[#ff00ff]'
-                            }`}>
-                              {ticket.payment_status === 'paid' ? 'Оплачен' : 'Ожидает оплаты'}
-                            </span>
-                          </div>
-                          <p className="text-white font-medium">#{ticket.ticket_number}</p>
-                          <p className="text-slate-400 text-sm">{ticket.price}₽</p>
-                        </div>
+                    <div key={ticket.id} className={`profile-ticket-item ${ticket.payment_status === 'paid' ? 'paid' : 'pending'}`}>
+                      <div className="profile-ticket-header">
+                        <span className={`profile-ticket-badge ${getTicketColor(ticket.type)}`}>
+                          {getTicketTypeName(ticket.type)}
+                        </span>
+                        <span className={`profile-ticket-status ${ticket.payment_status === 'paid' ? 'paid' : 'pending'}`}>
+                          {ticket.payment_status === 'paid' ? 'ОПЛАЧЕН' : 'ОЖИДАЕТ ОПЛАТЫ'}
+                        </span>
+                      </div>
+                      <p className="profile-ticket-number">#{ticket.ticket_number}</p>
+                      <p className="profile-ticket-price">{ticket.price} ₽</p>
+                      <div className="profile-ticket-footer">
+                        {ticket.payment_status === 'paid' && (
+                          <button
+                            onClick={() => showQrCode(ticket)}
+                            className="btn-qr"
+                          >
+                            QR-КОД
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -299,6 +331,48 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
+
+      {/* Модальное окно с QR-кодом */}
+      {selectedTicket && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3 className="modal-title">QR-КОД БИЛЕТА</h3>
+              <button className="modal-close" onClick={closeModal}>✕</button>
+            </div>
+            
+            <div className="modal-body">
+              <p className="modal-ticket-number">#{selectedTicket.ticket_number}</p>
+              <p className="modal-ticket-type">{getTicketTypeName(selectedTicket.type)}</p>
+              
+              {qrLoading ? (
+                <PageLoader className="profile-loader" text="" />
+              ) : qrError ? (
+                <div className="profile-message error">{qrError}</div>
+              ) : qrData ? (
+                <div className="modal-qr-container">
+                  <QRCodeSVG
+                    value={qrData}
+                    size={200}
+                    bgColor="#ffffff"
+                    fgColor="#000000"
+                    level="H"
+                    includeMargin={true}
+                  />
+                </div>
+              ) : null}
+              
+              <p className="modal-qr-note">ПРЕДЪЯВИТЕ QR-КОД НА ВХОДЕ</p>
+            </div>
+            
+            <div className="modal-footer">
+              <button onClick={closeModal} className="btn-blue" style={{ width: '100%' }}>
+                <span>ЗАКРЫТЬ</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

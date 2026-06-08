@@ -1,0 +1,1115 @@
+.organizer-cosplay-page {
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.organizer-cosplay-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.organizer-cosplay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.organizer-cosplay-title-section {
+  text-align: left;
+}
+
+.organizer-cosplay-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.organizer-cosplay-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== КНОПКИ ===== */
+/* Кнопка розовая (основная) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Кнопка голубая (вторичная) */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #54FEDD;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #136354, 4px 0px 0px #136354,
+              inset 0px 3px 0px #136354, inset 0px -3px 0px #136354,
+              inset 0px -10px 0px #198772, inset -3px 0px 0px #BFFFF3,
+              inset 0px -13px 0px #BFFFF3;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #01121C;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Кнопка редактирования */
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 8px 16px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.btn-edit:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* Кнопка удаления */
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #ff006e;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 8px 16px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 0, 110, 0.1);
+  border-color: #ff006e;
+  color: #ff006e;
+}
+
+/* Кнопка сохранения в модалке */
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #701342, 2px 0px 0px #701342,
+              inset 0px 2px 0px #701342, inset 0px -2px 0px #701342;
+  padding: 10px 20px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Кнопка отмены в модалке */
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 10px 20px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-cancel:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* ===== СООБЩЕНИЯ ===== */
+.message-error {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  image-rendering: pixelated;
+}
+
+.message-success {
+  background: rgba(0, 255, 127, 0.1);
+  border: 1px solid #39ff14;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #39ff14;
+  image-rendering: pixelated;
+}
+
+/* ===== ПУСТОЕ СОСТОЯНИЕ ===== */
+.empty-state {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 48px 24px;
+  text-align: center;
+  image-rendering: pixelated;
+}
+
+.empty-state-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.empty-state-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  text-decoration: none;
+  border-bottom: 1px solid #54FEDD;
+  padding-bottom: 2px;
+}
+
+.empty-state-link:hover {
+  color: #B72F74;
+  border-bottom-color: #B72F74;
+}
+
+/* ===== СЕТКА КАРТОЧЕК ===== */
+.cosplayers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .cosplayers-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .cosplayers-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== КАРТОЧКА УЧАСТНИКА ===== */
+.cosplayer-card {
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.cosplayer-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-2px);
+}
+
+.cosplayer-image {
+  aspect-ratio: 4/3;
+  background: #0a0a0f;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.cosplayer-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cosplayer-placeholder {
+  font-size: 35px;
+  color: #334155;
+}
+
+.votes-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 6px 12px;
+  background: rgba(10, 10, 15, 0.9);
+  border: 1px solid #1a1a24;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.votes-count {
+  color: #54FEDD;
+  font-weight: 400;
+}
+
+.votes-label {
+  color: #64748b;
+  font-size: 14px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  margin-left: 4px;
+}
+
+.cosplayer-content {
+  padding: 16px;
+}
+
+.cosplayer-character {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: 1px;
+  margin: 0 0 4px 0;
+}
+
+.cosplayer-origin {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  margin: 0 0 8px 0;
+}
+
+.cosplayer-name {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.cosplayer-awards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.award-badge {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 3px 8px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  color: #f59e0b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cosplayer-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #1a1a24;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.modal-container {
+  background: #0a0a0f;
+  border: 2px solid #54FEDD;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 24px;
+  image-rendering: pixelated;
+}
+
+.modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #54FEDD;
+  letter-spacing: 2px;
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+/* ===== ФОРМА ===== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 500px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-input,
+.form-textarea {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  padding: 10px 12px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a24;
+}
+
+/* ===== ДОСТУП ЗАПРЕЩЁН ===== */
+.access-denied {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0f;
+}
+
+.access-denied-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+}
+
+/* ===== ХЕДЕР С ДЕЙСТВИЯМИ ===== */
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* ===== ФИЛЬТРЫ ===== */
+.filters-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  flex-wrap: wrap;
+  image-rendering: pixelated;
+}
+
+.search-group {
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.sort-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.sort-select {
+  padding: 8px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  cursor: pointer;
+  image-rendering: pixelated;
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.sort-order-btn {
+  width: 36px;
+  height: 36px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.sort-order-btn:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* ===== ТАБЛИЦА ===== */
+.participants-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #1a1a24;
+  background: rgba(18, 18, 26, 0.4);
+  image-rendering: pixelated;
+}
+
+.participants-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+}
+
+.participants-table th {
+  text-align: left;
+  padding: 14px 12px;
+  background: rgba(18, 18, 26, 0.8);
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.participants-table td {
+  padding: 12px;
+  color: #cbd5e1;
+  border-bottom: 1px solid #1a1a24;
+  vertical-align: middle;
+}
+
+.participants-table tr:hover td {
+  background: rgba(18, 18, 26, 0.3);
+}
+
+/* Фото */
+.table-photo-cell {
+  width: 50px;
+}
+
+.table-photo {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #1a1a24;
+}
+
+.table-photo-placeholder {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  font-size: 24px;
+}
+
+/* Имя участника */
+.participant-name-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.participant-name {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.participant-lastname {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.participant-character {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+.participant-origin {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* Голоса */
+.votes-count-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: rgba(57, 255, 20, 0.15);
+  border: 1px solid #39ff14;
+  border-radius: 20px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #39ff14;
+}
+
+/* Награды */
+.awards-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.award-tag {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 2px 6px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  color: #fbbf24;
+  border-radius: 12px;
+}
+
+/* Действия */
+.table-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit-sm {
+  width: 32px;
+  height: 32px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.btn-edit-sm:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.btn-delete-sm {
+  width: 32px;
+  height: 32px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #ff006e;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  color: #ff006e;
+}
+
+.btn-delete-sm:hover {
+  background: rgba(255, 0, 110, 0.1);
+}
+
+/* Выравнивание */
+.text-center {
+  text-align: center;
+}
+
+.text-mono {
+  font-family: monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Фото-превью для модального окна */
+.photo-preview {
+  position: relative;
+  margin-top: 12px;
+  display: inline-block;
+}
+
+.preview-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border: 1px solid #1a1a24;
+  border-radius: 4px;
+}
+
+.remove-photo-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  background: #ff006e;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.remove-photo-btn:hover {
+  background: #ff3388;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .sort-group {
+    justify-content: space-between;
+  }
+  
+  .participants-table th,
+  .participants-table td {
+    padding: 8px;
+    font-size: 10px;
+  }
+  
+  .votes-count-badge {
+    font-size: 12px;
+    padding: 2px 6px;
+  }
+}
+
+/* ===== СТАТИСТИКА КОСПЛЕЕРОВ ===== */
+.cosplayers-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  image-rendering: pixelated;
+}
+
+.cosplayers-stats-count {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+.cosplayers-stats-page {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ===== ПАГИНАЦИЯ ДЛЯ КОСПЛЕЕРОВ ===== */
+.cosplayers-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  padding: 10px 24px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: #B72F74;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #701342, 2px 0px 0px #701342,
+              inset 0px 2px 0px #701342, inset 0px -2px 0px #701342;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.pagination-number:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.pagination-number.active {
+  background: #B72F74;
+  border-color: #B72F74;
+  color: #FFFFFF;
+}
+
+.pagination-dots {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+  padding: 0 4px;
+}
+
+/* Адаптация пагинации для мобильных */
+@media (max-width: 768px) {
+  .cosplayers-pagination {
+    gap: 12px;
+  }
+  
+  .pagination-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  
+  .pagination-number {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .cosplayers-stats {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}
+
+/* ===== СТИЛИ ДЛЯ ФИЛЬТРОВ (КАК НА СТРАНИЦЕ ТОВАРОВ) ===== */
+.filters-section {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 24px;
+  image-rendering: pixelated;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.filter-input,
+.filter-select {
+  padding: 10px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.filter-reset {
+  padding: 10px 20px;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  height: 42px;
+  align-self: flex-end;
+  border-radius: 4px;
+}
+
+.filter-reset:hover {
+  border-color: #ff006e;
+  color: #ff006e;
+}
+
+.filter-stats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 0 12px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  border-radius: 4px;
+  height: 42px;
+}
+
+/* ===== ССЫЛКА НА ПОРТФОЛИО ===== */
+.portfolio-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-decoration: none;
+  padding: 4px 8px;
+  background: rgba(84, 254, 221, 0.1);
+  border: 1px solid rgba(84, 254, 221, 0.3);
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.portfolio-link:hover {
+  background: rgba(84, 254, 221, 0.2);
+  border-color: #54FEDD;
+  color: #ffffff;
+}
+
+.portfolio-empty {
+  font-family: monospace;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ===== ФОТО В ТАБЛИЦЕ ===== */
+.table-photo-cell {
+  width: 60px;
+}
+
+.table-photo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #1a1a24;
+}
+
+.table-photo-placeholder {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  border-radius: 8px;
+  font-size: 24px;
+}
+
+/* ===== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ ===== */
+@media (max-width: 768px) {
+  .filters-row {
+    flex-direction: column;
+  }
+  
+  .filter-reset {
+    width: 100%;
+    height: auto;
+  }
+  
+  .filter-stats {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    height: auto;
+    padding: 12px;
+    gap: 8px;
+  }
+  
+  .portfolio-link {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+}

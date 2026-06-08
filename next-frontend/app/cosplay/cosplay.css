@@ -1,0 +1,441 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.cosplay-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===== HERO БЛОК ===== */
+.hero-cosplay-section {
+  position: relative;
+  padding: 60px 20px;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/images/cosplay/back.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+  mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.hero-text {
+  flex: 1;
+  text-align: left;
+  max-width: 50%;
+}
+
+.cosplay-page .hero-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 80px;
+  line-height: 1.2;
+  margin: 0 0 20px 30px;
+  background: linear-gradient(180deg, #B72F74 0%, #54FEDD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cosplay-page .hero-description-back {
+  position: relative;
+  width: 562px;
+  height: 103px;
+  background: linear-gradient(90deg, rgba(1, 18, 28, 0) 0%, #01121C 25.24%, #011011 73.38%, rgba(1, 18, 28, 0) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+  margin: 30px auto 60px auto;
+}
+
+.cosplay-page .hero-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 18px;
+  color: #cbd5e1;
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+.btn-blue {
+  margin-left: 35px;
+}
+
+.cosplay-page .hero-image {
+  flex-shrink: 0;
+  width: 45%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cosplay-image {
+  width: 100%;
+  max-width: 598px;
+  height: auto;
+  aspect-ratio: 598 / 837;
+  background-image: url('/images/cosplay/hero.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+/* ===== ОБЩИЕ СТИЛИ ДЛЯ БЛОКОВ ===== */
+.section-pixel {
+  padding: 80px 20px;
+}
+
+.container-pixel {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.section-title {
+  font-size: 35px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  margin: 0 auto 35px auto;
+  text-align: center;
+  color: #fff;
+}
+
+.section-subtitle {
+  font-size: 24px;
+  font-family: 'VCR OSD Mono Nova', sans-serif;
+  text-align: center;
+  max-width: 790px;
+  margin: 0 auto 50px auto;
+  color: #94a3b8;
+}
+
+/* ===== ЧТО ТАКОЕ КОСПЛЕЙ ===== */
+.description-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 20px;
+  color: #cbd5e1;
+  line-height: 1.8;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ===== ПОБЕДИТЕЛИ ===== */
+.winners-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.winner-card {
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+}
+
+.winner-card:hover {
+  border-color: #ff00ff;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 0 rgba(255, 0, 255, 0.2);
+}
+
+.winner-place {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  padding: 16px;
+  text-align: center;
+  background: linear-gradient(135deg, #ff00ff20, transparent);
+}
+
+.winner-place.first { color: #FFD700; }
+.winner-place.second { color: #C0C0C0; }
+.winner-place.third { color: #CD7F32; }
+
+.winner-image {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-top: 2px solid #1a1a24;
+  border-bottom: 2px solid #1a1a24;
+}
+
+.winner-info {
+  padding: 20px;
+  text-align: center;
+}
+
+.winner-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.winner-character {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #ff00ff;
+}
+
+/* ===== ПРАВИЛА РЕГИСТРАЦИИ ===== */
+.rules-grid {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.rule-item {
+  display: flex;
+  gap: 20px;
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 16px;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+}
+
+.rule-item:hover {
+  border-color: #ff00ff;
+  transform: translateX(4px);
+}
+
+.rule-number {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #ff00ff;
+  min-width: 50px;
+  text-align: center;
+}
+
+.rule-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #cbd5e1;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.template-block {
+  background: #0d0d14;
+  border: 2px solid #ff00ff;
+  padding: 20px;
+  margin-top: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  image-rendering: pixelated;
+}
+
+.template-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  color: #ff00ff;
+  margin-bottom: 12px;
+  font-size: 20px;
+}
+
+.template-code {
+  background: #0a0a0f;
+  padding: 16px;
+  margin-top: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+/* ===== ГАЛЕРЕЯ ===== */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.gallery-item {
+  background: rgba(18, 18, 26, 0.6);
+  border: 2px solid #1a1a24;
+  aspect-ratio: 3 / 4;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.gallery-item:hover {
+  border-color: #ff00ff;
+  transform: scale(1.02);
+}
+
+.gallery-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-image {
+  transform: scale(1.1);
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  background: transparent;
+  cursor: default;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: none;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 40px;
+  height: 40px;
+  background: #ff00ff;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-image {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border: 3px solid #ff00ff;
+  image-rendering: pixelated;
+}
+
+.modal-caption {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #cbd5e1;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 1024px) {
+  .cosplay-page .hero-title { font-size: 60px; margin-left: 0; }
+  .cosplay-page .hero-description-back { width: 400px; height: auto; min-height: 80px; margin: 20px auto 40px auto; }
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 15px; }
+}
+
+@media (max-width: 900px) {
+  .hero-content { flex-direction: column; text-align: center; }
+  .hero-text { text-align: center; max-width: 100%; }
+  .hero-image { width: 60%; justify-content: center; margin-top: 30px; }
+  .cosplay-page .hero-title { font-size: 48px; margin-left: 0; }
+  .cosplay-page .hero-description-back { width: 100%; max-width: 500px; margin: 20px auto; }
+  .btn-blue { margin-left: 0; margin: 0 auto; }
+  .winners-grid { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .section-pixel { padding: 60px 16px; }
+  .section-title { font-size: 30px; }
+  .section-subtitle { font-size: 18px; }
+  .description-text { font-size: 16px; }
+}
+
+@media (max-width: 768px) {
+  .hero-cosplay-section { padding: 40px 16px; min-height: auto; }
+  .cosplay-page .hero-title { font-size: 36px; margin-bottom: 15px; }
+  .cosplay-page .hero-description-back { width: 200px; margin: 15px auto 30px auto; }
+  .cosplay-page .hero-description { font-size: 14px; }
+  .section-pixel { padding: 40px 16px; }
+  .section-title { font-size: 24px; margin-bottom: 20px; }
+  .section-subtitle { font-size: 14px; margin-bottom: 30px; }
+  .description-text { font-size: 14px; }
+  .winners-grid { grid-template-columns: 1fr; max-width: 350px; margin: 0 auto; gap: 25px; }
+  .winner-name { font-size: 20px; }
+  .winner-character { font-size: 14px; }
+  .winner-place { font-size: 28px; padding: 12px; }
+  .rule-item { flex-direction: column; text-align: center; padding: 16px; }
+  .rule-number { text-align: center; font-size: 28px; }
+  .rule-text { font-size: 14px; text-align: center; }
+  .template-block { padding: 15px; margin-top: 20px; }
+  .template-title { font-size: 16px; text-align: center; }
+  .template-code { font-size: 10px; padding: 12px; }
+  .gallery-grid { max-width: 500px; margin: 0 auto; gap: 15px; }
+  .modal-close-btn { top: -35px; right: -5px; width: 35px; height: 35px; font-size: 20px; }
+  .modal-caption { font-size: 12px; }
+}
+
+@media (max-width: 480px) {
+  .hero-cosplay-section { padding: 30px 12px; }
+  .cosplay-page .hero-title { font-size: 28px; }
+  .cosplay-page .hero-description { font-size: 12px; }
+  .section-pixel { padding: 30px 12px; }
+  .section-title { font-size: 20px; }
+  .section-subtitle { font-size: 12px; }
+  .description-text { font-size: 12px; }
+  .winner-name { font-size: 18px; }
+  .winner-character { font-size: 12px; }
+  .winner-info { padding: 12px; }
+  .rule-number { font-size: 24px; min-width: 40px; }
+  .rule-text { font-size: 12px; }
+  .template-title { font-size: 14px; }
+  .template-code { font-size: 9px; padding: 10px; }
+  .modal-image { border-width: 2px; }
+  .modal-close-btn { width: 30px; height: 30px; font-size: 18px; right: -10px; }
+  .cosplay-image { max-width: 280px; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+  .winners-grid { grid-template-columns: repeat(2, 1fr); }
+}

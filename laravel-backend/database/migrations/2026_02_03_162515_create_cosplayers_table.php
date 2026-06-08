@@ -19,11 +19,9 @@ return new class extends Migration
             $table->string('origin');
             $table->string('photo');
             $table->text('biography')->nullable();
-            $table->text('character_description')->nullable();
-            $table->string('portfolio_link');
+            $table->string('portfolio_link')->nullable();
             $table->unsignedInteger('votes_count')->default(0);
             $table->json('voted_users')->nullable();
-            $table->text('awards')->nullable();
             $table->timestamps();
         });
     }

@@ -13,6 +13,14 @@ class UserCard extends Model
         'user_id',
         'card_id',
         'status',
+        'expires_at',
+        'coupon_code_used',
+        'bonus_used_data',
+    ];
+
+    protected $casts = [
+        'expires_at' => 'datetime',
+        'bonus_used_data' => 'array',
     ];
 
     public function user()
@@ -23,5 +31,15 @@ class UserCard extends Model
     public function card()
     {
         return $this->belongsTo(Card::class);
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expires_at && $this->expires_at->isPast();
+    }
+
+    public function canUseBonus(): bool
+    {
+        return $this->status === 'acquired' && !$this->isExpired();
     }
 }

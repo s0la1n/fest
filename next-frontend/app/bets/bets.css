@@ -1,0 +1,665 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+.bets-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ===== КОНТЕЙНЕР ===== */
+.bets-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.bets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+.bets-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0;
+}
+
+.bets-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== СТАТИСТИКА ===== */
+.bets-stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.bets-stat-card {
+  background: rgba(18, 18, 26, 0.5);
+  border: 1px solid #1a1a24;
+  padding: 16px;
+  text-align: center;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.bets-stat-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-2px);
+}
+
+.bets-stat-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.bets-stat-value {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+}
+
+.bets-stat-value.primary {
+  color: #54FEDD;
+}
+
+.bets-stat-value.yellow {
+  color: #f59e0b;
+}
+
+.bets-stat-value.green {
+  color: #39ff14;
+}
+
+.bets-stat-value.red {
+  color: #ff006e;
+}
+
+/* ===== ТАБЫ ===== */
+.bets-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.bets-tab {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.bets-tab:hover {
+  color: #54FEDD;
+}
+
+.bets-tab.active {
+  color: #54FEDD;
+}
+
+.bets-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #54FEDD;
+}
+
+/* ===== СПИСОК МАТЧЕЙ ===== */
+.bets-matches-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.bets-match-card {
+  background: rgba(18, 18, 26, 0.5);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+}
+
+.bets-match-card:hover {
+  border-color: #54FEDD;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 rgba(84, 254, 221, 0.1);
+}
+
+.bets-match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.bets-match-game {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-transform: uppercase;
+}
+
+.bets-match-stage {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.bets-match-teams {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.bets-match-team {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.bets-match-vs {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+  margin: 6px 0;
+}
+
+.bets-match-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #1a1a24;
+}
+
+.bets-match-time {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.bets-match-bet {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+}
+
+/* ===== СПИСОК СТАВОК ===== */
+.bets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bets-item {
+  background: rgba(18, 18, 26, 0.5);
+  border: 1px solid #1a1a24;
+  padding: 16px;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.bets-item:hover {
+  border-color: #54FEDD;
+  transform: translateX(2px);
+}
+
+.bets-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.bets-item-game {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #54FEDD;
+  text-transform: uppercase;
+}
+
+.bets-item-status {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  padding: 2px 8px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid;
+}
+
+.bets-item-status.won {
+  border-color: #39ff14;
+  color: #39ff14;
+}
+
+.bets-item-status.lost {
+  border-color: #ff006e;
+  color: #ff006e;
+}
+
+.bets-item-status.active {
+  border-color: #f59e0b;
+  color: #f59e0b;
+}
+
+.bets-item-status.pending {
+  border-color: #64748b;
+  color: #94a3b8;
+}
+
+.bets-item-teams {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+  margin-bottom: 8px;
+}
+
+.bets-item-details {
+  margin-top: 8px;
+}
+
+.bets-item-detail {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+}
+
+.bets-item-detail span {
+  color: #54FEDD;
+}
+
+.bets-item-win {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #39ff14;
+  margin-top: 6px;
+}
+
+.bets-item-date {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 8px;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО СТАВКИ ===== */
+.bets-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.bets-modal {
+  max-width: 480px;
+  width: 100%;
+  background: #0d0d14;
+  border: 2px solid #54FEDD;
+  padding: 28px;
+  image-rendering: pixelated;
+}
+
+.bets-modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #54FEDD;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.bets-modal-match {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  color: #ffffff;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.bets-modal-game {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Выбор исхода */
+.bets-outcomes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.bets-outcome-btn {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+  text-align: left;
+}
+
+.bets-outcome-btn:hover {
+  border-color: #54FEDD;
+  background: rgba(84, 254, 221, 0.05);
+}
+
+.bets-outcome-btn.active {
+  border-color: #54FEDD;
+  background: rgba(84, 254, 221, 0.1);
+}
+
+.bets-outcome-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+}
+
+.bets-outcome-odds {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #54FEDD;
+}
+
+/* Сумма ставки */
+.bets-amount {
+  margin-bottom: 20px;
+}
+
+.bets-amount-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.bets-amount-input {
+  width: 100%;
+  padding: 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  color: #ffffff;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  image-rendering: pixelated;
+}
+
+.bets-amount-input:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.bets-amount-presets {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.bets-preset {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  padding: 4px 12px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.bets-preset:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* Потенциальный выигрыш */
+.bets-potential {
+  background: rgba(18, 18, 26, 0.6);
+  padding: 12px;
+  margin-bottom: 20px;
+}
+
+.bets-potential-row {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.bets-potential-row:last-child {
+  margin-bottom: 0;
+}
+
+.bets-potential-label {
+  color: #94a3b8;
+}
+
+.bets-potential-value {
+  color: #f59e0b;
+}
+
+.bets-potential-value.white {
+  color: #ffffff;
+}
+
+/* Сообщения */
+.bets-error {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 11px;
+  color: #ff006e;
+  background: rgba(255, 0, 110, 0.1);
+  padding: 10px;
+  border: 1px solid #ff006e;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.bets-success {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #39ff14;
+  background: rgba(57, 255, 20, 0.1);
+  padding: 10px;
+  border: 1px solid #39ff14;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Кнопки модального окна */
+.bets-modal-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.bets-modal-cancel {
+  flex: 1;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.bets-modal-cancel:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.bets-modal-submit {
+  flex: 1;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 12px;
+  background: #54FEDD;
+  color: #0a0a0f;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  image-rendering: pixelated;
+}
+
+.bets-modal-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.bets-modal-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Пустое состояние */
+.bets-empty {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(18, 18, 26, 0.3);
+  border: 1px solid #1a1a24;
+  image-rendering: pixelated;
+}
+
+.bets-empty-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 1000px) {
+  .bets-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .bets-title {
+    font-size: 32px;
+  }
+  
+  .bets-description {
+    font-size: 14px;
+  }
+  
+  .bets-matches-grid {
+    grid-template-columns: 1fr;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .bets-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .bets-title {
+    font-size: 28px;
+  }
+  
+  .bets-description {
+    font-size: 12px;
+  }
+  
+  .bets-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .bets-stat-value {
+    font-size: 22px;
+  }
+  
+  .bets-tab {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+  
+  .bets-modal {
+    padding: 20px;
+  }
+  
+  .bets-modal-title {
+    font-size: 20px;
+  }
+  
+  .bets-modal-match {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .bets-title {
+    font-size: 24px;
+  }
+  
+  .bets-description {
+    font-size: 10px;
+  }
+  
+  .bets-stat-card {
+    padding: 12px;
+  }
+  
+  .bets-stat-value {
+    font-size: 18px;
+  }
+  
+  .bets-stat-label {
+    font-size: 9px;
+  }
+  
+  .bets-tab {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+  
+  .bets-match-team {
+    font-size: 14px;
+  }
+  
+  .bets-outcome-btn {
+    padding: 10px 12px;
+  }
+}

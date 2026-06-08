@@ -1,10 +1,8 @@
 import { LoginRequest, AuthResponse, ApiError, User } from '@/types/auth';
 
-// Корень бэкенда (для /sanctum/csrf-cookie)
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || (process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:8000');
-// Базовый URL API (должен заканчиваться на /api)
-const API_URL = process.env.NEXT_PUBLIC_API_URL?.trim().replace(/\/?$/, '') || (BACKEND_URL + '/api');
-const API_BASE = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
+// Единый origin через Next.js rewrites (/api, /sanctum) — cookies и CSRF работают на :3000
+const API_BASE = '/api';
+const SANCTUM_CSRF_URL = '/sanctum/csrf-cookie';
 
 class ApiService {
     private async getCsrfToken(): Promise<string | null> {
@@ -52,7 +50,7 @@ class ApiService {
     }
 
     async setCsrfCookie(): Promise<void> {
-        await fetch(`${BACKEND_URL}/sanctum/csrf-cookie`, {
+        await fetch(SANCTUM_CSRF_URL, {
             method: 'GET',
             credentials: 'include',
             headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },

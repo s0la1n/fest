@@ -1,0 +1,856 @@
+.organizer-teams-page {
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.organizer-teams-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.organizer-teams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.organizer-teams-title-section {
+  text-align: left;
+}
+
+.organizer-teams-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.organizer-teams-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== КНОПКИ ===== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #54FEDD;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #136354, 4px 0px 0px #136354,
+              inset 0px 3px 0px #136354, inset 0px -3px 0px #136354,
+              inset 0px -10px 0px #198772, inset -3px 0px 0px #BFFFF3,
+              inset 0px -13px 0px #BFFFF3;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #01121C;
+  letter-spacing: 2px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 6px 14px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-edit:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #ff006e;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 6px 14px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-delete:hover {
+  background: rgba(255, 0, 110, 0.1);
+}
+
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #701342, 2px 0px 0px #701342,
+              inset 0px 2px 0px #701342, inset 0px -2px 0px #701342;
+  padding: 10px 20px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 1px;
+  flex: 1;
+}
+
+.btn-save:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 10px 20px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-cancel:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* ===== СООБЩЕНИЯ ===== */
+.message-error {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  image-rendering: pixelated;
+}
+
+.message-success {
+  background: rgba(0, 255, 127, 0.1);
+  border: 1px solid #39ff14;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #39ff14;
+  image-rendering: pixelated;
+}
+
+/* ===== ПУСТОЕ СОСТОЯНИЕ ===== */
+.empty-state {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 48px 24px;
+  text-align: center;
+  image-rendering: pixelated;
+}
+
+.empty-state-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.empty-state-link {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-bottom: 1px solid #54FEDD;
+  padding-bottom: 2px;
+}
+
+.empty-state-link:hover {
+  color: #B72F74;
+  border-bottom-color: #B72F74;
+}
+
+/* ===== ТАБЛИЦА ===== */
+.teams-table-wrapper {
+  overflow-x: auto;
+}
+
+.teams-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+}
+
+.teams-table th {
+  text-align: left;
+  padding: 12px 8px;
+  background: rgba(18, 18, 26, 0.8);
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.teams-table td {
+  padding: 12px 8px;
+  color: #cbd5e1;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.teams-table tr:hover td {
+  background: rgba(18, 18, 26, 0.4);
+}
+
+.teams-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== ЯЧЕЙКИ ТАБЛИЦЫ ===== */
+.team-name {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #ffffff;
+  letter-spacing: 1px;
+}
+
+.team-tag {
+  font-family: monospace;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+.team-game {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.team-city {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #cbd5e1;
+}
+
+.players-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.player-badge {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 3px 8px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+}
+
+.player-captain {
+  color: #FFD700;
+}
+
+.player-more {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  padding: 3px 6px;
+  background: #1a1a24;
+  border-radius: 4px;
+  color: #64748b;
+}
+
+.actions-cell {
+  white-space: nowrap;
+}
+
+.actions-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== СЕЛЕКТ СТАТУСА ===== */
+.status-select {
+  padding: 6px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.status-select.status-active {
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.status-select.status-inactive {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.status-select:hover {
+  border-color: #54FEDD;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 16px;
+}
+
+.modal-container {
+  background: #0a0a0f;
+  border: 2px solid #54FEDD;
+  max-width: 700px;
+  width: 100%;
+  padding: 24px;
+  image-rendering: pixelated;
+}
+
+.modal-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #54FEDD;
+  letter-spacing: 2px;
+  margin: 0 0 24px 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+/* ===== ФОРМА ===== */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.form-input,
+.form-select {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  padding: 10px 12px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.form-input:focus,
+.form-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a24;
+}
+
+/* ===== ФИЛЬТРЫ ===== */
+.teams-filters {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 24px;
+  image-rendering: pixelated;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-input,
+.filter-select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.filter-reset-btn {
+  padding: 10px 20px;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  white-space: nowrap;
+}
+
+.filter-reset-btn:hover {
+  border-color: #ff006e;
+  color: #ff006e;
+}
+
+.filter-stats {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  padding-top: 12px;
+  border-top: 1px solid #1a1a24;
+}
+
+/* ===== РЕДАКТОР ИГРОКОВ ===== */
+.players-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.player-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.player-number {
+  width: 32px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a24;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  image-rendering: pixelated;
+}
+
+.player-input {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  background: rgba(18, 18, 26, 0.8);
+  border: 1px solid #1a1a24;
+  padding: 10px 12px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.player-input:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.nickname-input {
+  flex: 2;
+  min-width: 120px;
+}
+
+.name-input {
+  flex: 2;
+  min-width: 120px;
+}
+
+.input-error {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.player-role-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  height: 40px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.player-role-label:hover {
+  border-color: #54FEDD;
+}
+
+.captain-radio {
+  width: 16px;
+  height: 16px;
+  accent-color: #54FEDD;
+  cursor: pointer;
+}
+
+.captain-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.players-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.players-status {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+}
+
+.status-warning {
+  color: #f59e0b;
+}
+
+.status-error {
+  color: #ef4444;
+}
+
+.status-success {
+  color: #22c55e;
+}
+
+/* ===== ДОСТУП ЗАПРЕЩЁН ===== */
+.access-denied {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0f;
+}
+
+.access-denied-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .filter-row {
+    flex-direction: column;
+  }
+  
+  .filter-reset-btn {
+    width: 100%;
+  }
+  
+  .teams-table th,
+  .teams-table td {
+    padding: 8px;
+    font-size: 10px;
+  }
+  
+  .players-list {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .player-row {
+    flex-direction: column;
+  }
+  
+  .player-number {
+    width: 100%;
+    height: 36px;
+  }
+  
+  .nickname-input,
+  .name-input {
+    width: 100%;
+  }
+  
+  .player-role-label {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .players-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .modal-container {
+    max-width: 95%;
+  }
+}
+
+/* ===== СТАТИСТИКА КОМАНД ===== */
+.teams-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  image-rendering: pixelated;
+}
+
+.teams-stats-count {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+.teams-stats-page {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ===== ПАГИНАЦИЯ ===== */
+.teams-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.pagination-btn {
+  padding: 10px 24px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: #B72F74;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #701342, 2px 0px 0px #701342,
+              inset 0px 2px 0px #701342, inset 0px -2px 0px #701342;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.pagination-pages {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.pagination-number:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.pagination-number.active {
+  background: #B72F74;
+  border-color: #B72F74;
+  color: #FFFFFF;
+}
+
+.pagination-dots {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+  padding: 0 4px;
+}
+
+@media (max-width: 768px) {
+  .teams-pagination {
+    gap: 12px;
+  }
+  
+  .pagination-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  
+  .pagination-number {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .teams-stats {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

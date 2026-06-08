@@ -1,0 +1,225 @@
+.agreement-page {
+  color: #e2e8f0;
+  min-height: 100vh;
+  position: relative;
+  padding: 40px 20px;
+}
+
+.agreement-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.agreement-card {
+  background: rgba(18, 18, 26, 0.7);
+  border: 2px solid #1a1a24;
+  image-rendering: pixelated;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+
+.agreement-card:hover {
+  border-color: rgba(84, 254, 221, 0.5);
+}
+
+.agreement-header {
+  text-align: center;
+  padding: 32px 32px 20px;
+  border-bottom: 2px solid #1a1a24;
+  position: relative;
+}
+
+.agreement-back {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.agreement-back:hover {
+  color: #54FEDD;
+}
+
+.agreement-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 36px;
+  font-weight: 400;
+  background: linear-gradient(180deg, #B72F74 0%, #54FEDD 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+  letter-spacing: 2px;
+}
+
+.agreement-date {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.agreement-content {
+  padding: 32px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.agreement-content h2 {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: #54FEDD;
+  margin: 32px 0 16px 0;
+  letter-spacing: 1px;
+}
+
+.agreement-content h2:first-of-type {
+  margin-top: 0;
+}
+
+.agreement-content h3 {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: #B72F74;
+  margin: 20px 0 12px 0;
+  letter-spacing: 1px;
+}
+
+.agreement-content p {
+  margin-bottom: 12px;
+}
+
+.agreement-content ul {
+  margin: 12px 0 12px 24px;
+  padding-left: 20px;
+}
+
+.agreement-content li {
+  margin-bottom: 6px;
+}
+
+.agreement-footer-note {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 2px solid #1a1a24;
+  font-size: 12px;
+  color: #64748b;
+  text-align: center;
+}
+
+.agreement-buttons {
+  display: flex;
+  gap: 20px;
+  padding: 20px 32px 32px;
+  justify-content: center;
+  border-top: 1px solid #1a1a24;
+}
+
+.btn-home,
+.btn-buy {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 12px 28px;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn-home {
+  background: transparent;
+  border: 1px solid #54FEDD;
+  color: #54FEDD;
+}
+
+.btn-home:hover {
+  background: rgba(84, 254, 221, 0.1);
+  transform: translateY(-2px);
+}
+
+.btn-buy {
+  background: #54FEDD;
+  border: none;
+  color: #0a0a0f;
+}
+
+.btn-buy:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .agreement-page {
+    padding: 20px 16px;
+  }
+  
+  .agreement-header {
+    padding: 24px 20px 16px;
+  }
+  
+  .agreement-title {
+    font-size: 28px;
+  }
+  
+  .agreement-content {
+    padding: 24px;
+    font-size: 13px;
+  }
+  
+  .agreement-content h2 {
+    font-size: 20px;
+  }
+  
+  .agreement-content h3 {
+    font-size: 16px;
+  }
+  
+  .agreement-buttons {
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 24px 24px;
+  }
+  
+  .btn-home,
+  .btn-buy {
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  .agreement-back {
+    position: static;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .agreement-title {
+    font-size: 24px;
+  }
+  
+  .agreement-content {
+    padding: 20px;
+    font-size: 12px;
+  }
+  
+  .agreement-content h2 {
+    font-size: 18px;
+  }
+  
+  .agreement-content h3 {
+    font-size: 15px;
+  }
+}

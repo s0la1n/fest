@@ -6,18 +6,216 @@ use App\Models\Merch;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ShopController extends Controller
 {
     /**
-     * Список товаров магазина.
+     * Список товаров магазина (для обычных пользователей).
      */
     public function index(): JsonResponse
     {
         $products = Merch::orderBy('name')->get([
             'id', 'name', 'slug', 'description', 'price', 'stock_quantity', 'main_image'
-        ]);
+        ])->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'slug' => $product->slug,
+                'description' => $product->description,
+                'price' => (float) $product->price,
+                'stock_quantity' => $product->stock_quantity,
+                'main_image' => $product->main_image_url,
+            ];
+        });
+        
         return response()->json($products);
+    }
+
+    /**
+     * Получить все товары для админа.
+     */
+    public function getAllMerch(): JsonResponse
+    {
+        $merch = Merch::orderBy('created_at', 'desc')->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'slug' => $item->slug,
+                    'description' => $item->description,
+                    'price' => (float) $item->price,
+                    'stock_quantity' => $item->stock_quantity,
+                    'sold_quantity' => $item->sold_quantity,
+                    'main_image' => $item->main_image,
+                    'main_image_url' => $item->main_image_url,
+                    'created_at' => $item->created_at?->toIso8601String(),
+                ];
+            });
+        
+        return response()->json($merch);
+    }
+
+    /**
+     * Создать новый товар (для админа).
+     */
+    public function createMerch(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'price' => 'required|numeric|min:0',
+            'stock_quantity' => 'required|integer|min:0',
+            'image' => 'required|image|max:5120', // 5MB
+        ]);
+
+        // Генерируем slug из названия
+        $slug = Str::slug($validated['name']);
+        
+        // Проверяем уникальность slug
+        $originalSlug = $slug;
+        $counter = 1;
+        while (Merch::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        // Загрузка изображения
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $imagePath = $file->storeAs('merch', $filename, 'public');
+        }
+
+        if (!$imagePath) {
+            return response()->json(['error' => 'Изображение обязательно'], 422);
+        }
+
+        $merch = Merch::create([
+            'name' => $validated['name'],
+            'slug' => $slug,
+            'description' => $validated['description'] ?? null,
+            'price' => $validated['price'],
+            'stock_quantity' => $validated['stock_quantity'],
+            'sold_quantity' => 0,
+            'main_image' => $imagePath,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'merch' => [
+                'id' => $merch->id,
+                'name' => $merch->name,
+                'slug' => $merch->slug,
+                'description' => $merch->description,
+                'price' => (float) $merch->price,
+                'stock_quantity' => $merch->stock_quantity,
+                'sold_quantity' => $merch->sold_quantity,
+                'main_image_url' => $merch->main_image_url,
+            ],
+            'message' => 'Товар добавлен'
+        ], 201);
+    }
+
+    /**
+     * Обновить товар (для админа).
+     */
+    public function updateMerch(Request $request, int $id): JsonResponse
+    {
+        $merch = Merch::findOrFail($id);
+        
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string|max:5000',
+            'price' => 'sometimes|numeric|min:0',
+            'stock_quantity' => 'sometimes|integer|min:0',
+            'image' => 'nullable|image|max:5120',
+        ]);
+
+        $data = [];
+        
+        if (isset($validated['name'])) {
+            $data['name'] = $validated['name'];
+            // Обновляем slug если изменилось название
+            $newSlug = Str::slug($validated['name']);
+            $originalSlug = $newSlug;
+            $counter = 1;
+            while (Merch::where('slug', $newSlug)->where('id', '!=', $merch->id)->exists()) {
+                $newSlug = $originalSlug . '-' . $counter;
+                $counter++;
+            }
+            $data['slug'] = $newSlug;
+        }
+        
+        if (isset($validated['description'])) {
+            $data['description'] = $validated['description'];
+        }
+        
+        if (isset($validated['price'])) {
+            $data['price'] = $validated['price'];
+        }
+        
+        if (isset($validated['stock_quantity'])) {
+            $data['stock_quantity'] = $validated['stock_quantity'];
+        }
+
+        // Обновляем фото если загружено новое
+        if ($request->hasFile('image')) {
+            // Удаляем старое фото
+            if ($merch->main_image && Storage::disk('public')->exists($merch->main_image)) {
+                Storage::disk('public')->delete($merch->main_image);
+            }
+            
+            $file = $request->file('image');
+            $filename = time() . '_' . Str::random(40) . '.' . $file->getClientOriginalExtension();
+            $data['main_image'] = $file->storeAs('merch', $filename, 'public');
+        }
+
+        $merch->update($data);
+
+        return response()->json([
+            'success' => true,
+            'merch' => [
+                'id' => $merch->id,
+                'name' => $merch->name,
+                'slug' => $merch->slug,
+                'description' => $merch->description,
+                'price' => (float) $merch->price,
+                'stock_quantity' => $merch->stock_quantity,
+                'sold_quantity' => $merch->sold_quantity,
+                'main_image_url' => $merch->main_image_url,
+            ],
+            'message' => 'Товар обновлен'
+        ]);
+    }
+
+    /**
+     * Удалить товар (для админа).
+     */
+    public function deleteMerch(int $id): JsonResponse
+    {
+        $merch = Merch::findOrFail($id);
+        
+        // Проверяем, есть ли заказы с этим товаром
+        if ($merch->orders()->exists()) {
+            return response()->json([
+                'error' => 'Нельзя удалить товар, по которому есть заказы'
+            ], 400);
+        }
+        
+        // Удаляем фото
+        if ($merch->main_image && Storage::disk('public')->exists($merch->main_image)) {
+            Storage::disk('public')->delete($merch->main_image);
+        }
+        
+        $merch->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Товар удален'
+        ]);
     }
 
     /**
@@ -88,7 +286,26 @@ class ShopController extends Controller
             ->orders()
             ->with('merch:id,name,slug,main_image')
             ->orderByDesc('created_at')
-            ->get();
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'order_number' => $order->order_number,
+                    'merch_id' => $order->merch_id,
+                    'merch' => $order->merch ? [
+                        'id' => $order->merch->id,
+                        'name' => $order->merch->name,
+                        'slug' => $order->merch->slug,
+                        'main_image' => $order->merch->main_image_url,
+                    ] : null,
+                    'quantity' => $order->quantity,
+                    'total_amount' => (float) $order->total_amount,
+                    'shipping_address' => $order->shipping_address,
+                    'status' => $order->status,
+                    'created_at' => $order->created_at?->toIso8601String(),
+                ];
+            });
+            
         return response()->json(['orders' => $orders]);
     }
 }

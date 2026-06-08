@@ -1,8 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { apiClient } from '@/lib/api';
+import './signin.css';
+
+// Тип для информации о блокировке
+interface LockInfo {
+  is_locked: boolean;
+  locked_until?: string;
+  remaining_seconds?: number;
+  can_reset?: boolean;
+}
+
+// Тип для ответа от API при блокировке
+interface LockResponse {
+  is_locked: boolean;
+  locked_until?: string;
+  remaining_seconds?: number;
+  can_reset?: boolean;
+  message?: string;
+}
+
+// Тип для ошибки с response
+interface ErrorWithResponse {
+  response?: {
+    data?: {
+      locked?: boolean;
+      message?: string;
+      locked_until?: string;
+      remaining_seconds?: number;
+      can_reset?: boolean;
+    };
+  };
+  message?: string;
+}
 
 export default function Login() {
   const { login } = useAuth();
@@ -13,97 +46,208 @@ export default function Login() {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [lockInfo, setLockInfo] = useState<LockInfo | null>(null);
+  const [countdown, setCountdown] = useState<number>(0);
+
+  // Таймер обратного отсчета при блокировке
+  useEffect(() => {
+    if (lockInfo?.is_locked && lockInfo.remaining_seconds) {
+      setCountdown(lockInfo.remaining_seconds);
+      
+      const timer = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            checkLockStatus();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [lockInfo]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     setError('');
+    setLockInfo(null);
+  };
+
+  const checkLockStatus = async () => {
+    if (!formData.login) return;
+    
+    try {
+      const response = await apiClient.post<LockResponse>('/check-lock-status', {
+        login: formData.login
+      });
+      setLockInfo(response);
+    } catch (err) {
+      console.error('Error checking lock status:', err);
+    }
+  };
+
+  // Проверяем статус блокировки при вводе логина
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (formData.login) {
+        checkLockStatus();
+      }
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [formData.login]);
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
+    
     try {
       await login(formData.login, formData.password);
-      // Успех — контекст сам сделает router.push('/')
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Ошибка входа';
-      const hint = message.includes('Неверный логин') || message.includes('credentials')
-        ? ' В поле «Логин» можно ввести email. Если вы купили билет — используйте логин и пароль из письма или со страницы после оплаты.'
-        : '';
-      setError(message + hint);
+      // Проверяем на блокировку
+      const error = err as ErrorWithResponse;
+      
+      if (error?.response?.data?.locked) {
+        const lockData = {
+          is_locked: true,
+          locked_until: error.response.data.locked_until,
+          remaining_seconds: error.response.data.remaining_seconds,
+          can_reset: error.response.data.can_reset
+        };
+        setLockInfo(lockData);
+        setError(error.response.data.message || 'Вход заблокирован');
+      } else {
+        const message = error instanceof Error ? error.message : 'Ошибка входа';
+        const hint = message.includes('Неверный логин') || message.includes('credentials')
+          ? ' В поле «Логин» можно ввести email. Если вы купили билет — используйте логин и пароль из письма или со страницы после оплаты.'
+          : '';
+        setError(message + hint);
+        
+        // Обновляем статус блокировки после ошибки
+        checkLockStatus();
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-      <div className="max-w-md w-full bg-[#12121a] rounded-xl border border-[#00f5ff]/30 p-8" style={{ boxShadow: '0 0 30px rgba(0,245,255,0.15)' }}>
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Вход в аккаунт</h1>
-          <p className="mt-2 text-slate-400">Введите логин и пароль</p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
-              Логин *
-            </label>
-            <input
-              type="text"
-              name="login"
-              value={formData.login}
-              onChange={handleChange}
-              required
-              placeholder="Ваш логин"
-              className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-md text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-            />
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h1 className="auth-title">ВХОД В АККАУНТ</h1>
+            <p className="auth-subtitle">ВВЕДИТЕ ЛОГИН И ПАРОЛЬ</p>
           </div>
           
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium text-slate-300">
-                Пароль *
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <label className="form-label">
+                ЛОГИН ИЛИ EMAIL <span className="required">*</span>
               </label>
-              <Link href="/forgot-password" className="text-sm text-[#00f5ff] hover:text-[#00c4cc]">
-                Забыли пароль?
-              </Link>
+              <input
+                type="text"
+                name="login"
+                value={formData.login}
+                onChange={handleChange}
+                required
+                disabled={lockInfo?.is_locked}
+                placeholder="ВАШ ЛОГИН ИЛИ EMAIL"
+                className="form-input"
+              />
             </div>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Ваш пароль"
-              className="w-full px-3 py-2 bg-[#0a0a0f] border border-[#1a1a24] rounded-md text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#00f5ff] focus:border-[#00f5ff] transition"
-            />
-          </div>
+            
+            <div className="form-group">
+              <div className="form-links">
+                <label className="form-label">
+                  ПАРОЛЬ <span className="required">*</span>
+                </label>
+                <Link href="/forgot-password" className="forgot-link">
+                  ЗАБЫЛИ ПАРОЛЬ?
+                </Link>
+              </div>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                disabled={lockInfo?.is_locked}
+                placeholder="ВАШ ПАРОЛЬ"
+                className="form-input"
+              />
+            </div>
+            
+            {error && (
+              <div className="error-box">
+                <div className="error-text">{error}</div>
+                {lockInfo?.is_locked && countdown > 0 && (
+                  <div className="warning-text">
+                    ВХОД РАЗБЛОКИРУЕТСЯ ЧЕРЕЗ: {formatTime(countdown)}
+                  </div>
+                )}
+                {lockInfo?.can_reset && (
+                  <div>
+                    <Link href="/forgot-password" className="info-link">
+                      ОТПРАВИТЬ ССЫЛКУ ДЛЯ СБРОСА ПАРОЛЯ
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <button 
+              type="submit" 
+              disabled={loading || lockInfo?.is_locked}
+              className="auth-btn"
+            >
+              {loading ? 'ВХОД...' : lockInfo?.is_locked ? 'ВХОД ЗАБЛОКИРОВАН' : 'ВОЙТИ'}
+            </button>
+          </form>
           
-          {error && (
-            <div className="p-4 bg-[#ff006e]/10 border border-[#ff006e]/30 rounded-md">
-              <div className="text-sm text-[#ff006e]">{error}</div>
+          {lockInfo?.is_locked && (
+            <div className="lock-box">
+              <p className="lock-title">⚠️ ДОСТУП ВРЕМЕННО ЗАБЛОКИРОВАН</p>
+              <p className="lock-text">
+                Для безопасности вашего аккаунта вход временно заблокирован после нескольких неудачных попыток.
+              </p>
+              <p className="lock-text">ВЫ МОЖЕТЕ:</p>
+              <ul className="lock-list">
+                <li>ПОДОЖДАТЬ {countdown > 0 ? formatTime(countdown) : 'НЕСКОЛЬКО МИНУТ'}</li>
+                <li>
+                  <Link href="/forgot-password" className="forgot-link">
+                    ВОССТАНОВИТЬ ПАРОЛЬ
+                  </Link>
+                </li>
+              </ul>
             </div>
           )}
           
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full flex justify-center py-3 px-4 border-2 border-[#00f5ff] text-[#00f5ff] bg-transparent rounded-md text-sm font-medium hover:bg-[#00f5ff]/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00f5ff] disabled:opacity-50 disabled:cursor-not-allowed transition"
-            style={{ boxShadow: '0 0 15px rgba(0,245,255,0.2)' }}
-          >
-            {loading ? 'Вход...' : 'Войти'}
-          </button>
-        </form>
-        
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-400">
-            <Link href="/" className="font-medium text-[#00f5ff] hover:text-[#00c4cc]">
-              Вернуться на главную
+          <div className="auth-footer">
+            <Link href="/" className="auth-footer-link">
+              ВЕРНУТЬСЯ НА ГЛАВНУЮ
             </Link>
-          </p>
+          </div>
+
+          {/* Дополнительный текст с ссылкой на покупку билета */}
+          <div className="auth-additional">
+            <p className="auth-additional-text">
+              НЕТ АККАУНТА?
+              <Link href="/buy-ticket" className="auth-additional-link">
+                КУПИТЬ БИЛЕТ
+              </Link>
+            </p>
+          </div>
         </div>
       </div>
     </div>

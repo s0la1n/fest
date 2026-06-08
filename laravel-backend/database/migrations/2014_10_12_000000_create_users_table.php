@@ -15,13 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('last_name')->nullable();
-            $table->string('nickname')->nullable()->unique();
             $table->string('login')->unique();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['user', 'cosplay_organizer', 'tournament_organizer', 'admin'])->default('user');
+            $table->enum('role', ['user', 'organizer', 'admin'])->default('user');
             $table->boolean('is_banned')->default(false);
             $table->unsignedInteger('balance')->default(0);
             $table->rememberToken();

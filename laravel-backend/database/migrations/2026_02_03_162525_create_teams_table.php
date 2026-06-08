@@ -17,9 +17,6 @@ return new class extends Migration
             $table->string('team_name');
             $table->string('tag')->unique();
             $table->string('city');
-            $table->string('logo')->nullable();
-            $table->text('description')->nullable();
-            $table->text('awards')->nullable();
             $table->enum('status', [
                 'active',
                 'inactive',

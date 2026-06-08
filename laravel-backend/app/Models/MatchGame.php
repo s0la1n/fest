@@ -9,6 +9,18 @@ class MatchGame extends Model
 {
     use HasFactory;
 
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_SCHEDULED = 'scheduled';
+    public const STATUS_LIVE = 'live';
+    public const STATUS_FINISHED = 'finished';
+    public const STATUS_CANCELLED = 'cancelled';
+
+    public const STAGE_ORDER = [
+        'quarterfinal',
+        'semifinal',
+        'final',
+    ];
+
     protected $fillable = [
         'game_id',
         'team1_id',
@@ -22,6 +34,9 @@ class MatchGame extends Model
         'duration_minutes',
         'team1_score',
         'team2_score',
+        'odds_team1',
+        'odds_team2',
+        'odds_draw',
     ];
 
     protected $casts = [
@@ -30,6 +45,9 @@ class MatchGame extends Model
         'duration_minutes' => 'integer',
         'team1_score' => 'integer',
         'team2_score' => 'integer',
+        'odds_team1' => 'decimal:2',
+        'odds_team2' => 'decimal:2',
+        'odds_draw' => 'decimal:2',
     ];
 
     public function game()
@@ -59,34 +77,45 @@ class MatchGame extends Model
 
     public function isLive(): bool
     {
-        return $this->status === 'live';
+        return $this->status === self::STATUS_LIVE;
     }
 
     public function isFinished(): bool
     {
-        return $this->status === 'finished';
+        return $this->status === self::STATUS_FINISHED;
     }
 
-    public function finish(int $team1Score, int $team2Score, ?int $winnerId = null)
+    public function isPending(): bool
     {
+        return $this->status === self::STATUS_PENDING;
+    }
+
+    public function canTransitionTo(string $nextStatus): bool
+    {
+        $allowed = [
+            self::STATUS_PENDING => [self::STATUS_PENDING, self::STATUS_SCHEDULED, self::STATUS_CANCELLED],
+            self::STATUS_SCHEDULED => [self::STATUS_SCHEDULED, self::STATUS_LIVE, self::STATUS_CANCELLED],
+            self::STATUS_CANCELLED => [self::STATUS_CANCELLED, self::STATUS_SCHEDULED],
+            self::STATUS_LIVE => [self::STATUS_FINISHED],
+            self::STATUS_FINISHED => [],
+        ];
+
+        return in_array($nextStatus, $allowed[$this->status] ?? [], true);
+    }
+
+    public function finish(int $team1Score, int $team2Score, ?int $winnerId = null): void
+    {
+        $winner = $winnerId ?? ($team1Score > $team2Score
+            ? $this->team1_id
+            : ($team2Score > $team1Score ? $this->team2_id : null));
+
         $this->update([
-            'status' => 'finished',
+            'status' => self::STATUS_FINISHED,
             'end_time' => now(),
-            'duration_minutes' => $this->start_time->diffInMinutes(now()),
+            'duration_minutes' => $this->start_time ? $this->start_time->diffInMinutes(now()) : null,
             'team1_score' => $team1Score,
             'team2_score' => $team2Score,
-            'winner_id' => $winnerId ?? ($team1Score > $team2Score ? $this->team1_id : 
-                         ($team2Score > $team1Score ? $this->team2_id : null)),
+            'winner_id' => $winner,
         ]);
-    }
-
-    public function getWinnerAttribute()
-    {
-        if ($this->team1_score > $this->team2_score) {
-            return $this->team1;
-        } elseif ($this->team2_score > $this->team1_score) {
-            return $this->team2;
-        }
-        return null; // ничья
     }
 }

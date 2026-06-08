@@ -14,9 +14,6 @@ class Team extends Model
         'team_name',
         'tag',
         'city',
-        'logo',
-        'description',
-        'awards',
         'status',
     ];
 

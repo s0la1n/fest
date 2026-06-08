@@ -1,0 +1,582 @@
+.admin-orders-page {
+  min-height: 100vh;
+  color: #e2e8f0;
+}
+
+.admin-orders-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 20px;
+}
+
+/* ===== ЗАГОЛОВОК СТРАНИЦЫ ===== */
+.admin-orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  padding-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.admin-orders-title-section {
+  text-align: left;
+}
+
+.admin-orders-title {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 35px;
+  color: #fff;
+  margin: 0 0 8px 0;
+}
+
+.admin-orders-description {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #94a3b8;
+  margin: 0;
+}
+
+/* ===== КНОПКИ ===== */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #B72F74;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #701342, 4px 0px 0px #701342,
+              inset 0px 3px 0px #701342, inset 0px -3px 0px #701342,
+              inset 0px -10px 0px #9F2262, inset -3px 0px 0px #E04091,
+              inset 0px -13px 0px #E04091;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #54FEDD;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -4px 0px 0px #136354, 4px 0px 0px #136354,
+              inset 0px 3px 0px #136354, inset 0px -3px 0px #136354,
+              inset 0px -10px 0px #198772, inset -3px 0px 0px #BFFFF3,
+              inset 0px -13px 0px #BFFFF3;
+  padding: 0 24px;
+  height: 60px;
+  min-width: 200px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: #01121C;
+  letter-spacing: 2px;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  padding: 8px 16px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.btn-action:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+/* ===== СООБЩЕНИЯ ===== */
+.message-error {
+  background: rgba(255, 0, 110, 0.1);
+  border: 1px solid #ff006e;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ff006e;
+  image-rendering: pixelated;
+}
+
+/* ===== ПУСТОЕ СОСТОЯНИЕ ===== */
+.empty-state {
+  text-align: center;
+  padding: 48px 0;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ===== ТАБЛИЦА ===== */
+.orders-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #1a1a24;
+  background: rgba(18, 18, 26, 0.4);
+  image-rendering: pixelated;
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+}
+
+.orders-table th {
+  text-align: left;
+  padding: 14px 16px;
+  background: rgba(18, 18, 26, 0.8);
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.orders-table td {
+  padding: 14px 16px;
+  color: #cbd5e1;
+  border-bottom: 1px solid #1a1a24;
+}
+
+.orders-table tr:hover td {
+  background: rgba(18, 18, 26, 0.6);
+}
+
+.orders-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ===== СТАТУСЫ ===== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid;
+}
+
+.status-processing {
+  background: rgba(234, 179, 8, 0.15);
+  border-color: #eab308;
+  color: #eab308;
+}
+
+.status-confirmed {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.status-shipped {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: #22c55e;
+  color: #22c55e;
+}
+
+.status-cancelled {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+/* ===== СЕЛЕКТ СТАТУСА ===== */
+.status-select {
+  padding: 6px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.status-select:hover {
+  border-color: #54FEDD;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.status-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== ИНФОРМАЦИЯ О ПОЛЬЗОВАТЕЛЕ ===== */
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-name {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.user-email {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* ===== ТОВАР ===== */
+.merch-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.merch-image {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #1a1a24;
+}
+
+.merch-name {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+}
+
+/* ===== СУММА ===== */
+.order-amount {
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 16px;
+  color: #f59e0b;
+  letter-spacing: 1px;
+}
+
+/* ===== НОМЕР ЗАКАЗА ===== */
+.order-number {
+  font-family: monospace;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+/* ===== ДОСТУП ЗАПРЕЩЁН ===== */
+.access-denied {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0f;
+}
+
+.access-denied-text {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #ff006e;
+}
+
+/* ===== ФИЛЬТРЫ ===== */
+.admin-orders-page .filters-section {
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  padding: 20px;
+  margin-bottom: 24px;
+  image-rendering: pixelated;
+}
+
+.admin-orders-page .filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.admin-orders-page .filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 150px;
+}
+
+.admin-orders-page .filter-label {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.admin-orders-page .filter-input,
+.admin-orders-page .filter-select {
+  padding: 10px 12px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #e2e8f0;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.admin-orders-page .filter-input:focus,
+.admin-orders-page .filter-select:focus {
+  outline: none;
+  border-color: #54FEDD;
+}
+
+.admin-orders-page .filter-reset {
+  padding: 10px 20px;
+  background: #1a1a24;
+  border: 1px solid #334155;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  height: 42px;
+  align-self: flex-end;
+}
+
+.admin-orders-page .filter-reset:hover {
+  border-color: #ff006e;
+  color: #ff006e;
+}
+
+.admin-orders-page .filter-stats {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 0 12px;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+  background: rgba(18, 18, 26, 0.6);
+  border: 1px solid #1a1a24;
+  border-radius: 4px;
+  height: 42px;
+}
+
+.admin-orders-page .order-date {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+/* ===== АДАПТАВНОСТЬ ===== */
+@media (max-width: 768px) {
+  .admin-orders-title {
+    font-size: 32px;
+  }
+  
+  .admin-orders-description {
+    font-size: 14px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    min-width: 160px;
+    height: 50px;
+    font-size: 16px;
+  }
+  
+  .orders-table th,
+  .orders-table td {
+    padding: 10px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-orders-title {
+    font-size: 28px;
+  }
+  
+  .admin-orders-description {
+    font-size: 12px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    min-width: 140px;
+    height: 45px;
+    font-size: 14px;
+  }
+}
+
+/* ===== СТАТИСТИКА ЗАКАЗОВ ===== */
+.admin-orders-page .orders-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 12px 16px;
+  background: rgba(18, 18, 26, 0.4);
+  border: 1px solid #1a1a24;
+  image-rendering: pixelated;
+}
+
+.admin-orders-page .orders-stats-count {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #54FEDD;
+}
+
+.admin-orders-page .orders-stats-page {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ===== ПАГИНАЦИЯ ===== */
+.admin-orders-page .orders-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 40px;
+  padding: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-orders-page .pagination-btn {
+  padding: 10px 24px;
+  font-family: 'Sonic HUD C Italic', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  background: #B72F74;
+  color: #FFFFFF;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+  box-shadow: -2px 0px 0px #701342, 2px 0px 0px #701342,
+              inset 0px 2px 0px #701342, inset 0px -2px 0px #701342;
+}
+
+.admin-orders-page .pagination-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+}
+
+.admin-orders-page .pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.admin-orders-page .pagination-pages {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.admin-orders-page .pagination-number {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  background: #0a0a0f;
+  border: 1px solid #1a1a24;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  image-rendering: pixelated;
+}
+
+.admin-orders-page .pagination-number:hover {
+  border-color: #54FEDD;
+  color: #54FEDD;
+}
+
+.admin-orders-page .pagination-number.active {
+  background: #B72F74;
+  border-color: #B72F74;
+  color: #FFFFFF;
+}
+
+.admin-orders-page .pagination-dots {
+  font-family: 'VCR OSD Mono Nova', monospace;
+  font-size: 16px;
+  color: #64748b;
+  padding: 0 4px;
+}
+
+/* Адаптация пагинации для мобильных */
+@media (max-width: 768px) {
+  .orders-pagination {
+    gap: 12px;
+  }
+  
+  .pagination-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+  
+  .pagination-number {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .orders-stats {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+}

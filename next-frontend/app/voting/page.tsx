@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { apiClient } from '@/lib/api';
+import PageLoader from '@/components/ui/PageLoader';
+import './voting.css';
 
 interface Participant {
   id: number;
@@ -21,6 +23,10 @@ export default function VotingPage() {
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState<number | null>(null);
   const [voteError, setVoteError] = useState<string | null>(null);
+  
+  // Пагинация
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 9;
 
   useEffect(() => {
     if (user) fetchParticipants();
@@ -42,7 +48,7 @@ export default function VotingPage() {
     setVoting(participantId);
     setVoteError(null);
     try {
-      await apiClient.post(`/voting/vote`, { participant_id: participantId });
+      await apiClient.post('/voting/vote', { participant_id: participantId });
       await fetchParticipants();
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } }; message?: string };
@@ -55,73 +61,138 @@ export default function VotingPage() {
 
   const hasVotedAny = participants.some((p) => p.has_voted);
 
+  // Пагинация
+  const totalPages = Math.ceil(participants.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentParticipants = participants.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   if (!user) {
     return (
-      <div className="min-h-screen bg-slate-900 text-slate-200 flex items-center justify-center p-4">
-        <div className="text-center">
-          <p className="text-slate-400 mb-4">Войдите в аккаунт, чтобы участвовать в голосовании.</p>
-          <Link href="/signin" className="text-cyan-400 hover:text-cyan-300 font-medium">Войти</Link>
+      <div className="voting-page">
+        <div className="voting-container">
+          <div className="voting-unauth">
+            <div className="voting-unauth-icon">⚠️</div>
+            <h2 className="voting-unauth-title">ДОСТУП ЗАПРЕЩЁН</h2>
+            <p className="voting-unauth-text">ВОЙДИТЕ В АККАУНТ, ЧТОБЫ УЧАСТВОВАТЬ В ГОЛОСОВАНИИ</p>
+            <Link href="/signin" className="voting-unauth-link">ВОЙТИ</Link>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 py-12 px-4">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-2">Голосование</h1>
-        <p className="text-slate-400 mb-8">Выберите одного участника конкурса косплея. Голосовать можно только один раз.</p>
-        {voteError && <p className="mb-4 text-red-400 text-sm">{voteError}</p>}
+    <div className="voting-page">
+      <div className="voting-container">
+        <div className="voting-header">
+          <h1 className="voting-title">ГОЛОСОВАНИЕ</h1>
+          <p className="voting-description">ВЫБЕРИТЕ ЛУЧШЕГО КОСПЛЕЕРА</p>
+        </div>
+
+        {voteError && <div className="voting-error">{voteError}</div>}
 
         {loading ? (
-          <div className="flex justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyan-500" />
-          </div>
+          <PageLoader text="ЗАГРУЗКА УЧАСТНИКОВ..." className="voting-loader" />
         ) : participants.length === 0 ? (
-          <div className="bg-slate-800/50 rounded-xl p-12 text-center border border-slate-700">
-            <p className="text-slate-500">Участники для голосования пока не добавлены.</p>
-            <p className="text-slate-600 text-sm mt-2">Участников добавляет организатор конкурса.</p>
+          <div className="voting-empty">
+            <p className="voting-empty-text">НЕТ УЧАСТНИКОВ ДЛЯ ГОЛОСОВАНИЯ</p>
+            <p className="voting-empty-subtext">УЧАСТНИКОВ ДОБАВЛЯЕТ ОРГАНИЗАТОР КОНКУРСА</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {participants.map((p) => (
-              <div
-                key={p.id}
-                className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-cyan-500/50 transition-colors"
-              >
-                <div className="aspect-[4/3] bg-slate-700 flex items-center justify-center text-slate-500">
-                  {p.photo ? (
-                    <img src={p.photo} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-4xl">🎭</span>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold text-white">
-                    {p.character_name || `Участник #${p.id}`}
-                  </h3>
-                  {p.origin && (
-                    <p className="text-slate-400 text-sm mt-1">{p.origin}</p>
-                  )}
-                  <p className="text-cyan-400 text-sm mt-2">
-                    Голосов: {p.votes_count ?? 0}
-                  </p>
-                  <button
-                    onClick={() => handleVote(p.id)}
-                    disabled={voting !== null || p.has_voted || hasVotedAny}
-                    className="mt-3 w-full py-2 px-4 bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition"
-                  >
-                    {p.has_voted ? 'Вы проголосовали' : hasVotedAny ? 'Голос учтён' : voting === p.id ? 'Отправка...' : 'Голосовать'}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+          <>
+            <div className="voting-stats">
+              <span className="voting-stats-count">ВСЕГО УЧАСТНИКОВ: {participants.length}</span>
+              <span className="voting-stats-page">СТРАНИЦА {currentPage} ИЗ {totalPages}</span>
+            </div>
 
-        <div className="mt-8">
-          <Link href="/" className="text-cyan-400 hover:text-cyan-300 font-medium">← На главную</Link>
-        </div>
+            <div className="voting-grid">
+              {currentParticipants.map((p) => {
+                const isVoted = p.has_voted || hasVotedAny;
+                const isVotingNow = voting === p.id;
+                
+                return (
+                  <div key={p.id} className="voting-card">
+                    <div className="voting-card-image">
+                      {p.photo ? (
+                        <img src={p.photo} alt={p.character_name || 'Участник'} />
+                      ) : (
+                        <div className="voting-card-placeholder">🎭</div>
+                      )}
+                    </div>
+                    <div className="voting-card-info">
+                      <h3 className="voting-card-name">
+                        {p.character_name || `УЧАСТНИК #${p.id}`}
+                      </h3>
+                      {p.origin && (
+                        <p className="voting-card-origin">{p.origin}</p>
+                      )}
+                      <p className="voting-card-votes">
+                        ГОЛОСОВ: {p.votes_count ?? 0}
+                      </p>
+                      
+                      {p.has_voted ? (
+                        <button disabled className="voting-btn-disabled">
+                          <span>ВЫ ПРОГОЛОСОВАЛИ</span>
+                        </button>
+                      ) : hasVotedAny ? (
+                        <button disabled className="voting-btn-disabled">
+                          <span>ГОЛОС УЖЕ УЧТЁН</span>
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => handleVote(p.id)}
+                          disabled={isVotingNow}
+                          className="btn-pink"
+                        >
+                          <span>{isVotingNow ? 'ОТПРАВКА...' : 'ГОЛОСОВАТЬ'}</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Пагинация */}
+            {totalPages > 1 && (
+              <div className="voting-pagination">
+                <button
+                  onClick={() => goToPage(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="pagination-btn"
+                >
+                  ← НАЗАД
+                </button>
+                
+                <div className="pagination-pages">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => goToPage(page)}
+                      className={`pagination-number ${currentPage === page ? 'active' : ''}`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                
+                <button
+                  onClick={() => goToPage(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="pagination-btn"
+                >
+                  ВПЕРЁД →
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,18 +1,26 @@
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
 
   async redirects() {
     return [{ source: '/applications', destination: '/', permanent: false }];
   },
 
-  // Прокси для Laravel API (чтобы избежать CORS ошибок)
   async rewrites() {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*', // Laravel
+        destination: 'http://localhost:8000/api/:path*',
+      },
+      {
+        source: '/sanctum/:path*',
+        destination: 'http://localhost:8000/sanctum/:path*',
+      },
+      {
+        source: '/storage/:path*',
+        destination: 'http://localhost:8000/storage/:path*',
       },
     ];
   },
