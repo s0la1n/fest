@@ -1,1 +1,2 @@
-
+# Production uploads are persisted here. Existing repository media is intentionally retained.
+!.gitignore

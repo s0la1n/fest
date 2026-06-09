@@ -9,7 +9,7 @@ export function PaymentStatusChecker({ ticketId }: { ticketId: number }) {
   const checkStatus = async () => {
     setChecking(true);
     try {
-      const response = await fetch(`http://localhost:8000/api/tickets/${ticketId}/check-status`, {
+      const response = await fetch(`/api/tickets/${ticketId}/check-status`, {
         credentials: 'include',
       });
       
