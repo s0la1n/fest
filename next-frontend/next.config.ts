@@ -8,22 +8,10 @@ const nextConfig: NextConfig = {
     return [{ source: '/applications', destination: '/', permanent: false }];
   },
 
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:8000/api/:path*',
-      },
-      {
-        source: '/sanctum/:path*',
-        destination: 'http://localhost:8000/sanctum/:path*',
-      },
-      {
-        source: '/storage/:path*',
-        destination: 'http://localhost:8000/storage/:path*',
-      },
-    ];
-  },
+  // 🔥 УДАЛИТЕ ИЛИ ЗАКОММЕНТИРУЙТЕ rewrites для продакшена
+  // async rewrites() {
+  //   return [];
+  // },
 };
 
 export default nextConfig;

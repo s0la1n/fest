@@ -8,9 +8,11 @@ function buildCsp(isDev: boolean): string {
   const scriptSrc = isDev
     ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'"
     : "script-src 'self' 'unsafe-inline'";
+  
+  // 🔥 ИЗМЕНЕНО ДЛЯ ПРОДАКШЕНА
   const connectSrc = isDev
     ? "connect-src 'self' http://localhost:8000 ws://localhost:3000"
-    : "connect-src 'self'";
+    : "connect-src 'self' https://igrovoy-labirint.ru";
 
   return [
     "default-src 'self'",
@@ -63,5 +65,5 @@ export function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico).*)',
-  ],
+  ]
 };
