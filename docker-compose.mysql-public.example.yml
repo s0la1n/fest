@@ -1,0 +1,7 @@
+# DANGER: do not use on a public VPS without an IP-restricted firewall or VPN.
+# Usage only after explicit security review:
+# docker compose -f docker-compose.yml -f docker-compose.mysql-public.example.yml up -d
+services:
+  mysql:
+    ports:
+      - "127.0.0.1:3306:3306" # SSH tunnel access only; do not bind 0.0.0.0.

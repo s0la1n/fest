@@ -13,7 +13,7 @@ export default function CheckoutContent() {
   const [loading, setLoading] = useState(false);
   const [ticketInfo, setTicketInfo] = useState<any>(null);
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
   useEffect(() => {
     if (ticketId && user) {

@@ -1,0 +1,12 @@
+.git
+.github
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.production.example
+**/node_modules
+**/.next
+**/vendor
+backups
+deploy/certbot/conf
+deploy/certbot/www
